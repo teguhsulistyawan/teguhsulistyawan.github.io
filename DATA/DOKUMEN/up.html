@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Upload Gambar ke Google Drive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #f0f2f5;
+  display: flex; /* Menggunakan Flexbox */
+  flex-direction: column; /* Menyusun elemen secara vertikal */
+  justify-content: center; /* Konten dimulai dari atas */
+  align-items: center; /* Memusatkan konten secara horizontal */
+  min-height: 100vh; /* Mengisi seluruh tinggi viewport */
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto; /* Mengizinkan scroll jika konten lebih tinggi dari viewport */
+}
+
+.container {
+  width: 100%;
+  max-width: 800px; /* Tambahkan lebar maksimal agar tidak terlalu melebar */
+  margin: 0 auto; /* Pusatkan secara horizontal */
+  padding: 40px; /* Padding besar untuk tampilan yang luas */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column; /* Susunan elemen vertikal */
+  align-items: center; /* Pusatkan elemen secara horizontal */
+  max-height: auto; /* Mengatur tinggi maksimal kontainer */
+}
+
+h2 {
+  text-align: center;
+  color: rgb(42, 137, 115);
+  margin-bottom: 50px;
+  font-size: 90px; /* Ukuran font besar untuk judul */
+  letter-spacing: 2px;
+}
+
+input[type="file"] {
+  display: block;
+  width: 700px; /* Lebar penuh */
+  padding: 20px; /* Padding lebih besar */
+  font-size: 40px; /* Ukuran font besar */
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid rgb(194, 194, 194);
+  outline: none;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+button {
+  display: block;
+  width: 740px; /* Lebar penuh agar sama dengan input */
+  padding: 20px; /* Padding besar untuk tombol */
+  background: linear-gradient(135deg, #21958b 0%, #00625a 100%); /* Gradasi hijau */
+  color: #fff;
+  font-size: 70px; /* Ukuran font besar */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px; /* Margin di atas tombol */
+  font-weight: bold;
+}
+
+input[type="file"]:focus {
+  box-shadow: 0 0 10px rgba(0, 150, 136, 0.5);
+}
+
+#preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+#preview img {
+flex-basis: calc((100% / 3) - 20px); /* Lebar gambar dibagi menjadi 3, dikurangi jarak antar gambar */
+  width: 250px; /* Ukuran gambar besar */
+  height: 250px; /* Ukuran gambar besar */
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+#preview img:hover {
+  width:100%; /* Memperbesar gambar saat hover */
+  height: 100%;
+  border-radius: 0px; /* Gambar tidak melingkar saat hover */
+}
+
+
+button:hover {
+  background: linear-gradient(135deg, #00625a 0%, #21958b 100%); /* Membalik gradasi saat hover */
+}
+
+.loading {
+  text-align: center;
+  color: #fff;
+  margin-top: 30px;
+  font-size: 30px; /* Ukuran font besar */
+  display: none;
+}
+
+.success-message {
+  color: #28a745;
+  font-size: 30px; /* Ukuran font besar */
+  margin-top: 30px;
+  text-align: center;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 30px; /* Ukuran font besar */
+  margin-top: 30px;
+  text-align: center;
+}
+.progress-container {
+  width: 740px;
+  background-color: #e0e0e0; /* Warna latar belakang */
+  border-radius: 25px;
+  margin-top: 0px;
+  height: 30px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #00bfa5; /* Warna progress */
+  border-radius: 25px;
+  transition: width 0.4s ease; /* Animasi transisi pengisian */
+}
+.upload-status {
+  font-size: 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+    </style>
+    <script>
+      let filesToUpload = [];
+
+      function previewFiles(event) {
+        const preview = document.getElementById('preview');
+        preview.innerHTML = '';
+        filesToUpload = Array.from(event.target.files);
+
+        filesToUpload.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            preview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+      
+      function uploadFiles() {
+  if (filesToUpload.length === 0) {
+    alert('Pilih gambar yang ingin diunggah terlebih dahulu!');
+    return;
+  }
+
+  const progressBar = document.getElementById('progressBar');
+  progressBar.style.width = '0%'; // Reset progress bar
+
+  const loading = document.getElementById('loading');
+  loading.innerHTML = 'Sedang mengunggah...';
+
+  let fileIndex = 0; // Lacak indeks file yang diunggah
+  let totalFiles = filesToUpload.length;
+  const uploadStatus = document.getElementById('uploadStatus');
+  uploadStatus.style.display = 'none'; // Sembunyikan status upload
+
+  filesToUpload.forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileData = event.target.result;
+
+      google.script.run.withSuccessHandler((response) => {
+        // Update progress bar
+        fileIndex += 1;
+        const progressPercentage = (fileIndex / totalFiles) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+
+        // Sembunyikan gambar yang berhasil diunggah
+        const previewImages = document.querySelectorAll('#preview img');
+        if (previewImages[index]) {
+          previewImages[index].style.display = 'none';
+        }
+
+        // Jika semua file sudah diunggah
+        if (fileIndex === totalFiles) {
+          loading.innerHTML = ''; // Hapus pesan loading
+          progressBar.style.width = '0%'; // Reset progress bar
+
+          // Tampilkan status upload
+          if (response === "success") {
+            uploadStatus.innerHTML = 'Unggahan berhasil!';
+            uploadStatus.style.color = '#28a745'; // Warna hijau
+          } else {
+            uploadStatus.innerHTML = 'Unggahan gagal!';
+            uploadStatus.style.color = '#dc3545'; // Warna merah
+          }
+          uploadStatus.style.display = 'block'; // Tampilkan status upload
+          
+          // Reset form setelah beberapa detik jika diinginkan
+          setTimeout(() => {
+            resetForm(); // Reset form setelah unggahan selesai
+            uploadStatus.style.display = 'none'; // Sembunyikan status upload setelah beberapa detik
+          }, 5000);
+        }
+      }).uploadToDrive(fileData, file.name);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+    </script>
+  </head>
+  <body>
+    <h2>PILIH FOTO</h2>
+    <div class="container">
+      <input type="file" id="fileInput" multiple accept="image/*" onchange="previewFiles(event)">
+      <div id="preview"></div>
+      <button onclick="uploadFiles()">Upload</button>
+      <div id="loading" class="loading"></div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div id="uploadStatus" class="upload-status" style="display:none;"></div>      
+    </div>
+  </body>
+</html>
