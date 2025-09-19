@@ -1,198 +1,81 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard</title>
-    <!-- Apple Touch Icons -->
-<link rel="apple-touch-icon" sizes="57x57" href="ico/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="ico/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="ico/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="ico/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="ico/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="ico/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="ico/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="ico/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="ico/apple-icon-180x180.png">
-
-<!-- Android Icon -->
-<link rel="icon" type="image/png" sizes="192x192" href="ico/android-icon-192x192.png">
-
-<!-- Favicon for general browsers -->
-<link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="ico/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
-
-<!-- Web Manifest for Progressive Web App -->
-<link rel="manifest" href="ico/manifest.json">
-
-<!-- Microsoft-specific Meta Tags -->
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="ico/ms-icon-144x144.png">
-
-<!-- Theme color for browser UI -->
-<meta name="theme-color" content="#ffffff">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
-        .banner {
-            width: 320px;
-            height: auto;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        .banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px; /* Consistent gap between buttons */
-            margin-top: 5px;
-            max-width: 330px; /* Fixed width to prevent resizing */
-        }
-        .button-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90px; /* Fixed width for buttons */
-        }
-        .button-container button {
-            background-color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 0px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px; /* Fixed width */
-            height: 90px; /* Fixed height */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .button-container button:hover {
-            background-color: #3080f7;
-            color: #fff;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.08);
-            transform: translateY(-3px);
-        }
-        .button-container img {
-            width: 70%; /* Consistent image size */
-            height: auto;
-            transition: transform 0.3s ease;
-        }
-        .button-container button:hover img {
-            transform: scale(1.1);
-        }
-        .button-container p {
-            margin: 5px 0 0 0;
-            padding: 5px;
-            background: linear-gradient(45deg, #3080f7, #56ccf2);
-            color: white;
-            font-size: 12px; /* Slightly smaller font size for better fit */
-            text-align: center;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            width: 100%; /* Consistent width */
-            box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .button-container p:hover {
-            background: linear-gradient(45deg, #256bbd, #4a90e2);
-        }
-        .logout-btn {
-            background: linear-gradient(45deg, #3080f7, #56ccf2);
-            color: white;
-            width: 320px; /* Fixed width */
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            font-size: 16px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-top: 70PX;
-            margin-bottom: 0%;
-        }
-        .logout-btn:hover {
-            background: linear-gradient(45deg, #256bbd, #4a90e2);
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        .logout-btn:active {
-            transform: scale(0.98);
-        }
-    </style>
-    <script>
-        // Cek apakah pengguna sudah login
-        if (localStorage.getItem('loggedin') !== 'true') {
-            window.location.href = 'login.html';
-        } else {
-            // Menyembunyikan URL setelah berhasil login
-            history.replaceState(null, null, ' ');
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedin');
-            window.location.href = 'login.html';
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pusat Data</title>
+  <link rel="stylesheet" href="style-dashboard.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
 <body>
-    <div class="banner">
-        <img src="GAMBAR/BANNER.jpg" alt="Banner"> <!-- Ganti dengan path gambar banner Anda -->
+    <header class="topbar">PUSAT DATA</header>
+
+<section class="profile-section">
+  <div class="profile-info">
+    <!-- ✅ Avatar -->
+    <div class="profile-avatar" id="avatar"></div>
+
+    <!-- ✅ Nama dan pondok -->
+    <div>
+      <div id="nama-user" class="profile-name">Nama</div>
+      <div id="pondok-user" class="profile-pondok">Alamat</div>
     </div>
-    <div class="button-container">
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/PROGRAM.html'"><img src="GAMBAR/PROGRAM.png" alt="Button 1"></button>
-            <p>Program</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/DESAIN.html'"><img src="GAMBAR/DESAIN.png" alt="Button 2"></button>
-            <p>Desain</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/DOKUMEN.html'"><img src="GAMBAR/DOKUMENTASI.png" alt="Button 3"></button>
-            <p>Dokumen</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/MAKTABAH/PERPUSTAKAAN.html'"><img src="GAMBAR/PERPUSTAKAAN.png" alt="Button 4"></button>
-            <p>Maktabah</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/software.html'"><img src="GAMBAR/SANTRI.png" alt="Button 5"></button>
-            <p>Rumusan</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/perpustakaan.html'"><img src="GAMBAR/buku.png" alt="Button 6"></button>
-            <p>Perpustakaan</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/IBAROH.html'"><img src="GAMBAR/IBAROH.png" alt="Button 7"></button>
-            <p>Ibaroh</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/KAJIAN.html'"><img src="GAMBAR/KAJIAN.png" alt="Button 8"></button>
-            <p>Kajian</p>
-        </div>
-        <div class="button-item">
-            <button onclick="window.location.href='DATA/catatan.html'"><img src="GAMBAR/CATATAN.png" alt="Button 9"></button>
-            <p>Catatan</p>
-        </div>
-    </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</section>
+
+  <section class="menu-grid">
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/CATATAN.png" alt="soal" class="icon-img">
+      <p>Catatan Ibaroh</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('soal')">
+      <img src="/GAMBAR/IBAROH.png" alt="pesan" class="icon-img">
+      <p>Bahtsul Masail</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('upKitab')">
+      <img src="/GAMBAR/PERPUSTAKAAN.png" alt="upload" class="icon-img">
+      <p>Perpustakaan</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('chatt')">
+      <img src="/GAMBAR/PROGRAM.png" alt="kitab" class="icon-img">
+      <p>Program</p>
+    </button>
+
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/DESAIN.png" alt="kitab" class="icon-img">
+      <p>Desain</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/PRIFASI.png" alt="catatan" class="icon-img">
+      <p>Dokumen</p>
+    </button>
+    
+      </section>
+
+      <section class="extra-section">
+        <button onclick="openSheet('1ehfXEPLRveJ_S9RIDxu191yrXA9zU0uvASnLq7gVykY')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong
+        </button>
+        <button onclick="openSheet('1ZHH1-kkSZ8tPAjlmId5QGHyT0vTL6617WLoigg5dcl8')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong
+        </button>
+        <button onclick="openSheet('1ILCbl6TYewQS8qRphXXaXEjDZTO8u_QtjAs35D7QIVI')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong 
+        </button>
+        <button onclick="goTo('#')" class="extra-btn">
+          <i class="fas fa-user"></i> Bantuan Developer
+        </button>
+        
+      </section>
+      <div class="watermark">
+        &copy; Teguh Sulistyawan | All rights reserved
+      </div>
+      
+  <script src="script-dashboard.js"></script>
 </body>
 </html>

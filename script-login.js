@@ -5,7 +5,7 @@ window.onload = function () {
   if (typeof AndroidFunction !== "undefined" && AndroidFunction.getLoginData) {
     const savedId = AndroidFunction.getLoginData("userId");
     if (savedId) {
-      window.location.href = `dashboard.html?id=${savedId}`;
+      window.location.href = `index.html?id=${savedId}`;
     }
   }
 };
@@ -60,7 +60,7 @@ function login() {
         }
 
         // 🔁 Arahkan ke dashboard dengan ID
-        window.location.href = `dashboard.html?id=${data.id}`;
+        window.location.href = `index.html?id=${data.id}`;
       } else {
         alert("Email atau password salah, atau akun belum terdaftar.");
         btn.classList.remove("loading");
