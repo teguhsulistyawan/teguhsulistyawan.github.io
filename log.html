@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Login Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 400px;
+      width: 95%;
+      text-align: center;
+    }
+
+    form {
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 85%;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      height: 50px;
+      padding: 10px;
+      padding-right: 40px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+      line-height: 50px;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      border-color: #2e6f6bff;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 37%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-password i {
+      font-size: 1.2em;
+      color: #888;
+    }
+
+    button {
+      padding: 12px 15px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+      background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, rgb(26, 81, 148), rgb(43, 113, 197));
+    }
+
+    .form-wrapper p {
+      font-size: 13px;
+      color: #777;
+      margin-top: 15px;
+      font-style: italic;
+      line-height: 1.4;
+      width: 95%;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color:#2e6f6bff;
+    }
+
+    .spinner {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #ffffff99;
+      border-top: 2px solid #fff;
+      border-radius: 50%;
+      margin-left: 8px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .banner {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    .banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <form id="loginForm">
+        <div class="banner">
+            <img src="/GAMBAR/logo.png" alt="Banner"> <!-- Ganti dengan path gambar banner Anda -->
+        </div>
+      <input type="email" id="login-email" placeholder="Email" required />
+      <div class="password-wrapper">
+        <input type="password" id="login-password" placeholder="Password" required />
+        <span class="toggle-password" onclick="togglePassword()">
+          <i id="eyeIcon" class="fas fa-eye"></i>
+        </span>
+      </div>
+      <button type="submit" id="loginBtn">Login</button>
+      <p>Pendaftaran hanya bisa melalui admin</p>
+    </form>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const passwordField = document.getElementById("login-password");
+      const eyeIcon = document.getElementById("eyeIcon");
+
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+        eyeIcon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        passwordField.type = "password";
+        eyeIcon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+      const loginBtn = document.getElementById("loginBtn");
+
+      if (!email || !password) {
+        alert("Email dan password wajib diisi.");
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = 'Loading <span class="spinner"></span>';
+
+      // Panggil fungsi login Panjenengan
+      login();
+    });
+
+    function login() {
+      // Silakan isi dengan kode login asli (misalnya kirim ke Apps Script)
+      console.log("Login diproses...");
+      // Setelah selesai proses login, bisa reset tombol:
+      // document.getElementById("loginBtn").disabled = false;
+      // document.getElementById("loginBtn").innerHTML = 'Login';
+    }
+   
+
+  </script>
+  <script src="script-login.js"></script>
+</body>
+
+</html>

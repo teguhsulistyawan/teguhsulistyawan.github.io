@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pusat Data</title>
+  <link rel="stylesheet" href="style-dashboard.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+</head>
+<body>
+    <header class="topbar">PUSAT DATA</header>
+
+<section class="profile-section">
+  <div class="profile-info">
+    <!-- ✅ Avatar -->
+    <div class="profile-avatar" id="avatar"></div>
+
+    <!-- ✅ Nama dan pondok -->
+    <div>
+      <div id="nama-user" class="profile-name">Nama</div>
+      <div id="pondok-user" class="profile-pondok">Alamat</div>
+    </div>
+  </div>
+</section>
+
+  <section class="menu-grid">
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/CATATAN.png" alt="soal" class="icon-img">
+      <p>Catatan Ibaroh</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('soal')">
+      <img src="/GAMBAR/IBAROH.png" alt="pesan" class="icon-img">
+      <p>Bahtsul Masail</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('upKitab')">
+      <img src="/GAMBAR/PERPUSTAKAAN.png" alt="upload" class="icon-img">
+      <p>Perpustakaan</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('chatt')">
+      <img src="/GAMBAR/PROGRAM.png" alt="kitab" class="icon-img">
+      <p>Program</p>
+    </button>
+
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/DESAIN.png" alt="kitab" class="icon-img">
+      <p>Desain</p>
+    </button>
+    
+    <button class="menu-item" onclick="goTo('catatan')">
+      <img src="/GAMBAR/PRIFASI.png" alt="catatan" class="icon-img">
+      <p>Dokumen</p>
+    </button>
+    
+      </section>
+
+      <section class="extra-section">
+        <button onclick="openSheet('1ehfXEPLRveJ_S9RIDxu191yrXA9zU0uvASnLq7gVykY')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong
+        </button>
+        <button onclick="openSheet('1ZHH1-kkSZ8tPAjlmId5QGHyT0vTL6617WLoigg5dcl8')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong
+        </button>
+        <button onclick="openSheet('1ILCbl6TYewQS8qRphXXaXEjDZTO8u_QtjAs35D7QIVI')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Menu Kosong 
+        </button>
+        <button onclick="goTo('#')" class="extra-btn">
+          <i class="fas fa-user"></i> Bantuan Developer
+        </button>
+        
+      </section>
+      <div class="watermark">
+        &copy; Teguh Sulistyawan | All rights reserved
+      </div>
+      
+  <script src="script-dashboard.js"></script>
+</body>
+</html>

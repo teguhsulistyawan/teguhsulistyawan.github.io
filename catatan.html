@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Catatan Ibaroh</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    .pencarian {
+      display: flex;
+      justify-content: center;
+      margin: 10px auto;
+      width: 100%;
+      height: 50px;
+      margin-bottom: 0px;
+    }
+
+    .pencarian input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .pencarian button {
+      width: 15%;
+      padding: 10px;
+      background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+      color: #fff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .pencarian button:hover {
+      background-color: #000;
+    }
+
+    #spinner {
+      display: none;
+      text-align: center;
+      margin: 20px;
+    }
+
+    .spinner-border {
+      width: 10px;
+      height: 10px;
+      border: 5px solid #ddd;
+      border-top: 5px solid #4a90e2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #daftarCatatan {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .catatan-box {
+      background-color: #fff;
+      margin: 5px 0;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .judul {
+      background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+      color: #fff;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .isi {
+      padding: 12px;
+      font-size: 16px;
+      background-color: #fefefe;
+      direction: ltr;
+    }
+
+    .isi[dir="rtl"] {
+      direction: rtl;
+      font-family: 'Scheherazade New', 'Traditional Arabic', Tahoma, serif;
+      text-align: justify;
+    }
+
+    #tambahBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+      color: white;
+      border: none;
+      font-size: 36px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+
+    #tambahBtn:hover {
+      background-color: #000;
+    }
+
+    #formPopup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    #formContainer {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.4s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 20px;
+      float: right;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0,123,255,0.5);
+      outline: none;
+    }
+
+    .input-arabic {
+      direction: rtl;
+      font-family: 'Scheherazade New', 'Traditional Arabic', Tahoma, serif;
+      text-align: justify;
+    }
+
+    #formContainer button {
+      background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    #formContainer button:hover {
+      background-color: #000;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pencarian">
+    <input type="text" id="searchInput" placeholder="Cari catatan...">
+    <button onclick="cariCatatan()" title="Cari"><i class="fas fa-search"></i></button>
+  </div>
+
+  <div id="spinner"><div class="spinner-border"></div></div>
+  <div id="daftarCatatan"></div>
+
+  <button id="tambahBtn" onclick="toggleForm()">+</button>
+
+  <div id="formPopup">
+    <div id="formContainer">
+      <button class="close" onclick="toggleForm()">×</button>
+      <h3>Tambah Catatan Ibaroh</h3>
+      <input type="text" id="judulInput" placeholder="Judul Catatan"><br><br>
+      <div style="margin-top: 20px;">
+        <label for="teksArab">Teks Ibaroh:</label>
+        <textarea id="teksArab" class="input-arabic" rows="5" placeholder="اكتب هنا..."></textarea>
+      </div>      
+      <button onclick="kirimCatatan()">Kirim Catatan</button>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-frux0KY32T7qF-q9m5qPengJuZQ0x-IKqAVhpOVAc7sohbn1eZ5Rpbbns8F3i9gwlw/exec';
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id")?.toUpperCase();
+
+    const daftarDiv = document.getElementById("daftarCatatan");
+    const formPopup = document.getElementById("formPopup");
+    const spinner = document.getElementById("spinner");
+
+    function toggleForm() {
+      formPopup.style.display = formPopup.style.display === "flex" ? "none" : "flex";
+      formPopup.style.justifyContent = 'center';
+      formPopup.style.alignItems = 'center';
+    }
+
+    function kirimCatatan() {
+      const judul = document.getElementById("judulInput").value.trim();
+      const isi = document.getElementById("teksArab").value.trim();
+
+      if (!judul || !isi || !userId) {
+        alert("Lengkapi semua isian!");
+        return;
+      }
+
+      const formData = new URLSearchParams();
+      formData.append("aksi", "tambah");
+      formData.append("idUser", userId);
+      formData.append("judul", judul);
+      formData.append("isi", isi);
+
+      spinner.style.display = 'block';
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(res => {
+        spinner.style.display = 'none';
+        if (res.success) {
+          document.getElementById("judulInput").value = '';
+          document.getElementById("teksArab").value = '';
+          toggleForm();
+          loadCatatan();
+        } else {
+          alert("Gagal menyimpan catatan: " + res.error);
+        }
+      })
+      .catch(err => {
+        spinner.style.display = 'none';
+        alert("Error: " + err);
+      });
+    }
+
+    function loadCatatan() {
+      if (!userId) {
+        daftarDiv.innerHTML = '<p style="color:red;">ID User tidak ditemukan di URL</p>';
+        return;
+      }
+
+      spinner.style.display = 'block';
+      fetch(`${SCRIPT_URL}?idUser=${userId}&ts=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => {
+          spinner.style.display = 'none';
+          tampilkanCatatan(data.reverse()); // Terbaru di atas
+        })
+        .catch(err => {
+          spinner.style.display = 'none';
+          daftarDiv.innerHTML = '<p style="color:red;">Gagal mengambil data</p>';
+        });
+    }
+
+    function tampilkanCatatan(data) {
+      daftarDiv.innerHTML = '';
+      if (data.length === 0) {
+        daftarDiv.innerHTML = '<p>Belum ada catatan</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const kotak = document.createElement("div");
+        kotak.className = 'catatan-box';
+
+        const tombol = document.createElement("div");
+        tombol.className = 'judul';
+        tombol.innerText = item.judul;
+
+        const isi = document.createElement("div");
+        isi.className = 'isi';
+        isi.style.display = "none";
+
+        // Deteksi karakter Arab
+        const isArabic = /[\u0600-\u06FF]/.test(item.isi);
+        if (isArabic) isi.setAttribute('dir', 'rtl');
+
+        isi.innerText = item.isi;
+
+        tombol.onclick = () => {
+          isi.style.display = isi.style.display === "none" ? "block" : "none";
+        };
+
+        kotak.appendChild(tombol);
+        kotak.appendChild(isi);
+        daftarDiv.appendChild(kotak);
+      });
+    }
+
+    function cariCatatan() {
+      const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+
+      spinner.style.display = 'block';
+
+      if (keyword === "") {
+        loadCatatan();
+        return;
+      }
+
+      fetch(`${SCRIPT_URL}?idUser=${userId}&ts=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => {
+          spinner.style.display = 'none';
+          const hasil = data.filter(item =>
+            item.judul.toLowerCase().includes(keyword) ||
+            item.isi.toLowerCase().includes(keyword)
+          );
+          tampilkanCatatan(hasil.reverse());
+        })
+        .catch(err => {
+          spinner.style.display = 'none';
+          daftarDiv.innerHTML = '<p style="color:red;">Gagal mengambil data</p>';
+        });
+    }
+
+    window.onload = () => {
+      loadCatatan();
+      document.getElementById("searchInput").addEventListener("input", function () {
+        if (this.value.trim() === "") {
+          loadCatatan();
+        }
+      });
+    };
+  </script>
+</body>
+</html>
