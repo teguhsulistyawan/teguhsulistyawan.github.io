@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Menu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+    }
+    header {
+      background: #4a90e2;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #menuGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .menu-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 15px;
+      transition: transform .2s;
+      position: relative;
+    }
+    .menu-card:hover {
+      transform: translateY(-5px);
+    }
+    .menu-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .menu-card h4 {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    .actions button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #555;
+    }
+    #tambahBtn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    #formPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    #formContainer {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    #formContainer input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    #formContainer button {
+      padding: 10px 15px;
+      background: #4a90e2;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #formContainer button.close {
+      background: none;
+      color: red;
+      font-size: 20px;
+      float: right;
+      cursor: pointer;
+    }
+    #spinner {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>Dashboard Menu</header>
+  <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+  <div id="menuGrid"></div>
+
+  <button id="tambahBtn" onclick="openForm()">+</button>
+
+  <div id="formPopup">
+    <div id="formContainer">
+      <button class="close" onclick="closeForm()">×</button>
+      <h3 id="formTitle">Tambah Menu</h3>
+      <input type="hidden" id="editIdMenu">
+      <input type="text" id="judulInput" placeholder="Judul menu">
+      <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
+      <input type="text" id="linkInput" placeholder="Link tujuan">
+      <button onclick="submitMenu()">Simpan</button>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTbmok0i6AtgLr4ebPcm2Gujl7n75yXH2IpM3B-D2tzhZeGLHfcyCyydHD7m9QsZFH/exec';
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id")?.toUpperCase();
+
+    const menuGrid = document.getElementById("menuGrid");
+    const spinner = document.getElementById("spinner");
+    const formPopup = document.getElementById("formPopup");
+    const editIdMenu = document.getElementById("editIdMenu");
+    const formTitle = document.getElementById("formTitle");
+
+    function openForm(editData = null) {
+      formPopup.style.display = "flex";
+      if (editData) {
+        formTitle.innerText = "Edit Menu";
+        editIdMenu.value = editData.idMenu;
+        document.getElementById("judulInput").value = editData.judul;
+        document.getElementById("ikonInput").value = editData.ikon;
+        document.getElementById("linkInput").value = editData.link;
+      } else {
+        formTitle.innerText = "Tambah Menu";
+        editIdMenu.value = "";
+        document.getElementById("judulInput").value = "";
+        document.getElementById("ikonInput").value = "";
+        document.getElementById("linkInput").value = "";
+      }
+    }
+    function closeForm() {
+      formPopup.style.display = "none";
+    }
+
+    function loadMenu() {
+      if (!userId) {
+        menuGrid.innerHTML = '<p style="color:red;">ID User tidak ditemukan di URL</p>';
+        return;
+      }
+      spinner.style.display = 'block';
+      fetch(`${SCRIPT_URL}?idUser=${userId}&ts=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => {
+          spinner.style.display = 'none';
+          tampilkanMenu(data.reverse());
+        })
+        .catch(() => {
+          spinner.style.display = 'none';
+          menuGrid.innerHTML = '<p style="color:red;">Gagal mengambil data</p>';
+        });
+    }
+
+    function tampilkanMenu(data) {
+      menuGrid.innerHTML = '';
+      if (data.length === 0) {
+        menuGrid.innerHTML = '<p>Belum ada menu</p>';
+        return;
+      }
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "menu-card";
+
+        const img = document.createElement("img");
+        img.src = `https://drive.google.com/thumbnail?id=${item.ikon}`;
+        card.appendChild(img);
+
+        const h4 = document.createElement("h4");
+        h4.innerText = item.judul;
+        card.appendChild(h4);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+        editBtn.onclick = () => openForm(item);
+        actions.appendChild(editBtn);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.onclick = () => hapusMenu(item.idMenu);
+        actions.appendChild(deleteBtn);
+
+        card.appendChild(actions);
+        card.onclick = () => {
+          if (item.link) window.open(item.link, "_blank");
+        };
+
+        menuGrid.appendChild(card);
+      });
+    }
+
+    function submitMenu() {
+      const idMenu = editIdMenu.value;
+      const judul = document.getElementById("judulInput").value.trim();
+      const ikon = document.getElementById("ikonInput").value.trim();
+      const link = document.getElementById("linkInput").value.trim();
+
+      if (!judul || !ikon || !link) {
+        alert("Lengkapi semua isian!");
+        return;
+      }
+
+      const formData = new URLSearchParams();
+      formData.append("idUser", userId);
+      formData.append("judul", judul);
+      formData.append("ikon", ikon);
+      formData.append("link", link);
+
+      if (idMenu) {
+        formData.append("aksi", "edit");
+        formData.append("idMenu", idMenu);
+      } else {
+        formData.append("aksi", "tambah");
+      }
+
+      spinner.style.display = 'block';
+      fetch(SCRIPT_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+          spinner.style.display = 'none';
+          if (res.success) {
+            closeForm();
+            loadMenu();
+          } else {
+            alert("Gagal menyimpan: " + res.error);
+          }
+        })
+        .catch(err => {
+          spinner.style.display = 'none';
+          alert("Error: " + err);
+        });
+    }
+
+    function hapusMenu(idMenu) {
+      if (!confirm("Yakin ingin menghapus menu ini?")) return;
+      const formData = new URLSearchParams();
+      formData.append("aksi", "hapus");
+      formData.append("idMenu", idMenu);
+
+      spinner.style.display = 'block';
+      fetch(SCRIPT_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+          spinner.style.display = 'none';
+          if (res.success) loadMenu();
+          else alert("Gagal hapus: " + res.error);
+        })
+        .catch(err => {
+          spinner.style.display = 'none';
+          alert("Error: " + err);
+        });
+    }
+
+    window.onload = loadMenu;
+  </script>
+</body>
+</html>

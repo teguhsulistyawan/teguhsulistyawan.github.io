@@ -137,3 +137,150 @@ body {
     margin-top: 40px;
   }
   
+  /* === MENU GRID KEDUA (Custom / Dinamis) === */
+#menuGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.menu-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+  position: relative;
+  cursor: pointer;
+}
+
+.menu-card:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.menu-card img {
+  width: 50px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.menu-card h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #050505;
+}
+
+/* Tombol aksi edit & hapus */
+.menu-card .actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+}
+
+.menu-card .actions button {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.menu-card .actions button:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+/* Tombol tambah (+) */
+#tambahBtn {
+  all: unset;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+  border-radius: 50%;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
+  margin: 16px auto;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#tambahBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* Popup Form */
+#formPopup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+#formContainer {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+#formContainer h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: rgb(26, 81, 148);
+}
+
+#formContainer input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#formContainer button {
+  width: 100%;
+  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#formContainer button:hover {
+  background: linear-gradient(135deg, rgb(33, 90, 160), rgb(20, 65, 120));
+}
+
+#formContainer .close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+}
