@@ -135,8 +135,19 @@ function tampilkanMenu(data) {
     card.className = "menu-card";
 
     const img = document.createElement("img");
-    const driveId = extractDriveId(item.ikon);
-    img.src = `https://drive.google.com/thumbnail?id=${driveId}`;
+
+    // 🔹 Cek apakah ikon dari Google Drive atau Flaticon/link langsung
+    if (item.ikon.includes("drive.google.com")) {
+      const driveId = extractDriveId(item.ikon);
+      img.src = `https://drive.google.com/thumbnail?id=${driveId}`;
+    } else if (item.ikon.startsWith("http")) {
+      // Asumsikan ini link langsung (Flaticon, CDN, atau gambar lain)
+      img.src = item.ikon;
+    } else {
+      // Jika kosong atau tidak valid, pakai ikon default
+      img.src = "https://cdn-icons-png.flaticon.com/512/1828/1828673.png"; // default icon
+    }
+
     card.appendChild(img);
 
     const h4 = document.createElement("h4");
@@ -176,11 +187,12 @@ function tampilkanMenu(data) {
       } else {
         alert("Link belum tersedia!");
       }
-    };    
+    };
 
     menuGrid.appendChild(card);
   });
 }
+
 
 
 function submitMenu() {
