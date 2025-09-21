@@ -55,24 +55,31 @@
       <p>Dokumen</p>
     </button>
     
-    <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
-    <div id="menuGrid" class="menu-item"></div>
-
-    <button id="tambahBtn" onclick="openForm()">+</button>
-
-    <div id="formPopup">
-      <div id="formContainer">
-        <button class="close" onclick="closeForm()">×</button>
-        <h3 id="formTitle">Tambah Menu</h3>
-        <input type="hidden" id="editIdMenu">
-        <input type="text" id="judulInput" placeholder="Judul menu">
-        <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
-        <input type="text" id="linkInput" placeholder="Link tujuan">
-        <button onclick="submitMenu()">Simpan</button>
-      </div>
-    </div>
       </section>
 
+      <div id="menuGrid" class="menu-item">
+        <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat menu...</div>
+      </div>
+  
+      <!-- Pakai inline SVG -->
+      <button id="tambahBtn" onclick="openForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+        
+      <div id="formPopup">
+        <div id="formContainer">
+          <button class="close" onclick="closeForm()">×</button>
+          <h3 id="formTitle">Tambah Menu</h3>
+          <input type="hidden" id="editIdMenu">
+          <input type="text" id="judulInput" placeholder="Judul menu">
+          <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
+          <input type="text" id="linkInput" placeholder="Link tujuan">
+          <button onclick="submitMenu()">Simpan</button>
+        </div>
+      </div>
       <section class="extra-section">
         <button onclick="openSheet('1ehfXEPLRveJ_S9RIDxu191yrXA9zU0uvASnLq7gVykY')" class="extra-btn">
           <i class="fa-solid fa-database"></i> Menu Kosong

@@ -112,7 +112,6 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: box-shadow 0.2s;
   height: 100px;
-
 }
 
 .menu-item:hover {
@@ -139,21 +138,25 @@ body {
 
 /* === MENU GRID KEDUA (Custom / Dinamis) === */
 #menuGrid {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 12px;
-margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 16px;
+  background-color: #f0f2f5 !important;
+  height: auto;
+  box-shadow: none;
 }
 
 .menu-card {
 background-color: white;
 border-radius: 8px;
-padding: 12px;
+padding: 16px;
 text-align: center;
 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 transition: box-shadow 0.2s;
 position: relative;
 cursor: pointer;
+height: 100px;
 }
 
 .menu-card:hover {
@@ -161,10 +164,11 @@ box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 .menu-card img {
-width: 50px;
-height: auto;
-object-fit: contain;
-margin-bottom: 6px;
+  width: 50px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 4px;
+  margin-top: 15px;
 }
 
 .menu-card h4 {
@@ -198,28 +202,31 @@ transition: background 0.2s;
 background: rgba(0,0,0,0.05);
 }
 
-/* Tombol tambah (+) */
+/* Tombol tambah bulat */
 #tambahBtn {
-all: unset;
-width: 60px;
-height: 60px;
-background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-border-radius: 50%;
-color: white;
-font-size: 28px;
-font-weight: bold;
-display: flex;
-align-items: center;
-justify-content: center;
-box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-cursor: pointer;
-margin: 16px auto;
-transition: transform 0.2s, box-shadow 0.2s;
+  all: unset;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #2b71c5, #1a5194);
+  border-radius: 50%; /* bulat */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  cursor: pointer;
+  margin: 16px auto;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 #tambahBtn:hover {
-transform: scale(1.05);
-box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
+#tambahBtn svg {
+  width: 26px;
+  height: 26px;
 }
 
 /* Popup Form */
