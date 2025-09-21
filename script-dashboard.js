@@ -165,8 +165,18 @@ function tampilkanMenu(data) {
     card.appendChild(actions);
 
     card.onclick = () => {
-      if (item.link) window.open(item.link, "_blank");
-    };
+      if (item.link) {
+        if (item.link.startsWith("http")) {
+          // Link eksternal
+          window.open(item.link, "_blank");
+        } else {
+          // Link internal, arahkan dengan tetap membawa id user
+          goTo(item.link);
+        }
+      } else {
+        alert("Link belum tersedia!");
+      }
+    };    
 
     menuGrid.appendChild(card);
   });

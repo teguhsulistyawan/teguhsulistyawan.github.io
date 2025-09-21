@@ -23,7 +23,7 @@
     </div>
   </div>
 </section>
-  <section class="menu-grid">
+  <!-- <section class="menu-grid">
     <button class="menu-item" onclick="goTo('catatan')">
       <img src="/GAMBAR/CATATAN.png" alt="soal" class="icon-img">
       <p>Catatan Ibaroh</p>
@@ -54,18 +54,18 @@
       <p>Dokumen</p>
     </button>
     
-      </section>
+      </section> -->
 
       <div id="menuGrid" class="menu-item">
         <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat menu...</div>
       </div>
   
       <!-- Pakai inline SVG -->
-      <button id="tambahBtn" onclick="openForm()">
+      <!-- <button id="tambahBtn" onclick="openForm()">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-      </button>
+      </button> -->
 
       <div id="formPopup">
         <div id="formContainer">
@@ -75,7 +75,7 @@
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-                    <h3 id="formTitle">Tambahkan Menu</h3>
+          <h3 id="formTitle">Tambahkan Menu</h3>
           <input type="hidden" id="editIdMenu">
           <input type="text" id="judulInput" placeholder="Judul menu">
           <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
@@ -84,20 +84,27 @@
         </div>
       </div>
       <section class="extra-section">
-        <button onclick="openSheet('1ehfXEPLRveJ_S9RIDxu191yrXA9zU0uvASnLq7gVykY')" class="extra-btn">
-          <i class="fa-solid fa-database"></i> Menu Kosong
+        <button onclick="openForm()" class="extra-btn">
+          <i class="fa-solid fa-plus-circle"></i> Tambahkan Menu
         </button>
-        <button onclick="openSheet('1ZHH1-kkSZ8tPAjlmId5QGHyT0vTL6617WLoigg5dcl8')" class="extra-btn">
-          <i class="fa-solid fa-database"></i> Menu Kosong
-        </button>
-        <button onclick="openSheet('1ILCbl6TYewQS8qRphXXaXEjDZTO8u_QtjAs35D7QIVI')" class="extra-btn">
-          <i class="fa-solid fa-database"></i> Menu Kosong 
-        </button>
+      
         <button onclick="goTo('#')" class="extra-btn">
-          <i class="fas fa-user"></i> Bantuan Developer
+          <i class="fa-solid fa-user-gear"></i> Pengaturan Akun
         </button>
-        
+      
+        <button onclick="openSheet('')" class="extra-btn">
+          <i class="fa-solid fa-database"></i> Database
+        </button>
+      
+        <button onclick="goTo('https://wa.me/6285182347948?text=Halo,%20saya%20butuh%20bantuan%20developer')" class="extra-btn">
+          <i class="fa-solid fa-circle-question"></i> Bantuan Developer
+        </button>        
+      
+        <button onclick="goTo('log')" class="logout-btn">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
       </section>
+      
       <div class="watermark">
         &copy; Teguh Sulistyawan | All rights reserved
       </div>
