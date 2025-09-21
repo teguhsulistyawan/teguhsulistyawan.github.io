@@ -113,6 +113,17 @@ function loadMenu() {
     });
 }
 
+// Fungsi untuk ambil ID Google Drive dari berbagai format link
+function extractDriveId(url) {
+  if (!url) return "";
+
+  // Pola umum Google Drive
+  const regex = /(?:\/d\/|id=)([-\w]{10,})/;
+  const match = url.match(regex);
+  return match ? match[1] : url; 
+  // kalau bukan link drive, kembalikan apa adanya (anggap user sudah input ID)
+}
+
 function tampilkanMenu(data) {
   menuGrid.innerHTML = '';
   if (data.length === 0) {
@@ -124,7 +135,8 @@ function tampilkanMenu(data) {
     card.className = "menu-card";
 
     const img = document.createElement("img");
-    img.src = `https://drive.google.com/thumbnail?id=${item.ikon}`;
+    const driveId = extractDriveId(item.ikon);
+    img.src = `https://drive.google.com/thumbnail?id=${driveId}`;
     card.appendChild(img);
 
     const h4 = document.createElement("h4");
@@ -137,7 +149,7 @@ function tampilkanMenu(data) {
     const editBtn = document.createElement("button");
     editBtn.innerHTML = '<i class="fas fa-edit"></i>';
     editBtn.onclick = (e) => {
-      e.stopPropagation(); // hentikan bubbling
+      e.stopPropagation();
       openForm(item);
     };
     actions.appendChild(editBtn);
@@ -145,13 +157,13 @@ function tampilkanMenu(data) {
     const deleteBtn = document.createElement("button");
     deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
     deleteBtn.onclick = (e) => {
-      e.stopPropagation(); // hentikan bubbling
+      e.stopPropagation();
       hapusMenu(item.idMenu);
     };
     actions.appendChild(deleteBtn);
 
-
     card.appendChild(actions);
+
     card.onclick = () => {
       if (item.link) window.open(item.link, "_blank");
     };
@@ -159,6 +171,7 @@ function tampilkanMenu(data) {
     menuGrid.appendChild(card);
   });
 }
+
 
 function submitMenu() {
   const idMenu = editIdMenu.value;
