@@ -205,8 +205,8 @@ background: rgba(0,0,0,0.05);
 /* Tombol tambah bulat */
 #tambahBtn {
   all: unset;
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
   background: linear-gradient(135deg, #2b71c5, #1a5194);
   border-radius: 50%; /* bulat */
   color: white;
@@ -243,51 +243,75 @@ justify-content: center;
 #formContainer {
 background: white;
 border-radius: 10px;
-padding: 20px;
+padding: 20px 20px 20px 20px;
 width: 320px;
 box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 position: relative;
 }
 
 #formContainer h3 {
-margin: 0 0 12px;
+margin: 0 0 15px;
 font-size: 18px;
 color: rgb(26, 81, 148);
+text-align: center;
 }
 
+/* Reset penting */
+#formContainer, 
+#formContainer * {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Input */
 #formContainer input {
-width: 100%;
-margin-bottom: 10px;
-padding: 10px;
-font-size: 14px;
-border: 1px solid #ccc;
-border-radius: 6px;
+  width: 100%;
+  height: 50px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: block;
 }
 
+/* Button */
 #formContainer button {
-width: 100%;
-background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-color: white;
-padding: 10px;
-border: none;
-border-radius: 6px;
-font-size: 14px;
-font-weight: bold;
-cursor: pointer;
-transition: background 0.2s;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: block;
 }
 
 #formContainer button:hover {
-background: linear-gradient(135deg, rgb(33, 90, 160), rgb(20, 65, 120));
+  background: linear-gradient(135deg, rgb(26, 81, 148), rgb(43, 113, 197));
+}
+#formContainer .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.05);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  color: #666;
 }
 
-#formContainer .close {
-position: absolute;
-top: 10px;
-right: 12px;
-background: none;
-border: none;
-font-size: 22px;
-color: #888;
-cursor: pointer;
+#formContainer .close:hover {
+  background: rgba(0,0,0,0.1);
+  color: #ff0000;
+  transform: rotate(90deg);
 }
