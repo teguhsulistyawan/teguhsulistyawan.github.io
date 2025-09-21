@@ -1,286 +1,286 @@
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f0f2f5;
-    color: #050505;
-  }
-  
-  .topbar {
-    background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-    color: white;
-    padding: 16px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  .profile-section {
-    padding: 16px;
-    background-color: white;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .profile-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .profile-avatar {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .profile-name {
-    font-size: 20px;
-    font-weight: 600;
-  }
-  
-  .profile-pondok {
-    font-size: 13px;
-    color: #666;
-  }
-  
-  /* Tampilan kotak menu */
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 16px;
-    background-color: #f0f2f5 !important;
-  }
-  
-  .menu-item p {
-    margin: 0;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  /* Tombol extra */
-  .extra-section {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .extra-btn,
-  .logout-btn {
-    font-weight: bold;
-    background-color: white;
-    color:  rgb(26, 81, 148);
-    border: none;
-    padding: 12px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s;
-    height: 50px;
-  }
-  
-  .extra-btn:hover,
-  .logout-btn:hover {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    cursor: pointer;
-  }
-  
-  .logout-btn {
-    background-color: #f02849;
-    color: white;
-  }
-  
-  .logout-btn i {
-    color: white;
-  }
-  .menu-item {
-    all: unset; /* reset gaya tombol bawaan */
-    background-color: white;
-    border-radius: 8px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s;
-    height: 100px;
-
-  }
-  
-  .menu-item:hover {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    cursor: pointer;
-  }
-  .icon-img {
-    width: 50px;
-    height: auto;
-    object-fit: contain;
-    margin-bottom: 4px;
-  }
-  
-  .watermark {
-    text-align: center;
-    padding: 12px;
-    font-size: 13px;
-    color: #666;
-    background-color: #f0f2f5;
-    font-style: italic;
-    border-top: 1px solid #ccc;
-    margin-top: 40px;
-  }
-  
-  /* === MENU GRID KEDUA (Custom / Dinamis) === */
-#menuGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 12px;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f2f5;
+  color: #050505;
 }
 
-.menu-card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 12px;
+.topbar {
+  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+  color: white;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
   text-align: center;
+}
+
+.profile-section {
+  padding: 16px;
+  background-color: white;
+  border-bottom: 1px solid #ccc;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+.profile-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profile-pondok {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Tampilan kotak menu */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 16px;
+  background-color: #f0f2f5 !important;
+}
+
+.menu-item p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Tombol extra */
+.extra-section {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.extra-btn,
+.logout-btn {
+  font-weight: bold;
+  background-color: white;
+  color:  rgb(26, 81, 148);
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: box-shadow 0.2s;
-  position: relative;
+  height: 50px;
+}
+
+.extra-btn:hover,
+.logout-btn:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
   cursor: pointer;
 }
 
-.menu-card:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+.logout-btn {
+  background-color: #f02849;
+  color: white;
 }
 
-.menu-card img {
+.logout-btn i {
+  color: white;
+}
+.menu-item {
+  all: unset; /* reset gaya tombol bawaan */
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+  height: 100px;
+
+}
+
+.menu-item:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+.icon-img {
   width: 50px;
   height: auto;
   object-fit: contain;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+.watermark {
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  color: #666;
+  background-color: #f0f2f5;
+  font-style: italic;
+  border-top: 1px solid #ccc;
+  margin-top: 40px;
+}
+
+/* === MENU GRID KEDUA (Custom / Dinamis) === */
+#menuGrid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 12px;
+margin-top: 12px;
+}
+
+.menu-card {
+background-color: white;
+border-radius: 8px;
+padding: 12px;
+text-align: center;
+box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+transition: box-shadow 0.2s;
+position: relative;
+cursor: pointer;
+}
+
+.menu-card:hover {
+box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.menu-card img {
+width: 50px;
+height: auto;
+object-fit: contain;
+margin-bottom: 6px;
 }
 
 .menu-card h4 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: #050505;
+margin: 0;
+font-size: 15px;
+font-weight: 600;
+color: #050505;
 }
 
 /* Tombol aksi edit & hapus */
 .menu-card .actions {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  display: flex;
-  gap: 6px;
+position: absolute;
+top: 6px;
+right: 6px;
+display: flex;
+gap: 6px;
 }
 
 .menu-card .actions button {
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background 0.2s;
+background: none;
+border: none;
+color: #555;
+font-size: 14px;
+cursor: pointer;
+padding: 4px;
+border-radius: 50%;
+transition: background 0.2s;
 }
 
 .menu-card .actions button:hover {
-  background: rgba(0,0,0,0.05);
+background: rgba(0,0,0,0.05);
 }
 
 /* Tombol tambah (+) */
 #tambahBtn {
-  all: unset;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-  border-radius: 50%;
-  color: white;
-  font-size: 28px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
-  margin: 16px auto;
-  transition: transform 0.2s, box-shadow 0.2s;
+all: unset;
+width: 60px;
+height: 60px;
+background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+border-radius: 50%;
+color: white;
+font-size: 28px;
+font-weight: bold;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+cursor: pointer;
+margin: 16px auto;
+transition: transform 0.2s, box-shadow 0.2s;
 }
 
 #tambahBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+transform: scale(1.05);
+box-shadow: 0 5px 10px rgba(0,0,0,0.25);
 }
 
 /* Popup Form */
 #formPopup {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+align-items: center;
+justify-content: center;
 }
 
 #formContainer {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  width: 320px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-  position: relative;
+background: white;
+border-radius: 10px;
+padding: 20px;
+width: 320px;
+box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+position: relative;
 }
 
 #formContainer h3 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  color: rgb(26, 81, 148);
+margin: 0 0 12px;
+font-size: 18px;
+color: rgb(26, 81, 148);
 }
 
 #formContainer input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+width: 100%;
+margin-bottom: 10px;
+padding: 10px;
+font-size: 14px;
+border: 1px solid #ccc;
+border-radius: 6px;
 }
 
 #formContainer button {
-  width: 100%;
-  background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
+width: 100%;
+background: linear-gradient(135deg, rgb(43, 113, 197), rgb(26, 81, 148));
+color: white;
+padding: 10px;
+border: none;
+border-radius: 6px;
+font-size: 14px;
+font-weight: bold;
+cursor: pointer;
+transition: background 0.2s;
 }
 
 #formContainer button:hover {
-  background: linear-gradient(135deg, rgb(33, 90, 160), rgb(20, 65, 120));
+background: linear-gradient(135deg, rgb(33, 90, 160), rgb(20, 65, 120));
 }
 
 #formContainer .close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  background: none;
-  border: none;
-  font-size: 22px;
-  color: #888;
-  cursor: pointer;
+position: absolute;
+top: 10px;
+right: 12px;
+background: none;
+border: none;
+font-size: 22px;
+color: #888;
+cursor: pointer;
 }
