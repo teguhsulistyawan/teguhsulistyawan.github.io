@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Catatan Keuangan</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+    h1 { text-align: center; color: #2c3e50; }
+    .saldo { font-size: 20px; font-weight: bold; text-align: center; margin: 10px 0; color: #27ae60; }
+    .form-box { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #3498db; color: white; cursor: pointer; border: none; margin-top: 10px; }
+    button:hover { background: #2980b9; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+    th { background: #34495e; color: white; }
+    .btn-small { padding: 5px 10px; font-size: 12px; border-radius: 4px; margin: 2px; }
+    .edit { background: #f39c12; color: white; }
+    .delete { background: #e74c3c; color: white; }
+  </style>
+</head>
+<body>
+
+<h1>📒 Catatan Keuangan</h1>
+<div class="saldo" id="saldo">Saldo: Rp 0</div>
+
+<div class="form-box">
+  <h3>Tambah Catatan</h3>
+  <label>Jenis</label>
+  <select id="jenis">
+    <option value="Pemasukan">Pemasukan</option>
+    <option value="Pengeluaran">Pengeluaran</option>
+  </select>
+  <label>Nominal</label>
+  <input type="number" id="nominal" placeholder="Masukkan nominal">
+  <label>Keterangan</label>
+  <input type="text" id="keterangan" placeholder="Keterangan">
+  <button onclick="tambahCatatan()">Simpan</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tanggal</th>
+      <th>Jenis</th>
+      <th>Nominal</th>
+      <th>Keterangan</th>
+      <th>Saldo</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody id="tabelBody"></tbody>
+</table>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbx0OUVAfVMQ0p9dctZhrS7viD_WXL-91PKD7aQ4TgiCTj7ue9GcYQ9U28bdUEagAS8nnQ/exec"; // ganti dengan link Web App
+const urlParams = new URLSearchParams(window.location.search);
+const idUser = urlParams.get("id") || "USR001";
+
+async function apiPost(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" }
+  });
+  return res.json();
+}
+
+async function loadData() {
+  const data = await apiPost({ action: "getCatatan", idUser });
+  if (data.status === "success") {
+    const tbody = document.getElementById("tabelBody");
+    tbody.innerHTML = "";
+    let saldoAkhir = 0;
+    data.data.forEach(row => {
+      saldoAkhir = row.saldo;
+      tbody.innerHTML += `
+        <tr>
+          <td>${new Date(row.tanggal).toLocaleString()}</td>
+          <td>${row.jenis}</td>
+          <td>Rp ${row.nominal.toLocaleString()}</td>
+          <td>${row.keterangan}</td>
+          <td>Rp ${row.saldo.toLocaleString()}</td>
+          <td>
+            <button class="btn-small edit" onclick="editCatatan('${row.idCatatan}')">Edit</button>
+            <button class="btn-small delete" onclick="hapusCatatan('${row.idCatatan}')">Hapus</button>
+          </td>
+        </tr>`;
+    });
+    document.getElementById("saldo").innerText = "Saldo: Rp " + saldoAkhir.toLocaleString();
+  }
+}
+
+async function tambahCatatan() {
+  const jenis = document.getElementById("jenis").value;
+  const nominal = document.getElementById("nominal").value;
+  const keterangan = document.getElementById("keterangan").value;
+
+  await apiPost({ action: "createCatatan", idUser, jenis, nominal, keterangan });
+  loadData();
+}
+
+async function hapusCatatan(idCatatan) {
+  if (confirm("Yakin hapus catatan?")) {
+    await apiPost({ action: "deleteCatatan", idCatatan });
+    loadData();
+  }
+}
+
+function editCatatan(idCatatan) {
+  const newNominal = prompt("Masukkan nominal baru:");
+  const newKeterangan = prompt("Masukkan keterangan baru:");
+  if (newNominal) {
+    apiPost({ action: "updateCatatan", idCatatan, nominal: newNominal, keterangan: newKeterangan }).then(loadData);
+  }
+}
+
+loadData();
+</script>
+
+</body>
+</html>
