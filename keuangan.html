@@ -1,123 +1,391 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Catatan Keuangan</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Catatan Keuangan — CRUD</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
-    h1 { text-align: center; color: #2c3e50; }
-    .saldo { font-size: 20px; font-weight: bold; text-align: center; margin: 10px 0; color: #27ae60; }
-    .form-box { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 10px; }
-    input, select, button { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-    button { background: #3498db; color: white; cursor: pointer; border: none; margin-top: 10px; }
-    button:hover { background: #2980b9; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
-    th { background: #34495e; color: white; }
-    .btn-small { padding: 5px 10px; font-size: 12px; border-radius: 4px; margin: 2px; }
-    .edit { background: #f39c12; color: white; }
-    .delete { background: #e74c3c; color: white; }
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --primary: #0b63d6;
+      --muted: #6b7280;
+      --danger: #ef4444;
+      --radius: 12px;
+      --gap: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Inter, system-ui, Arial;
+      color: #111;
+      background: var(--bg);
+      margin: 0;
+      padding: 28px;
+      display: flex;
+      justify-content: center;
+    }
+    .container { width: 100%; max-width: 920px; }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    h1 { margin: 0; font-size: 20px; }
+    .row { display: flex; gap: var(--gap); flex-wrap: wrap; }
+    .card { background: var(--card); border-radius: var(--radius); padding: 18px; box-shadow: 0 6px 18px rgba(12,15,20,0.06); }
+    .wide { flex: 1 1 420px; }
+    .narrow { width: 320px; }
+    label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    input[type="number"], input[type="date"], select, textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e6e9ef;
+      background: #fff;
+      font-size: 14px;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    button.primary { background: var(--primary); color: #fff; padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
+    button.ghost { background: #f3f4f6; color: #111; border: 0; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+    .totals { display: flex; gap: 12px; justify-content: space-between; margin: 12px 0; }
+    .totals .box { flex: 1; padding: 12px; border-radius: 10px; background: #f8fafc; text-align: center; }
+    .totals .box h3 { margin: 0; font-size: 16px; }
+    .list { margin-top: 12px; }
+    .item { display: flex; justify-content: space-between; gap: 10px; padding: 12px; border-radius: 10px; border: 1px solid #eef2f6; margin-bottom: 8px; align-items: flex-start; background: #fff; }
+    .meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .actions { display: flex; gap: 8px; }
+    button.edit { background: #fde68a; border-radius: 8px; padding: 6px 8px; border: 0; cursor: pointer; }
+    button.del { background: var(--danger); color: #fff; border-radius: 8px; padding: 6px 8px; border: 0; cursor: pointer; }
+    .muted-small { font-size: 13px; color: var(--muted); }
+    .center { display: flex; justify-content: center; }
+    .hidden { display: none; }
+    @media (max-width: 720px) { .row { flex-direction: column; } .narrow { width: 100%; } }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>Catatan Keuangan</h1>
+      <div style="margin-left: auto" id="userTag" class="muted-small"></div>
+    </header>
 
-<h1>📒 Catatan Keuangan</h1>
-<div class="saldo" id="saldo">Saldo: Rp 0</div>
+    <div class="row">
+      <div class="card wide">
+        <form id="form">
+          <input type="hidden" id="noteId" />
+          <div style="display: flex; gap: 12px; flex-wrap: wrap">
+            <div style="flex: 1; min-width: 160px">
+              <label>Tanggal</label>
+              <input id="tanggal" type="date" required />
+            </div>
+            <div style="flex: 1; min-width: 160px">
+              <label>Jenis</label>
+              <select id="jenis" required>
+                <option value="">Pilih Jenis</option>
+                <option value="Pemasukan">Pemasukan</option>
+                <option value="Pengeluaran">Pengeluaran</option>
+              </select>
+            </div>
+            <div style="width: 200px">
+              <label>Jumlah</label>
+              <input id="jumlah" type="number" placeholder="0" required min="0" />
+            </div>
+          </div>
+          <div style="margin-top: 12px">
+            <label>Deskripsi</label>
+            <textarea id="deskripsi" placeholder="Catatan..."></textarea>
+          </div>
+          <div style="margin-top: 12px; display: flex; gap: 8px">
+            <button class="primary" type="submit" id="btnSave">Simpan</button>
+            <button type="button" id="btnReset" class="ghost">Reset</button>
+            <div id="spinner" class="muted-small" style="margin-left: auto; align-self: center; display: none">Processing...</div>
+          </div>
+        </form>
 
-<div class="form-box">
-  <h3>Tambah Catatan</h3>
-  <label>Jenis</label>
-  <select id="jenis">
-    <option value="Pemasukan">Pemasukan</option>
-    <option value="Pengeluaran">Pengeluaran</option>
-  </select>
-  <label>Nominal</label>
-  <input type="number" id="nominal" placeholder="Masukkan nominal">
-  <label>Keterangan</label>
-  <input type="text" id="keterangan" placeholder="Keterangan">
-  <button onclick="tambahCatatan()">Simpan</button>
-</div>
+        <div class="totals" style="margin-top: 14px">
+          <div class="box">
+            <h3 id="totalIn">Rp 0</h3>
+            <div class="muted-small">Total Pemasukan</div>
+          </div>
+          <div class="box">
+            <h3 id="totalOut">Rp 0</h3>
+            <div class="muted-small">Total Pengeluaran</div>
+          </div>
+          <div class="box">
+            <h3 id="saldo">Rp 0</h3>
+            <div class="muted-small">Saldo</div>
+          </div>
+        </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Tanggal</th>
-      <th>Jenis</th>
-      <th>Nominal</th>
-      <th>Keterangan</th>
-      <th>Saldo</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody id="tabelBody"></tbody>
-</table>
+        <div class="list card" id="listContainer">
+          <div id="list" class="list"></div>
+        </div>
+      </div>
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbx0OUVAfVMQ0p9dctZhrS7viD_WXL-91PKD7aQ4TgiCTj7ue9GcYQ9U28bdUEagAS8nnQ/exec"; // ganti dengan link Web App
-const urlParams = new URLSearchParams(window.location.search);
-const idUser = urlParams.get("id") || "USR001";
+      <div class="card narrow" style="display: flex; flex-direction: column; gap: 10px">
+        <div>
+          <strong>Petunjuk</strong>
+          <p class="muted-small">Buka halaman dengan parameter <code>?id=GUYUYG7HBH7JJ</code> (contoh). ID diambil dari URL.</p>
+        </div>
+        <div>
+          <strong>Status</strong>
+          <p class="muted-small" id="statusMsg">—</p>
+        </div>
+        <div>
+          <strong>Kontrol</strong>
+          <div style="display: flex; gap: 8px">
+            <button id="btnRefresh" class="ghost">Refresh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-async function apiPost(payload) {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" }
-  });
-  return res.json();
-}
+  <script>
+    // URL Web App Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiX9bEW01OgbtcYcX4ywG0a-yk3lLdXsThX2ul7-wppw24003Q_6KbYsiHVOjvkv9J6A/exec";
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id")?.trim()?.toUpperCase();
+    const userTag = document.getElementById("userTag");
+    const statusMsg = document.getElementById("statusMsg");
+    const spinner = document.getElementById("spinner");
 
-async function loadData() {
-  const data = await apiPost({ action: "getCatatan", idUser });
-  if (data.status === "success") {
-    const tbody = document.getElementById("tabelBody");
-    tbody.innerHTML = "";
-    let saldoAkhir = 0;
-    data.data.forEach(row => {
-      saldoAkhir = row.saldo;
-      tbody.innerHTML += `
-        <tr>
-          <td>${new Date(row.tanggal).toLocaleString()}</td>
-          <td>${row.jenis}</td>
-          <td>Rp ${row.nominal.toLocaleString()}</td>
-          <td>${row.keterangan}</td>
-          <td>Rp ${row.saldo.toLocaleString()}</td>
-          <td>
-            <button class="btn-small edit" onclick="editCatatan('${row.idCatatan}')">Edit</button>
-            <button class="btn-small delete" onclick="hapusCatatan('${row.idCatatan}')">Hapus</button>
-          </td>
-        </tr>`;
+    if (!userId) {
+      document.body.innerHTML = "<div style='padding:40px;text-align:center;color:#b91c1c'><h2>ID user tidak ditemukan. Tambahkan ?id=YOURID pada URL</h2></div>";
+      throw new Error("User ID missing");
+    }
+    userTag.textContent = "User: " + userId;
+
+    const form = document.getElementById("form");
+    const noteId = document.getElementById("noteId");
+    const tanggal = document.getElementById("tanggal");
+    const jenis = document.getElementById("jenis");
+    const jumlah = document.getElementById("jumlah");
+    const deskripsi = document.getElementById("deskripsi");
+    const list = document.getElementById("list");
+    const totalIn = document.getElementById("totalIn");
+    const totalOut = document.getElementById("totalOut");
+    const saldoEl = document.getElementById("saldo");
+    const btnRefresh = document.getElementById("btnRefresh");
+    const btnReset = document.getElementById("btnReset");
+
+    // Helper format
+    function formatRp(n) { return "Rp " + (Number(n) || 0).toLocaleString('id-ID'); }
+    function showStatus(t) { statusMsg.textContent = t; }
+
+    async function apiPost(body) {
+      spinner.style.display = "inline-block";
+      try {
+        console.log("Sending POST payload:", JSON.stringify(body));
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          mode: "cors",
+          credentials: "omit"
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}`);
+        }
+        const j = await res.json();
+        spinner.style.display = "none";
+        if (!j.status) {
+          throw new Error("Invalid response: " + JSON.stringify(j));
+        }
+        return j;
+      } catch (err) {
+        spinner.style.display = "none";
+        console.error("POST error:", err.message);
+        throw new Error(`Gagal menyimpan: ${err.message}. Pastikan koneksi internet dan URL Web App benar.`);
+      }
+    }
+
+    async function apiGet() {
+      spinner.style.display = "inline-block";
+      try {
+        const url = `${SCRIPT_URL}?idUser=${encodeURIComponent(userId)}&ts=${Date.now()}`;
+        console.log("Fetching data from:", url);
+        const res = await fetch(url, {
+          method: "GET",
+          mode: "cors",
+          credentials: "omit"
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}`);
+        }
+        const j = await res.json();
+        spinner.style.display = "none";
+        if (!j.status) {
+          throw new Error("Invalid response: " + JSON.stringify(j));
+        }
+        return j;
+      } catch (err) {
+        spinner.style.display = "none";
+        console.error("GET error:", err.message);
+        throw new Error(`Gagal mengambil data: ${err.message}. Pastikan userId valid dan server dapat diakses.`);
+      }
+    }
+
+    // Load data
+    async function loadData() {
+      try {
+        showStatus("Mengambil data...");
+        const r = await apiGet();
+        if (r.status !== "success") {
+          showStatus("Gagal mengambil data: " + (r.error || r.message || r.status));
+          list.innerHTML = "<div class='muted-small'>Gagal mengambil data</div>";
+          return;
+        }
+        renderList(r.data || []);
+        showStatus("Data siap");
+      } catch (err) {
+        console.error(err);
+        showStatus("Error: " + err.message);
+        list.innerHTML = "<div class='muted-small'>Terjadi error saat mengambil data</div>";
+      }
+    }
+
+    // Render list + totals
+    function renderList(data) {
+      list.innerHTML = "";
+      if (!data || data.length === 0) {
+        list.innerHTML = "<div class='muted-small'>Belum ada catatan</div>";
+        totalIn.textContent = formatRp(0);
+        totalOut.textContent = formatRp(0);
+        saldoEl.textContent = formatRp(0);
+        return;
+      }
+
+      // Compute totals
+      let inTotal = 0, outTotal = 0;
+      data.forEach(item => {
+        const jml = Number(item.jumlah) || 0;
+        if (item.jenis.toLowerCase() === "pemasukan") inTotal += jml;
+        else outTotal += jml;
+      });
+
+      totalIn.textContent = formatRp(inTotal);
+      totalOut.textContent = formatRp(outTotal);
+      saldoEl.textContent = formatRp(inTotal - outTotal);
+
+      // Build items
+      data.forEach(item => {
+        const node = document.createElement("div");
+        node.className = "item";
+
+        const left = document.createElement("div");
+        left.style.flex = "1";
+
+        const title = document.createElement("div");
+        title.style.display = "flex";
+        title.style.justifyContent = "space-between";
+        title.style.alignItems = "baseline";
+
+        const tLeft = document.createElement("div");
+        tLeft.innerHTML = `<strong>${item.jenis} • ${formatRp(item.jumlah)}</strong>`;
+        const tRight = document.createElement("div");
+        tRight.style.fontSize = "12px";
+        tRight.style.color = "#6b7280";
+        const d = new Date(item.tanggal);
+        tRight.textContent = isNaN(d.getTime()) ? item.tanggal : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        title.appendChild(tLeft);
+        title.appendChild(tRight);
+
+        const desc = document.createElement("div");
+        desc.className = "muted-small";
+        desc.style.marginTop = "6px";
+        desc.textContent = item.deskripsi || "";
+
+        const saldo = document.createElement("div");
+        saldo.className = "meta";
+        saldo.textContent = `Saldo: ${formatRp(item.saldo)}`;
+
+        left.appendChild(title);
+        left.appendChild(desc);
+        left.appendChild(saldo);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", () => {
+          noteId.value = item.noteId;
+          tanggal.value = item.tanggal;
+          jenis.value = item.jenis;
+          jumlah.value = item.jumlah;
+          deskripsi.value = item.deskripsi || "";
+          btnSave.textContent = "Update";
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "del";
+        delBtn.textContent = "Hapus";
+        delBtn.addEventListener("click", async () => {
+          if (!confirm("Yakin hapus catatan ini?")) return;
+          try {
+            const res = await apiPost({ action: "deleteCatatan", userId, noteId: item.noteId });
+            if (res.status === "success") {
+              showStatus("Terhapus");
+              await loadData();
+              noteId.value = "";
+              form.reset();
+              btnSave.textContent = "Simpan";
+            } else {
+              showStatus("Gagal hapus: " + (res.error || res.message || res.status));
+            }
+          } catch (err) {
+            console.error(err);
+            showStatus("Error hapus: " + err.message);
+          }
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        node.appendChild(left);
+        node.appendChild(actions);
+        list.appendChild(node);
+      });
+    }
+
+    // Submit (create or update)
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const payload = {
+        action: noteId.value ? "updateCatatan" : "createCatatan",
+        userId: userId,
+        noteId: noteId.value,
+        tanggal: tanggal.value,
+        jenis: jenis.value,
+        jumlah: Number(jumlah.value) || 0,
+        deskripsi: deskripsi.value || ""
+      };
+      try {
+        const res = await apiPost(payload);
+        if (res.status === "success") {
+          showStatus("Tersimpan");
+          noteId.value = "";
+          form.reset();
+          btnSave.textContent = "Simpan";
+          loadData();
+        } else {
+          showStatus("Gagal: " + (res.error || res.message || res.status));
+        }
+      } catch (err) {
+        console.error(err);
+        showStatus("Error simpan: " + err.message);
+      }
     });
-    document.getElementById("saldo").innerText = "Saldo: Rp " + saldoAkhir.toLocaleString();
-  }
-}
 
-async function tambahCatatan() {
-  const jenis = document.getElementById("jenis").value;
-  const nominal = document.getElementById("nominal").value;
-  const keterangan = document.getElementById("keterangan").value;
+    btnRefresh.addEventListener("click", loadData);
+    btnReset.addEventListener("click", () => {
+      noteId.value = "";
+      form.reset();
+      btnSave.textContent = "Simpan";
+    });
 
-  await apiPost({ action: "createCatatan", idUser, jenis, nominal, keterangan });
-  loadData();
-}
-
-async function hapusCatatan(idCatatan) {
-  if (confirm("Yakin hapus catatan?")) {
-    await apiPost({ action: "deleteCatatan", idCatatan });
+    // Initial load
     loadData();
-  }
-}
-
-function editCatatan(idCatatan) {
-  const newNominal = prompt("Masukkan nominal baru:");
-  const newKeterangan = prompt("Masukkan keterangan baru:");
-  if (newNominal) {
-    apiPost({ action: "updateCatatan", idCatatan, nominal: newNominal, keterangan: newKeterangan }).then(loadData);
-  }
-}
-
-loadData();
-</script>
-
+  </script>
 </body>
 </html>
