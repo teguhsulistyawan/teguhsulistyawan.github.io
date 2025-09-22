@@ -138,7 +138,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpxfhUPuYMdP6VZC_80kR6IMKNyN0Z3B2CRtxqXxwS3ST5kr1o1DrGrvOLwTMX_iDzNg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDQDQS2hPx1LE3OpZuVreiNpUsKDc540VQdsMJ7lQUKxWddoeB7DMg4-phy5SOTkIb-g/exec";
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id")?.trim()?.toUpperCase();
     const userTag = document.getElementById("userTag");
@@ -168,14 +168,14 @@
     function formatRp(n) { return "Rp " + (Number(n) || 0).toLocaleString('id-ID'); }
     function showStatus(t) { statusMsg.textContent = t; }
 
-    async function apiPost(formData) {
+    async function apiPost(data) {
       spinner.style.display = "inline-block";
       try {
-        console.log("Sending POST data:", formData.toString());
+        console.log("Sending POST data:", JSON.stringify(data));
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
           mode: "cors",
           credentials: "omit"
         });
@@ -323,12 +323,13 @@
         delBtn.textContent = "Hapus";
         delBtn.addEventListener("click", async () => {
           if (!confirm("Yakin hapus catatan ini?")) return;
-          const formData = new URLSearchParams();
-          formData.append("aksi", "hapus");
-          formData.append("idUser", userId);
-          formData.append("idCatatan", item.idCatatan);
+          const data = {
+            action: "deleteCatatan",
+            idUser: userId,
+            idCatatan: item.idCatatan
+          };
           try {
-            const res = await apiPost(formData);
+            const res = await apiPost(data);
             if (res.status === "success" || res.success) {
               showStatus("Terhapus");
               await loadData();
@@ -360,17 +361,18 @@
         showStatus("Lengkapi semua isian!");
         return;
       }
-      const formData = new URLSearchParams();
-      formData.append("idUser", userId);
-      formData.append("tanggal", tanggal.value);
-      formData.append("jenis", jenis.value);
-      formData.append("jumlah", Number(jumlah.value) || 0);
-      formData.append("deskripsi", deskripsi.value || "");
-      formData.append("aksi", noteId.value ? "edit" : "tambah");
-      if (noteId.value) formData.append("idCatatan", noteId.value);
+      const data = {
+        action: noteId.value ? "updateCatatan" : "createCatatan",
+        idUser: userId,
+        tanggal: tanggal.value,
+        jenis: jenis.value,
+        jumlah: Number(jumlah.value) || 0,
+        deskripsi: deskripsi.value || ""
+      };
+      if (noteId.value) data.idCatatan = noteId.value;
 
       try {
-        const res = await apiPost(formData);
+        const res = await apiPost(data);
         if (res.status === "success" || res.success) {
           showStatus("Tersimpan");
           noteId.value = "";
