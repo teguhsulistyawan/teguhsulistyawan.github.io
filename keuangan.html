@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Catatan Keuangan — CRUD</title>
+  <title>Catatan Keuangan</title>
   <style>
     :root {
       --bg: #f6f8fb;
@@ -11,145 +11,547 @@
       --primary: #0b63d6;
       --muted: #6b7280;
       --danger: #ef4444;
-      --radius: 12px;
+      --radius: 8px; /* ← Ubah semua jadi 8px */
       --gap: 14px;
     }
+  
     * { box-sizing: border-box; }
     body {
       font-family: Inter, system-ui, Arial;
-      color: #111;
       background: var(--bg);
       margin: 0;
       padding: 28px;
       display: flex;
       justify-content: center;
+      color: #111;
     }
+  
     .container { width: 100%; max-width: 920px; }
     header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
     h1 { margin: 0; font-size: 20px; }
     .row { display: flex; gap: var(--gap); flex-wrap: wrap; }
-    .card { background: var(--card); border-radius: var(--radius); padding: 18px; box-shadow: 0 6px 18px rgba(12,15,20,0.06); }
+  
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(12,15,20,0.06);
+    }
+  
     .wide { flex: 1 1 420px; }
     .narrow { width: 320px; }
+  
     label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-    input[type="number"], input[type="date"], select, textarea, input[type="text"] {
+  
+    input, select, textarea {
       width: 100%;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: var(--radius);
       border: 1px solid #e6e9ef;
       background: #fff;
       font-size: 14px;
     }
+  
     textarea { min-height: 84px; resize: vertical; }
-    button.primary { background: var(--primary); color: #fff; padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
-    button.ghost { background: #f3f4f6; color: #111; border: 0; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
-    .totals { display: flex; gap: 12px; justify-content: space-between; margin: 12px 0; }
-    .totals .box { flex: 1; padding: 12px; border-radius: 10px; background: #f8fafc; text-align: center; }
+  
+    button.primary {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 0;
+      cursor: pointer;
+    }
+  
+    button.ghost {
+      background: #f3f4f6;
+      color: #111;
+      border: 0;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+  
+    .totals {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+  
+    .totals .box {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: #f8fafc;
+      text-align: center;
+    }
+  
     .totals .box h3 { margin: 0; font-size: 16px; }
+  
     .list { margin-top: 12px; }
-    .item { display: flex; justify-content: space-between; gap: 10px; padding: 12px; border-radius: 10px; border: 1px solid #eef2f6; margin-bottom: 8px; align-items: flex-start; background: #fff; }
+  
+    .item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid #eef2f6;
+      margin-bottom: 8px;
+      align-items: flex-start;
+      background: #fff;
+    }
+  
     .meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  
     .actions { display: flex; gap: 8px; }
-    button.edit { background: #fde68a; border-radius: 8px; padding: 6px 8px; border: 0; cursor: pointer; }
-    button.del { background: var(--danger); color: #fff; border-radius: 8px; padding: 6px 8px; border: 0; cursor: pointer; }
+  
+    button.edit {
+      background: #fde68a;
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      border: 0;
+      cursor: pointer;
+    }
+  
+    button.del {
+      background: var(--danger);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      border: 0;
+      cursor: pointer;
+    }
+  
     .muted-small { font-size: 13px; color: var(--muted); }
     .center { display: flex; justify-content: center; }
     .hidden { display: none; }
-    @media (max-width: 720px) { .row { flex-direction: column; } .narrow { width: 100%; } }
+  
+    @media (max-width: 720px) {
+      .row { flex-direction: column; }
+      .narrow { width: 100%; }
+    }
+  
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 20px; right: 20px;
+      background: #111; color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0; transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  
+    /* Modal Confirmation */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9998;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  
+    .modal {
+      background: #fff;
+      padding: 20px;
+      border-radius: var(--radius);
+      max-width: 320px;
+      width: 90%;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+  
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      justify-content: center;
+    }
   </style>
+  
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Catatan Keuangan</h1>
-      <div style="margin-left: auto" id="userTag" class="muted-small"></div>
-    </header>
-
-    <div class="row">
-      <div class="card wide">
-        <form id="form">
-          <input type="hidden" id="noteId" />
-          <div style="display: flex; gap: 12px; flex-wrap: wrap">
-            <div style="flex: 1; min-width: 160px">
-              <label>Tanggal</label>
-              <input id="tanggal" type="date" required />
+    <!doctype html>
+    <html lang="id">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>Catatan Keuangan</title>
+      <style>
+        :root {
+          --bg: #f6f8fb;
+          --card: #ffffff;
+          --primary: #0b63d6;
+          --muted: #6b7280;
+          --danger: #ef4444;
+          --radius: 8px;
+          --gap: 16px;
+        }
+    
+        * { box-sizing: border-box; }
+        body {
+          font-family: "Inter", system-ui, Arial;
+          background: var(--bg);
+          margin: 0;
+          padding: 28px;
+          display: flex;
+          justify-content: center;
+          color: #111;
+        }
+    
+        .container {
+          width: 100%;
+          max-width: 1100px;
+          display: flex;
+          flex-direction: column;
+          gap: var(--gap);
+        }
+    
+        header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 8px;
+        }
+    
+        h1 { margin: 0; font-size: 22px; font-weight: 600; }
+    
+        .row {
+          display: flex;
+          gap: var(--gap);
+          flex-wrap: wrap;
+        }
+    
+        .card {
+          background: var(--card);
+          border-radius: var(--radius);
+          padding: 20px;
+          box-shadow: 0 4px 14px rgba(12,15,20,0.06);
+        }
+    
+        .wide { flex: 1 1 360px; }
+        .narrow { flex: 2 1 520px; }
+    
+        label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    
+        input, select, textarea {
+          width: 100%;
+          padding: 10px;
+          border-radius: var(--radius);
+          border: 1px solid #e6e9ef;
+          background: #fff;
+          font-size: 14px;
+        }
+    
+        textarea { min-height: 84px; resize: vertical; }
+    
+        button.primary {
+          background: var(--primary);
+          color: #fff;
+          padding: 10px 14px;
+          border-radius: var(--radius);
+          border: 0;
+          cursor: pointer;
+          font-weight: 500;
+        }
+    
+        button.ghost {
+          background: #f3f4f6;
+          color: #111;
+          border: 0;
+          padding: 8px 10px;
+          border-radius: var(--radius);
+          cursor: pointer;
+        }
+    
+        .totals {
+          display: flex;
+          gap: 12px;
+          justify-content: space-between;
+          margin-bottom: 14px;
+          flex-wrap: wrap;
+        }
+    
+        .totals .box {
+          flex: 1;
+          padding: 12px;
+          border-radius: var(--radius);
+          background: #f8fafc;
+          text-align: center;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+    
+        .totals .box h3 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+        }
+    
+        .list { margin-top: 12px; }
+    
+        .item {
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+          padding: 12px;
+          border-radius: var(--radius);
+          border: 1px solid #eef2f6;
+          margin-bottom: 8px;
+          align-items: flex-start;
+          background: #fff;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+    
+        .meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+        .actions { display: flex; gap: 8px; }
+    
+        button.edit {
+          background: #fde68a;
+          border-radius: var(--radius);
+          padding: 6px 8px;
+          border: 0;
+          cursor: pointer;
+        }
+    
+        button.del {
+          background: var(--danger);
+          color: #fff;
+          border-radius: var(--radius);
+          padding: 6px 8px;
+          border: 0;
+          cursor: pointer;
+        }
+    
+        .muted-small { font-size: 13px; color: var(--muted); }
+        .center { display: flex; justify-content: center; }
+        .hidden { display: none; }
+    
+        @media (max-width: 820px) {
+          .row { flex-direction: column; }
+          .narrow, .wide { width: 100%; }
+        }
+    
+        /* Toast Notification */
+        .toast {
+          position: fixed;
+          top: 20px; right: 20px;
+          background: #111; color: #fff;
+          padding: 10px 16px;
+          border-radius: var(--radius);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+          opacity: 0; transform: translateY(-10px);
+          transition: all 0.3s ease;
+          z-index: 9999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+    
+        /* Modal Confirmation */
+        .modal-overlay {
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.4);
+          display: flex; justify-content: center; align-items: center;
+          z-index: 9998;
+          opacity: 0; pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    
+        .modal {
+          background: #fff;
+          padding: 20px;
+          border-radius: var(--radius);
+          max-width: 320px;
+          width: 90%;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+          text-align: center;
+        }
+    
+        .modal-buttons {
+          display: flex;
+          gap: 10px;
+          margin-top: 14px;
+          justify-content: center;
+        }
+        .data-wrapper {
+            max-height: 300px; /* atur tinggi sesuai kebutuhan */
+            overflow-y: auto;
+            border: 1px solid #ccc; /* opsional, supaya lebih rapi */
+            border-radius: 8px; /* opsional, biar sudut melengkung */
+            background: #fff; /* opsional */
+          }
+          
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <header>
+          <h1>Catatan Keuangan</h1>
+          <div style="margin-left: auto" id="userTag" class="muted-small"></div>
+        </header>
+    
+        <div class="row">
+          <!-- Form Input -->
+          <div class="card wide">
+            <form id="form">
+              <input type="hidden" id="noteId" />
+              <div style="display: flex; gap: 12px; flex-wrap: wrap">
+                <div style="flex: 1; min-width: 160px">
+                  <label>Tanggal</label>
+                  <input id="tanggal" type="date" required />
+                </div>
+                <div style="flex: 1; min-width: 160px">
+                  <label>Jenis</label>
+                  <select id="jenis" required>
+                    <option value="">Pilih Jenis</option>
+                    <option value="Pemasukan">Pemasukan</option>
+                    <option value="Pengeluaran">Pengeluaran</option>
+                  </select>
+                </div>
+                <div style="width: 200px">
+                  <label>Jumlah</label>
+                  <input id="jumlah" type="number" placeholder="0" required min="0" />
+                </div>
+              </div>
+              <div style="margin-top: 12px">
+                <label>Deskripsi</label>
+                <textarea id="deskripsi" placeholder="Catatan..."></textarea>
+              </div>
+              <div style="margin-top: 12px; display: flex; gap: 8px">
+                <button class="primary" type="submit" id="btnSave">Simpan</button>
+                <button type="button" id="btnReset" class="ghost">Reset</button>
+                <div id="spinner" class="muted-small" style="margin-left: auto; align-self: center; display: none">Processing...</div>
+              </div>
+            </form>
+            <div style="margin-top: 16px">
+              <strong>Status</strong>
+              <p class="muted-small" id="statusMsg">—</p>
+              <button id="btnRefresh" class="ghost">Refresh data</button>
             </div>
-            <div style="flex: 1; min-width: 160px">
-              <label>Jenis</label>
-              <select id="jenis" required>
-                <option value="">Pilih Jenis</option>
-                <option value="Pemasukan">Pemasukan</option>
-                <option value="Pengeluaran">Pengeluaran</option>
-              </select>
+          </div>
+    
+          <!-- Ringkasan & List -->
+          <div class="card narrow">
+            <div class="totals">
+              <div class="box">
+                <h3 id="totalIn">Rp 0</h3>
+                <div class="muted-small">Total Pemasukan</div>
+              </div>
+              <div class="box">
+                <h3 id="totalOut">Rp 0</h3>
+                <div class="muted-small">Total Pengeluaran</div>
+              </div>
+              <div class="box">
+                <h3 id="saldo">Rp 0</h3>
+                <div class="muted-small">Saldo</div>
+              </div>
             </div>
-            <div style="width: 200px">
-              <label>Jumlah</label>
-              <input id="jumlah" type="number" placeholder="0" required min="0" />
+            <div class="data-wrapper">
+            <div class="list" id="listContainer">
+              <div id="list" class="list"></div>
             </div>
-          </div>
-          <div style="margin-top: 12px">
-            <label>Deskripsi</label>
-            <textarea id="deskripsi" placeholder="Catatan..."></textarea>
-          </div>
-          <div style="margin-top: 12px; display: flex; gap: 8px">
-            <button class="primary" type="submit" id="btnSave">Simpan</button>
-            <button type="button" id="btnReset" class="ghost">Reset</button>
-            <div id="spinner" class="muted-small" style="margin-left: auto; align-self: center; display: none">Processing...</div>
-          </div>
-        </form>
-
-        <div class="totals" style="margin-top: 14px">
-          <div class="box">
-            <h3 id="totalIn">Rp 0</h3>
-            <div class="muted-small">Total Pemasukan</div>
-          </div>
-          <div class="box">
-            <h3 id="totalOut">Rp 0</h3>
-            <div class="muted-small">Total Pengeluaran</div>
-          </div>
-          <div class="box">
-            <h3 id="saldo">Rp 0</h3>
-            <div class="muted-small">Saldo</div>
+            </div>
           </div>
         </div>
-
-        <div class="list card" id="listContainer">
-          <div id="list" class="list"></div>
+      </div>
+    
+      <!-- Toast & Modal -->
+      <div id="toast" class="toast"></div>
+      <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+          <div id="modalMsg">Apakah Anda yakin?</div>
+          <div class="modal-buttons">
+            <button id="modalNo" class="ghost">Batal</button>
+            <button id="modalYes" class="primary">Ya</button>
+          </div>
         </div>
       </div>
 
-      <div class="card narrow" style="display: flex; flex-direction: column; gap: 10px">
-        <div>
-          <strong>Petunjuk</strong>
-          <p class="muted-small">Buka halaman dengan parameter <code>?id=GUYUYG7HBH7JJ</code> (contoh). ID diambil dari URL.</p>
-        </div>
-        <div>
-          <strong>Status</strong>
-          <p class="muted-small" id="statusMsg">—</p>
-        </div>
-        <div>
-          <strong>Kontrol</strong>
-          <div style="display: flex; gap: 8px">
-            <button id="btnRefresh" class="ghost">Refresh</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+    
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDQDQS2hPx1LE3OpZuVreiNpUsKDc540VQdsMJ7lQUKxWddoeB7DMg4-phy5SOTkIb-g/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMfyB836C6JYzAWFQ4zBA45fsUKiLXHL2j8cdqLOfxM-r7rdlhfV_yDfFGUf_S6dXoNg/exec";
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id")?.trim()?.toUpperCase();
+
     const userTag = document.getElementById("userTag");
     const statusMsg = document.getElementById("statusMsg");
     const spinner = document.getElementById("spinner");
+    const toast = document.getElementById("toast");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalMsg = document.getElementById("modalMsg");
+    const modalYes = document.getElementById("modalYes");
+    const modalNo = document.getElementById("modalNo");
 
     if (!userId) {
       document.body.innerHTML = "<div style='padding:40px;text-align:center;color:#b91c1c'><h2>ID user tidak ditemukan. Tambahkan ?id=YOURID pada URL</h2></div>";
       throw new Error("User ID missing");
     }
     userTag.textContent = "User: " + userId;
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    function customConfirm(message) {
+      return new Promise(resolve => {
+        modalMsg.textContent = message;
+        modalOverlay.classList.add("show");
+        modalYes.onclick = () => { modalOverlay.classList.remove("show"); resolve(true); };
+        modalNo.onclick = () => { modalOverlay.classList.remove("show"); resolve(false); };
+      });
+    }
+
+    function formatRp(n) { return "Rp " + (Number(n) || 0).toLocaleString('id-ID'); }
+    function showStatus(t) { statusMsg.textContent = t; }
+
+    async function apiPost(data) {
+      spinner.style.display = "inline-block";
+      try {
+        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) });
+        const j = await res.json();
+        spinner.style.display = "none";
+        return j;
+      } catch (err) {
+        spinner.style.display = "none";
+        showStatus("Gagal kirim: " + err.message);
+        throw err;
+      }
+    }
+
+    async function apiGet() {
+      spinner.style.display = "inline-block";
+      try {
+        const url = `${SCRIPT_URL}?idUser=${encodeURIComponent(userId)}&ts=${Date.now()}`;
+        const res = await fetch(url);
+        const j = await res.json();
+        spinner.style.display = "none";
+        return j;
+      } catch (err) {
+        spinner.style.display = "none";
+        showStatus("Gagal ambil: " + err.message);
+        throw err;
+      }
+    }
+
+    async function loadData() {
+      showStatus("Mengambil data...");
+      const r = await apiGet();
+      if (r.status === "success") {
+        renderList(r.data || []);
+        showStatus("Data siap");
+      } else {
+        list.innerHTML = "<div class='muted-small'>Gagal ambil data</div>";
+      }
+    }
 
     const form = document.getElementById("form");
     const noteId = document.getElementById("noteId");
@@ -163,86 +565,8 @@
     const saldoEl = document.getElementById("saldo");
     const btnRefresh = document.getElementById("btnRefresh");
     const btnReset = document.getElementById("btnReset");
+    const btnSave = document.getElementById("btnSave");
 
-    // Helper format
-    function formatRp(n) { return "Rp " + (Number(n) || 0).toLocaleString('id-ID'); }
-    function showStatus(t) { statusMsg.textContent = t; }
-
-    async function apiPost(data) {
-      spinner.style.display = "inline-block";
-      try {
-        console.log("Sending POST data:", JSON.stringify(data));
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          mode: "cors",
-          credentials: "omit"
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}. Response: ${text}`);
-        }
-        const j = await res.json();
-        spinner.style.display = "none";
-        if (!j.status && !j.success) {
-          throw new Error("Invalid response: " + JSON.stringify(j));
-        }
-        return j;
-      } catch (err) {
-        spinner.style.display = "none";
-        console.error("POST error:", err.message);
-        throw new Error(`Gagal menyimpan: ${err.message}. Pastikan frontend di-host di server web (bukan file://) dan Web App dideploy dengan benar.`);
-      }
-    }
-
-    async function apiGet() {
-      spinner.style.display = "inline-block";
-      try {
-        const url = `${SCRIPT_URL}?idUser=${encodeURIComponent(userId)}&ts=${Date.now()}`;
-        console.log("Fetching data from:", url);
-        const res = await fetch(url, {
-          method: "GET",
-          mode: "cors",
-          credentials: "omit"
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}. Response: ${text}`);
-        }
-        const j = await res.json();
-        spinner.style.display = "none";
-        if (!j.status && !j.success) {
-          throw new Error("Invalid response: " + JSON.stringify(j));
-        }
-        return j;
-      } catch (err) {
-        spinner.style.display = "none";
-        console.error("GET error:", err.message);
-        throw new Error(`Gagal mengambil data: ${err.message}. Pastikan userId valid dan server dapat diakses.`);
-      }
-    }
-
-    // Load data
-    async function loadData() {
-      try {
-        showStatus("Mengambil data...");
-        const r = await apiGet();
-        if (r.status === "success" || r.success) {
-          renderList(r.data || []);
-          showStatus("Data siap");
-        } else {
-          showStatus("Gagal mengambil data: " + (r.error || r.message || r.status));
-          list.innerHTML = "<div class='muted-small'>Gagal mengambil data</div>";
-        }
-      } catch (err) {
-        console.error(err);
-        showStatus("Error: " + err.message);
-        list.innerHTML = "<div class='muted-small'>Terjadi error saat mengambil data</div>";
-      }
-    }
-
-    // Render list + totals
     function renderList(data) {
       list.innerHTML = "";
       if (!data || data.length === 0) {
@@ -253,7 +577,6 @@
         return;
       }
 
-      // Compute totals
       let inTotal = 0, outTotal = 0;
       data.forEach(item => {
         const jml = Number(item.jumlah) || 0;
@@ -265,137 +588,67 @@
       totalOut.textContent = formatRp(outTotal);
       saldoEl.textContent = formatRp(inTotal - outTotal);
 
-      // Build items
       data.forEach(item => {
         const node = document.createElement("div");
         node.className = "item";
-
-        const left = document.createElement("div");
-        left.style.flex = "1";
-
-        const title = document.createElement("div");
-        title.style.display = "flex";
-        title.style.justifyContent = "space-between";
-        title.style.alignItems = "baseline";
-
-        const tLeft = document.createElement("div");
-        tLeft.innerHTML = `<strong>${item.jenis} • ${formatRp(item.jumlah)}</strong>`;
-        const tRight = document.createElement("div");
-        tRight.style.fontSize = "12px";
-        tRight.style.color = "#6b7280";
-        const d = new Date(item.tanggal);
-        tRight.textContent = isNaN(d.getTime()) ? item.tanggal : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-        title.appendChild(tLeft);
-        title.appendChild(tRight);
-
-        const desc = document.createElement("div");
-        desc.className = "muted-small";
-        desc.style.marginTop = "6px";
-        desc.textContent = item.deskripsi || "";
-
-        const saldo = document.createElement("div");
-        saldo.className = "meta";
-        saldo.textContent = `Saldo: ${formatRp(item.saldo)}`;
-
-        left.appendChild(title);
-        left.appendChild(desc);
-        left.appendChild(saldo);
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit";
-        editBtn.textContent = "Edit";
-        editBtn.addEventListener("click", () => {
+        node.innerHTML = `
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between">
+              <strong>${item.jenis} • ${formatRp(item.jumlah)}</strong>
+              <span class="muted-small">${item.tanggal}</span>
+            </div>
+            <div class="muted-small" style="margin-top:6px">${item.deskripsi || ""}</div>
+          </div>
+          <div class="actions">
+            <button class="edit">Edit</button>
+            <button class="del">Hapus</button>
+          </div>`;
+        node.querySelector(".edit").addEventListener("click", () => {
           noteId.value = item.idCatatan;
           tanggal.value = item.tanggal;
           jenis.value = item.jenis;
           jumlah.value = item.jumlah;
           deskripsi.value = item.deskripsi || "";
           btnSave.textContent = "Update";
-          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        node.querySelector(".del").addEventListener("click", async () => {
+          const ok = await customConfirm("Hapus catatan ini?");
+          if (!ok) return;
+          await apiPost({ action: "deleteCatatan", idUser: userId, idCatatan: item.idCatatan });
+          showToast("🗑️ Catatan dihapus");
+          loadData();
         });
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "del";
-        delBtn.textContent = "Hapus";
-        delBtn.addEventListener("click", async () => {
-          if (!confirm("Yakin hapus catatan ini?")) return;
-          const data = {
-            action: "deleteCatatan",
-            idUser: userId,
-            idCatatan: item.idCatatan
-          };
-          try {
-            const res = await apiPost(data);
-            if (res.status === "success" || res.success) {
-              showStatus("Terhapus");
-              await loadData();
-              noteId.value = "";
-              form.reset();
-              btnSave.textContent = "Simpan";
-            } else {
-              showStatus("Gagal hapus: " + (res.error || res.message || res.status));
-            }
-          } catch (err) {
-            console.error(err);
-            showStatus("Error hapus: " + err.message);
-          }
-        });
-
-        actions.appendChild(editBtn);
-        actions.appendChild(delBtn);
-
-        node.appendChild(left);
-        node.appendChild(actions);
         list.appendChild(node);
       });
     }
 
-    // Submit (create or update)
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
-      if (!tanggal.value || !jenis.value || !jumlah.value) {
-        showStatus("Lengkapi semua isian!");
-        return;
-      }
       const data = {
         action: noteId.value ? "updateCatatan" : "createCatatan",
         idUser: userId,
         tanggal: tanggal.value,
         jenis: jenis.value,
-        jumlah: Number(jumlah.value) || 0,
-        deskripsi: deskripsi.value || ""
+        jumlah: Number(jumlah.value),
+        deskripsi: deskripsi.value
       };
       if (noteId.value) data.idCatatan = noteId.value;
-
-      try {
-        const res = await apiPost(data);
-        if (res.status === "success" || res.success) {
-          showStatus("Tersimpan");
-          noteId.value = "";
-          form.reset();
-          btnSave.textContent = "Simpan";
-          loadData();
-        } else {
-          showStatus("Gagal: " + (res.error || res.message || res.status));
-        }
-      } catch (err) {
-        console.error(err);
-        showStatus("Error simpan: " + err.message);
-      }
+      await apiPost(data);
+      form.reset();
+      noteId.value = "";
+      btnSave.textContent = "Simpan";
+      showToast("✅ Catatan disimpan");
+      loadData();
     });
 
     btnRefresh.addEventListener("click", loadData);
     btnReset.addEventListener("click", () => {
-      noteId.value = "";
       form.reset();
+      noteId.value = "";
       btnSave.textContent = "Simpan";
     });
 
-    // Initial load
     loadData();
   </script>
 </body>
