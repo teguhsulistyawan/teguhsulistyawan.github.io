@@ -138,8 +138,7 @@
   </div>
 
   <script>
-    // URL Web App Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxiX9bEW01OgbtcYcX4ywG0a-yk3lLdXsThX2ul7-wppw24003Q_6KbYsiHVOjvkv9J6A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwspMkbackS8qRJCWmEdJ_qk7z_BZu7cLQCo4_Fpt_KIpXBDGxH78MuA6lG9IpnhmGjHg/exec";
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id")?.trim()?.toUpperCase();
     const userTag = document.getElementById("userTag");
@@ -169,14 +168,13 @@
     function formatRp(n) { return "Rp " + (Number(n) || 0).toLocaleString('id-ID'); }
     function showStatus(t) { statusMsg.textContent = t; }
 
-    async function apiPost(body) {
+    async function apiPost(formData) {
       spinner.style.display = "inline-block";
       try {
-        console.log("Sending POST payload:", JSON.stringify(body));
+        console.log("Sending POST data:", formData.toString());
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: formData,
           mode: "cors",
           credentials: "omit"
         });
@@ -185,7 +183,7 @@
         }
         const j = await res.json();
         spinner.style.display = "none";
-        if (!j.status) {
+        if (!j.status && !j.success) {
           throw new Error("Invalid response: " + JSON.stringify(j));
         }
         return j;
@@ -211,7 +209,7 @@
         }
         const j = await res.json();
         spinner.style.display = "none";
-        if (!j.status) {
+        if (!j.status && !j.success) {
           throw new Error("Invalid response: " + JSON.stringify(j));
         }
         return j;
@@ -227,13 +225,13 @@
       try {
         showStatus("Mengambil data...");
         const r = await apiGet();
-        if (r.status !== "success") {
+        if (r.status === "success" || r.success) {
+          renderList(r.data || []);
+          showStatus("Data siap");
+        } else {
           showStatus("Gagal mengambil data: " + (r.error || r.message || r.status));
           list.innerHTML = "<div class='muted-small'>Gagal mengambil data</div>";
-          return;
         }
-        renderList(r.data || []);
-        showStatus("Data siap");
       } catch (err) {
         console.error(err);
         showStatus("Error: " + err.message);
@@ -322,9 +320,13 @@
         delBtn.textContent = "Hapus";
         delBtn.addEventListener("click", async () => {
           if (!confirm("Yakin hapus catatan ini?")) return;
+          const formData = new URLSearchParams();
+          formData.append("aksi", "hapus");
+          formData.append("idUser", userId);
+          formData.append("idCatatan", item.noteId);
           try {
-            const res = await apiPost({ action: "deleteCatatan", userId, noteId: item.noteId });
-            if (res.status === "success") {
+            const res = await apiPost(formData);
+            if (res.status === "success" || res.success) {
               showStatus("Terhapus");
               await loadData();
               noteId.value = "";
@@ -351,18 +353,18 @@
     // Submit (create or update)
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
-      const payload = {
-        action: noteId.value ? "updateCatatan" : "createCatatan",
-        userId: userId,
-        noteId: noteId.value,
-        tanggal: tanggal.value,
-        jenis: jenis.value,
-        jumlah: Number(jumlah.value) || 0,
-        deskripsi: deskripsi.value || ""
-      };
+      const formData = new URLSearchParams();
+      formData.append("idUser", userId);
+      formData.append("tanggal", tanggal.value);
+      formData.append("jenis", jenis.value);
+      formData.append("jumlah", Number(jumlah.value) || 0);
+      formData.append("deskripsi", deskripsi.value || "");
+      formData.append("aksi", noteId.value ? "edit" : "tambah");
+      if (noteId.value) formData.append("idCatatan", noteId.value);
+
       try {
-        const res = await apiPost(payload);
-        if (res.status === "success") {
+        const res = await apiPost(formData);
+        if (res.status === "success" || res.success) {
           showStatus("Tersimpan");
           noteId.value = "";
           form.reset();
