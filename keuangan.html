@@ -138,7 +138,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwspMkbackS8qRJCWmEdJ_qk7z_BZu7cLQCo4_Fpt_KIpXBDGxH78MuA6lG9IpnhmGjHg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpxfhUPuYMdP6VZC_80kR6IMKNyN0Z3B2CRtxqXxwS3ST5kr1o1DrGrvOLwTMX_iDzNg/exec";
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id")?.trim()?.toUpperCase();
     const userTag = document.getElementById("userTag");
@@ -174,12 +174,14 @@
         console.log("Sending POST data:", formData.toString());
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: formData,
           mode: "cors",
           credentials: "omit"
         });
         if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}`);
+          const text = await res.text();
+          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}. Response: ${text}`);
         }
         const j = await res.json();
         spinner.style.display = "none";
@@ -190,7 +192,7 @@
       } catch (err) {
         spinner.style.display = "none";
         console.error("POST error:", err.message);
-        throw new Error(`Gagal menyimpan: ${err.message}. Pastikan koneksi internet dan URL Web App benar.`);
+        throw new Error(`Gagal menyimpan: ${err.message}. Pastikan frontend di-host di server web (bukan file://) dan Web App dideploy dengan benar.`);
       }
     }
 
@@ -205,7 +207,8 @@
           credentials: "omit"
         });
         if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}`);
+          const text = await res.text();
+          throw new Error(`HTTP error! Status: ${res.status} ${res.statusText}. Response: ${text}`);
         }
         const j = await res.json();
         spinner.style.display = "none";
@@ -306,7 +309,7 @@
         editBtn.className = "edit";
         editBtn.textContent = "Edit";
         editBtn.addEventListener("click", () => {
-          noteId.value = item.noteId;
+          noteId.value = item.idCatatan;
           tanggal.value = item.tanggal;
           jenis.value = item.jenis;
           jumlah.value = item.jumlah;
@@ -323,7 +326,7 @@
           const formData = new URLSearchParams();
           formData.append("aksi", "hapus");
           formData.append("idUser", userId);
-          formData.append("idCatatan", item.noteId);
+          formData.append("idCatatan", item.idCatatan);
           try {
             const res = await apiPost(formData);
             if (res.status === "success" || res.success) {
@@ -353,6 +356,10 @@
     // Submit (create or update)
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
+      if (!tanggal.value || !jenis.value || !jumlah.value) {
+        showStatus("Lengkapi semua isian!");
+        return;
+      }
       const formData = new URLSearchParams();
       formData.append("idUser", userId);
       formData.append("tanggal", tanggal.value);
