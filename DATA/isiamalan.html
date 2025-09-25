@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta property="og:title" content="">
+  <meta property="og:description" content="Arsip Amalan KH. Ahmad Fathoni">
+  <meta property="og:image" content=""> 
+  <title>Arsip Amalan KH. Ahmad Fathoni</title>
+  <title id="title"></title>
+  <link href="https://fonts.googleapis.com/css2?family=Scheherazade&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">  <style>
+/* Reset & Base */
+body {
+    font-family: 'Calibri', sans-serif;
+    margin: 0;
+    padding: 5px;
+    background: #f0f2f5;
+    color: #333;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .container:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Judul */
+  h1.judul {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 20px 0;
+    font-size: 24px;
+    color:  #21958b;
+  }
+
+  /* Konten Utama */
+  .content {
+    margin-top: 20px;
+    line-height: 1.8;
+    text-align: justify;
+    font-size: 16px;
+    color: rgb(31, 31, 31);
+  }
+  
+  .content .arab {
+    font-family: 'Scheherazade', serif;
+    direction: rtl;
+    text-align: justify;
+    font-size: 20px;
+    line-height: 2;
+    color: rgb(31, 31, 31);
+  }
+  
+    
+  /* Judul bagian */
+  .section-title {
+    font-weight: bold;
+    margin: 25px 0 10px;
+    color: rgb(31, 31, 31);
+    font-size: 17px;
+    border-left: 4px solid  #21958b;
+    padding-left: 10px;
+  }
+  
+  /* Penanda */
+  .kitab {
+    font-weight: bold;
+    background-color: #ecf0f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  
+  .syahid {
+    color: #e74c3c;
+  }
+
+  
+  /* List */
+  ul, ol {
+    margin: 10px 0 10px 25px;
+    padding-left: 20px;
+  }
+    
+    /* Tombol */
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 30px;
+      }
+      
+      .btn {
+        flex: 1;
+        min-width: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 0;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: background 0.3s ease, transform 0.2s;
+      }
+      
+      .btn:hover {
+        transform: scale(1.05);
+      }
+      
+      .like-btn {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+      }
+      
+      .share-btn {
+background:  #21958b;
+      }
+      
+      .btn.liked {
+        background-color: #7b1f15;
+      }
+      
+      .btn i {
+        font-size: 16px;
+      }
+      
+      .counts {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 18px;
+        font-size: 15px;
+        color: rgb(31, 31, 31);
+      }
+      
+      .count-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* === KOMENTAR SECTION YANG SERASI DAN PROFESIONAL === */
+.komentar-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+    border-top: 5px solid  #21958b;
+  }
+  
+  /* Judul Komentar */
+  .komentar-heading {
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: rgb(31, 31, 31);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .komentar-heading::before {
+    content: "💬";
+    font-size: 1em;
+  }
+  
+  /* Daftar Komentar */
+  .komentar-list {
+    margin-bottom: 30px;
+  }
+  
+  .komentar-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #cfdbe7;
+  }
+  
+  /* Avatar Bulat */
+  .komentar-avatar {
+    flex-shrink: 0;
+  }
+  
+  .avatar-bulat {
+    width: 48px;
+    height: 48px;
+    background:  #21958b;
+    border-radius: 50%;
+    font-size: 20px;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  
+  /* Isi Komentar */
+  .komentar-content {
+    flex: 1;
+  }
+  
+  .komentar-content .nama {
+    font-weight: bold;
+    color:  #21958b;
+    font-size: 1.05em;
+  }
+  
+  .komentar-content .waktu {
+    font-size: 0.8em;
+    color: #7f8c8d;
+    margin-bottom: 6px;
+  }
+  
+  .komentar-content .isi {
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: #000000;
+  }
+  
+  .komentar-content .kontak {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    color: #21958b;
+    margin-top: 6px;
+  }
+  
+  .komentar-content .kontak svg {
+    width: 16px;
+    height: 16px;
+    fill:  #21958b;
+  }
+  
+  /* Formulir Komentar */
+  #komentarForm {
+    border-top: 1px dashed #bcd;
+    padding-top: 24px;
+  }
+  
+  #komentarForm input[type="text"],
+  #komentarForm textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: inherit;
+    background: #fff;
+    transition: border-color 0.3s ease;
+  }
+  
+  #komentarForm input[type="text"]:focus,
+  #komentarForm textarea:focus {
+    border-color:  #21958b;
+    outline: none;
+  }
+  
+  /* Tombol Kirim */
+  #komentarForm button {
+    background: #21958b;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background 0.3s ease, transform 0.2s;
+  }
+  
+  #komentarForm button:hover {
+    background:  #21958b;
+    transform: scale(1.03);
+  }
+
+  /* Loader wrapper */
+  .loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+  }
+  
+  .loader-wrapper.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  
+  /* Spinner yang muter */
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 6px solid #ccc;
+    border-top-color:  #21958b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Animasi muter */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Hilangkan loader */
+  .loader-wrapper.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper">
+        <div class="spinner"></div>
+      </div>
+
+<div class="container">
+  <h1 id="judul" class="judul"></h1>
+  <div id="content" class="content"></div>
+  
+  <div class="buttons">
+    <button id="likeBtn" class="btn like-btn">
+        <i class="far fa-thumbs-up"></i> <span>Suka</span>
+    </button>
+    <button id="shareBtn" class="btn share-btn">
+        <i class="fas fa-share-alt"></i> <span>Bagikan</span>
+    </button>
+  </div>
+
+  <div class="counts">
+    <div class="count-item"><i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span> Suka</div>
+    <div class="count-item"><i class="fas fa-eye"></i> <span id="viewCount">0</span> Dilihat</div>
+  </div>
+</div>
+
+<!-- Komentar -->
+<div id="komentarSection" class="komentar-section">
+    <h2 class="komentar-heading"> Komentar</h2>
+    <div id="komentarList" class="komentar-list"></div>
+  
+    <form id="komentarForm" onsubmit="kirimKomentar(event)">
+      <input type="text" id="namaKomentar" placeholder="Nama Anda" required>
+      <textarea id="isiKomentar" placeholder="Tulis komentar..." rows="4" required></textarea>
+      <input type="text" id="kontakKomentar" placeholder="Email atau No. WA (opsional)">
+      <button type="submit">Kirim Komentar</button>
+    </form>
+  </div>
+<script>
+  const API = 'https://script.google.com/macros/s/AKfycbyPGojHecZzwLNxxEMBoLmLMWdoCZD2q5xlenboauq353CVwJCmn5HmDOlmbUuXZBDG/exec';
+  const KOMENTAR_API = 'https://script.google.com/macros/s/AKfycbyLCLp8lnUX7mBlSbz__zBrH9c1G88mHk4iiDVpFv8_0LdWzWQoPMosnKOj9yZJqSNTBA/exec';
+
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) {
+    document.body.textContent = 'ID tidak ditemukan';
+    throw '';
+  }
+
+  function parseIsi(text) {
+    const lines = text.split('\n');
+    let html = '', listOpen = false, listType, listStyle;
+  
+    lines.forEach(line => {
+      const t = line.trim();
+      const isArabic = /[\u0600-\u06FF]/.test(t);
+      const m = t.match(/^([a-z]\.|\d+\.)\s+/i);
+  
+      if (m) {
+        const marker = m[1];
+        let tag = 'ul', style = 'disc';
+        if (/^[a-z]\./i.test(marker)) { tag = 'ol'; style = 'lower-alpha'; }
+        else if (/^\d+\./.test(marker)) { tag = 'ol'; style = 'decimal'; }
+  
+        if (!listOpen || listType !== tag || listStyle !== style) {
+          if (listOpen) html += `</${listType}>`;
+          html += `<${tag} style="list-style-type:${style};margin-left:1.5em">`;
+          listOpen = true; listType = tag; listStyle = style;
+        }
+        html += `<li>${t.replace(/^[a-z]\.|\d+\.\s+/i, '')}</li>`;
+      } else {
+        if (listOpen) { html += `</${listType}>`; listOpen = false; }
+  
+        let text = t
+          
+          .replace(/#(.*?)#/g, '<span class="kitab">$1</span>')
+          .replace(/\*(.*?)\*/g, '<span class="syahid">$1</span>');
+  
+        html += `<p class="${isArabic ? 'arab' : ''}">${text}</p>`;
+      }
+    });
+  
+    if (listOpen) html += `</${listType}>`;
+    return html;
+  }
+  
+  function updateCounts(action) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `id=${id}&action=${action}`
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (action === 'like') {
+        // Ubah jumlah like di semua elemen dengan id 'likeCount'
+        document.querySelectorAll('#likeCount').forEach(el => el.textContent = data.likes);
+  
+        // Ubah tampilan tombol
+        const likeBtn = document.getElementById('likeBtn');
+        likeBtn.classList.add('liked');
+        likeBtn.innerHTML = `<i class="fas fa-thumbs-up"></i> <span>Disukai</span>`;
+      }
+  
+      
+    });
+  }
+  
+
+  function setupShare() {
+  const title = document.getElementById('judul')?.textContent || "Judul Tidak Ditemukan";
+  const url = location.href;
+  const appLink = 'https://play.google.com/store/apps/details?id=appinventor.ai_teguhsulistyawan01.Santri_Tanggung&pcampaignid=web_share';
+
+  const text = `${title}\n${url}\n__________\nAyo install aplikasi Santri Tanggung dari Google Plastore sekarang juga:\n${appLink}`;
+
+  const btn = document.getElementById('shareBtn');
+  if (!btn) return;
+
+  btn.onclick = () => {
+    if (typeof AndroidFunction === 'object' && typeof AndroidFunction.shareText === 'function') {
+      // ✅ Untuk Android Studio (WebView)
+    AndroidFunction.shareText(text); // ✅ Ini yang benar
+    } else if (typeof window.AppInventor !== 'undefined') {
+      // 🟡 Untuk MIT App Inventor
+      window.AppInventor.setWebViewString(text);
+      window.location = url;
+    } else if (navigator.share) {
+      // 🟢 Jika dibuka di browser modern
+      navigator.share({
+        title: title,
+        text: text,
+        url: url,
+      });
+    } else {
+      // 🟠 Jika tidak mendukung, fallback copy ke clipboard
+      navigator.clipboard.writeText(text);
+    }
+  };
+}
+
+  
+  async function load() {
+    const resp = await fetch(`${API}?id=${id}`);
+    const data = await resp.json();
+    if (data.error) return document.body.textContent = data.error;
+  
+    document.getElementById('judul').textContent = data.judul;
+    document.getElementById('content').innerHTML = parseIsi(data.isi);
+    document.getElementById('likeCount').textContent = data.likes;
+    document.getElementById('viewCount').textContent = data.views;
+  
+    await updateCounts('view');
+  
+    let liked = false;
+    document.getElementById('likeBtn').onclick = async () => {
+      if (liked) return;
+      liked = true;
+      const res = await updateCounts('like');
+      document.getElementById('likeCount').textContent = res.likes;
+    };
+  
+    setupShare();
+    loadKomentar();
+  
+    // ✅ Sembunyikan loader setelah semua konten selesai dimuat
+    document.getElementById('loader').classList.add('hidden');
+}
+  
+  function loadKomentar() {
+    fetch(`${KOMENTAR_API}?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('komentarList');
+        list.innerHTML = data.map(c => {
+          const initial = c.nama ? c.nama.charAt(0).toUpperCase() : '?';
+          return `
+            <div class="komentar-item">
+              <div class="komentar-avatar"><div class="avatar-bulat">${initial}</div></div>
+              <div class="komentar-content">
+                <div class="nama"><strong>${c.nama}</strong></div>
+                <div class="waktu">${c.waktu}</div>
+                <div class="isi">${c.komentar}</div>
+                ${c.kontak ? `<div class="kontak">Kontak: ${c.kontak}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+  }
+
+  function kirimKomentar(event) {
+    event.preventDefault();
+    const nama = document.getElementById('namaKomentar').value.trim();
+    const komentar = document.getElementById('isiKomentar').value.trim();
+    const kontak = document.getElementById('kontakKomentar').value.trim();
+
+    if (!nama || !komentar) {
+      alert('Nama dan komentar wajib diisi.');
+      return;
+    }
+
+    fetch(KOMENTAR_API, {
+      method: 'POST',
+      body: JSON.stringify({ id_artikel: id, nama, komentar, kontak })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('namaKomentar').value = '';
+        document.getElementById('isiKomentar').value = '';
+        document.getElementById('kontakKomentar').value = '';
+        loadKomentar();
+      } else {
+        alert('Gagal mengirim komentar.');
+      }
+    })
+    .catch(() => alert('Terjadi kesalahan saat mengirim komentar.'));
+  }
+
+  window.addEventListener('DOMContentLoaded', load);
+</script>
+
+</body>
+
+</html>
+

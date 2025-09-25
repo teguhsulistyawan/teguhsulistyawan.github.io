@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Arsip Amalan KH. Ahmad Fathoni</title>
+
+<!-- Open Graph -->
+<meta property="og:title" content="Arsip Amalan KH. Ahmad Fathoni">
+<meta property="og:description" content="Arsip Amalan KH. Ahmad Fathoni">
+<meta property="og:image" content="https://ppmugrobogan.com/GAMBAR/GAMBARKONTEN/YAI.jpg">
+<meta property="og:url" content="https://ppmugrobogan.com">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card (opsional) -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Arsip Amalan KH. Ahmad Fathoni">
+<meta name="twitter:description" content="Arsip Amalan KH. Ahmad Fathoni">
+<meta name="twitter:image" content="https://ppmugrobogan.com/GAMBAR/GAMBARKONTEN/YAI.jpg">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+      /* Reset dan dasar */
+      body {
+          font-family: 'Inter', sans-serif;
+          margin: 0;
+          background-color: #f5f7fa;
+          color: #333;
+          margin-inline: auto;
+        }
+        
+        h1 {
+          text-align: center;
+          margin-bottom: 1em;
+        }
+        
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 0px solid #2e6f6b;
+            background-color: #2e6f6b;
+            width: 98%;
+            height: 50px;
+            margin: 0px auto;
+            padding: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+          }
+          
+          .search-bar input#keyword {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            border-radius: 50px;
+          }
+          
+          .search-bar input#keyword::placeholder {
+            color: #777;
+          }
+          
+          .search-bar button.search {
+            background-color: #2e6f6b;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            border-radius: 0 999px 999px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+          }
+          
+          .search-bar button.search:hover {
+            background-color: #2e6f6b;
+          }
+          
+          .search-bar button.search i {
+            font-size: 16px;
+          }
+          
+        /* Kategori (judul folder) */
+      .kategori {
+          background: #ffffff;
+          padding: 0.75em 1.2em;
+          margin: 0.2em 0;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          border: 1px solid #dcdcdc;
+          border-radius: 5px;
+          text-align: left;
+          transition: background 0.3s ease, box-shadow 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+        
+        .kategori:hover {
+          background-color: #f0f4ff;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Daftar Artikel (sub-judul) */
+        .artikel {
+          margin: 0.3em 0 1em 1.2em;
+          display: none;
+          border-left: 2px solid #e0e0e0;
+          padding-left: 1em;
+        }
+        
+        .artikel button {
+          display: block;
+          width: 100%;
+          background: #fafafa;
+          border: 1px solid #e0e0e0;
+          padding: 0.6em 1em;
+          margin: 0.4em 0;
+          border-radius: 6px;
+          text-align: left;
+          font-size: 0.95rem;
+          color: #333;
+          cursor: pointer;
+          transition: background 0.3s ease, transform 0.2s ease;
+        }
+        
+        .artikel button:hover {
+          background: #f5f9ff;
+          transform: translateX(4px);
+        }
+        
+        /* Hasil Pencarian */
+        .hasil-pencarian {
+          background: #ffffff;
+          padding: 1em;
+          border: 1px solid #dcdcdc;
+          border-radius: 8px;
+          margin-top: 1em;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          transition: transform 0.2s ease;
+        }
+        
+        .hasil-pencarian:hover {
+          transform: translateY(-2px);
+        }
+        
+        .kategori-label {
+          font-size: 0.85rem;
+          color: #888;
+          margin-bottom: 0.2em;
+        }
+        
+        .highlight {
+          background-color: #fff3a0;
+          font-weight: 600;
+          padding: 0 0.2em;
+          border-radius: 4px;
+        }
+        
+        /* Loading */
+        .loading {
+          text-align: center;
+          color: #555;
+          margin-top: 1em;
+          font-style: italic;
+        }
+        
+        /* Responsive */
+        @media screen and (max-width: 600px) {
+    
+        }
+        .admin-floating {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 999;
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #2e6f6b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+      margin-top: 50%;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .load {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-top: 2px solid #2e6f6b;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .navbar {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #2e6f6b;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px 0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        height: 55px;
+      }
+  
+      .nav-item {
+        width: 50px;
+        height: 50px;
+        background-color: white;
+        color: #2e6f6b;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+      }
+      
+      .nav-item i {
+        font-size: 20px;
+      }
+      
+      .nav-item span {
+        display: none;
+      }
+      
+      .nav-item.active {
+        width: 200px;
+        border-radius: 999px;
+      }
+      
+      .nav-item.active span {
+        display: inline;
+        margin-left: 10px;
+        font-weight: 600;
+        font-size: 16px;
+      }
+  
+      .nav-item span {
+        display: none;
+      }
+  
+      @media (max-width: 500px) {
+        .nav-item.active span {
+          font-size: 14px;
+        }
+      }
+.isi{
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.admin-button {
+    background: #2e6f6b;
+              color: #fff;
+              border: none;
+              border-radius: 5px;
+              padding: 0.7em 0.9em;
+              font-size: 1.2rem;
+              cursor: pointer;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+              transition: background 0.3s ease;
+            }
+            
+            .admin-button:hover {
+    background: #255855;
+            }
+            
+  </style>
+</head>
+<body>
+    <div class="isi">
+  <div class="search-bar">
+    <input type="text" id="keyword" placeholder="Cari amalan...">
+    <button class="search" onclick="cari()"><i class="fas fa-search"></i></button>
+  </div>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div>Memuat data...</div>
+  </div>
+
+  <div id="result"></div>
+  <div id="list"></div>
+</div>
+  <script>
+    const API = 'https://script.google.com/macros/s/AKfycbyPGojHecZzwLNxxEMBoLmLMWdoCZD2q5xlenboauq353CVwJCmn5HmDOlmbUuXZBDG/exec';
+    let allData = [];
+
+    async function loadList() {
+      const loading = document.getElementById('loading');
+      loading.style.display = 'block';
+
+      const data = await fetch(API).then(r => r.json());
+      allData = data;
+      const map = {};
+      data.forEach(a => {
+        if (!map[a.kategori]) map[a.kategori] = [];
+        map[a.kategori].push(a);
+      });
+
+      const cont = document.getElementById('list');
+      cont.innerHTML = '';
+      Object.entries(map).forEach(([cat, arr]) => {
+        const btnCat = document.createElement('button');
+        btnCat.textContent = cat;
+        btnCat.className = 'kategori';
+
+        const divArt = document.createElement('div');
+        divArt.className = 'artikel';
+
+        arr.forEach(a => {
+          const b = document.createElement('button');
+          b.textContent = a.judul;
+          b.onclick = () => window.location = `https://teguhsulistyawan.github.io/DATA/isiamalan.html?id=${a.id}`;
+          divArt.appendChild(b);
+        });
+
+        btnCat.onclick = async () => {
+          if (divArt.style.display === 'block') {
+            divArt.style.display = 'none';
+            return;
+          }
+        
+          // Tambahkan load di tombol
+          const originalText = btnCat.textContent;
+          btnCat.innerHTML = `${originalText} <span class="load"></span>`;
+        
+          // Delay seolah sedang memuat
+          await new Promise(resolve => setTimeout(resolve, 300)); // 300ms delay
+        
+          divArt.style.display = 'block';
+          btnCat.innerHTML = originalText;
+        };
+        
+
+        cont.append(btnCat, divArt);
+      });
+
+      loading.style.display = 'none';
+    }
+
+    function cari() {
+      const keyword = document.getElementById('keyword').value.trim().toLowerCase();
+      const list = document.getElementById('list');
+      const result = document.getElementById('result');
+      const loading = document.getElementById('loading');
+
+      result.innerHTML = '';
+      if (!keyword) {
+        list.style.display = 'block';
+        result.innerHTML = '';
+        return;
+      }
+
+      list.style.display = 'none';
+      loading.style.display = 'block';
+
+      setTimeout(() => {
+        const found = allData.filter(item =>
+          item.judul.toLowerCase().includes(keyword) ||
+          item.isi.toLowerCase().includes(keyword)
+        );
+
+        loading.style.display = 'none';
+        result.innerHTML = `<div><b>${found.length}</b> hasil ditemukan</div>`;
+
+        found.forEach(item => {
+          const frag = document.createElement('div');
+          frag.className = 'hasil-pencarian';
+
+          const isi = item.isi.toLowerCase();
+          const idx = isi.indexOf(keyword);
+          let preview = item.isi;
+
+          if (idx !== -1) {
+            const start = Math.max(0, idx - 40);
+            const end = Math.min(item.isi.length, idx + 60);
+            preview = item.isi.substring(start, end)
+              .replace(new RegExp(`(${keyword})`, 'gi'), '<span class="highlight">$1</span>');
+          }
+
+          frag.innerHTML = `
+            <div class="kategori-label">Kategori: ${item.kategori}</div>
+            <a href="https://teguhsulistyawan.github.io/DATA/isiamalan.html?id=${item.id}"><b>${item.judul}</b></a>
+            <div>${preview}...</div>
+          `;
+          result.appendChild(frag);
+        });
+      }, 300);
+    }
+
+    document.getElementById('keyword').addEventListener('input', () => {
+      const keyword = document.getElementById('keyword').value.trim();
+      const result = document.getElementById('result');
+      const list = document.getElementById('list');
+
+      if (!keyword) {
+        result.innerHTML = '';
+        list.style.display = 'block';
+      }
+    });
+
+    loadList();
+
+    function toggleAdminMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('adminMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('adminMenu');
+      const button = document.querySelector('.admin-button');
+      if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.style.display = 'none';
+      }
+    });
+  </script>
+  <div class="admin-floating">
+    <button class="admin-button" onclick="window.location.href='upamalan.html'">
+      <i class="fa-solid fa-upload"></i>
+    </button>
+</div>
+  
+</body>
+</html>

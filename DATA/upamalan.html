@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Arsip Amalan KH. Ahmad Fathoni</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&family=Segoe+UI&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Scheherazade&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #2e6f6b;
+      margin: 10px;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0px auto;
+      background: #ffffff;
+      padding: 30px 15px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 18px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 6px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+      height: 50px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #2e6f6b;
+      box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 300px;
+      resize: vertical;
+      font-family: 'Segoe UI', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+      line-height: 1.6;
+      direction: auto;
+    }
+
+    button {
+      background: #2e6f6b;
+      color: white;
+      font-weight: bold;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 25px;
+      transition: background 0.3s ease, transform 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 50px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background: #2e6f6b;
+      transform: scale(1.01);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid #ffffff90;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      margin-left: 10px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #statusPesan {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+    .container {
+      max-width: 720px;
+      width: 100%;
+    }
+    @media (max-width: 600px) {
+      .container {
+        width: 95%;
+        padding: 20px 10px;
+      }
+    
+      input, select, textarea {
+        font-size: 14px;
+        padding: 10px;
+      }
+    
+      button {
+        font-size: 14px;
+        padding: 12px;
+      }
+    
+      h1 {
+        font-size: 22px;
+      }
+    
+      
+    }
+    select.input-field {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #fff;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%232980b9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      padding-right: 40px;
+      border: 1px solid#2e6f6b;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 50%;
+      height: auto;
+  }
+.judul{
+  color:  #ffffff;
+      text-align: center;
+      margin-bottom: 20px;
+}
+  </style>
+</head>
+<body>
+    <h1 class="judul">ARSIP AMALAN <br>KH. AHMAD FATHONI</h1>
+  <div class="container">
+    <form id="formArtikel" onsubmit="kirimData(event)">
+      <input type="text" id="id" readonly class="hidden">
+      <label for="kategori">Kategori Amalan</label>
+<select id="kategori" name="kategori" class="input-field" required>
+  <option value="" disabled selected>Pilih kategori amalan</option>
+  <option value="Harian">Harian</option>
+  <option value="Mingguan">Mingguan</option>
+  <option value="Bulanan">Bulanan</option>
+  <option value="Khusus">Khusus</option>
+  <option value="Lain-lain">Lain-lain</option>
+</select>
+
+      <label for="judul">Judul Amalan</label>
+      <input type="text" id="judul" placeholder="Masukan judul amalan" required>
+
+      <label for="isi">Isi</label>
+      <textarea id="isi" placeholder="Tulis isi lengkap..." required></textarea>
+
+      <button type="submit" id="btnSubmit">
+        UPLOAD AMALAN
+      </button>
+    </form>
+
+    <p id="statusPesan"></p>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPGojHecZzwLNxxEMBoLmLMWdoCZD2q5xlenboauq353CVwJCmn5HmDOlmbUuXZBDG/exec';
+
+    function kirimData(e) {
+      e.preventDefault();
+      const form = document.getElementById('formArtikel');
+      const status = document.getElementById('statusPesan');
+      const button = document.getElementById('btnSubmit');
+
+      const originalHTML = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = `Menyimpan <div class="spinner"></div>`;
+      status.textContent = '';
+
+      const data = new URLSearchParams();
+      data.append('action', 'tambah');
+      data.append('kategori', form.kategori.value.trim());
+      data.append('judul', form.judul.value.trim());
+      data.append('isi', form.isi.value.trim());
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: data
+      })
+      .then(res => res.json())
+      .then(res => {
+        button.disabled = false;
+        button.innerHTML = originalHTML;
+        if (res.success) {
+          form.reset();
+          status.innerHTML = `✅ Amalan berhasil disimpan.<br><strong>ID: ${res.id}</strong>`;
+        } else {
+          status.textContent = '❌ Gagal menyimpan amalan.';
+        }
+      })
+      .catch(err => {
+        button.disabled = false;
+        button.innerHTML = originalHTML;
+        status.textContent = '❌ Terjadi kesalahan saat menyimpan.';
+        console.error(err);
+      });
+    }
+  </script>
+
+</body>
+</html>
