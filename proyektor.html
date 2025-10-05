@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAHTSUL MASAIL</title>
+<style>
+    @font-face {
+        font-family: 'CustomArabicFont';
+        src: url('arabic-font.ttf') format('truetype');
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-image: url('bacground.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat; /* tidak berulang */
+        background-attachment: fixed; /* background tidak ikut scroll */
+        color: white;
+        margin: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden; /* akan diatur ulang lewat JS */
+    }
+
+    .konten {
+        text-align: left;
+        align-self: center;
+        max-height: 100vh; /* agar tidak melewati layar */
+    }
+
+    .rtl, .indonesia {
+        text-align: justify;
+        font-size: 60px;
+        color: #000;
+    }
+
+    .rtl {
+        direction: rtl;
+        font-family: 'CustomArabicFont', 'Traditional Arabic', Tahoma, sans-serif;
+    }
+
+    .custom-style {
+        color: red;
+        display: inline;
+    }
+</style>
+</head>
+<body>
+<div class="konten" id="data-container"></div>
+
+<script>
+function isArabic(text) {
+    return /[\u0600-\u06FF]/.test(text);
+}
+
+function adjustScrollability() {
+    const konten = document.querySelector('.konten');
+    if (konten.scrollHeight > window.innerHeight) {
+        document.body.style.overflow = 'auto';
+    } else {
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// --- Simpan ukuran font global agar tidak reset setiap refresh ---
+let fontSize = 16;
+const minFont = 20;
+const maxFont = 500;
+
+function applyFontSize() {
+    document.querySelectorAll('.rtl, .indonesia').forEach(el => {
+        el.style.fontSize = fontSize + 'px';
+    });
+}
+
+function processDataAndDisplay(data) {
+    const container = document.getElementById('data-container');
+    container.innerHTML = '';
+
+    const lastRow = data[data.length - 1];
+    const paragraph = document.createElement('p');
+    const isArabicText = isArabic(lastRow[0]);
+
+    if (isArabicText) {
+        paragraph.classList.add('rtl');
+    } else if (lastRow[0].match(/[a-zA-Z]/)) {
+        paragraph.classList.add('indonesia');
+    }
+
+    const underlinedText = lastRow[0].replace(/\*(.*?)\*/g, (_, p1) => `<p class="custom-style">${p1}</p>`);
+    const newText = document.createElement('div');
+    newText.innerHTML = underlinedText.replace(/\n/g, '<br>');
+    paragraph.appendChild(newText);
+    container.appendChild(paragraph);
+
+    applyFontSize();      // 👉 Terapkan ukuran font terakhir
+    adjustScrollability(); // 👉 Cek apakah perlu scroll
+}
+
+// --- Zoom pakai mouse ---
+document.addEventListener('wheel', function(e) {
+    if (e.ctrlKey) { // tekan Ctrl + scroll
+        e.preventDefault();
+        if (e.deltaY < 0 && fontSize < maxFont) {
+            fontSize += 2;
+        } else if (e.deltaY > 0 && fontSize > minFont) {
+            fontSize -= 2;
+        }
+        applyFontSize();
+        adjustScrollability();
+    }
+}, { passive: false });
+
+function fetchDataAndDisplay(columnAndRows) {
+    const apiKey = 'AIzaSyAlT57jkJ9WR6bmEXlBXcR1-3kKzhk8FHw';
+    const spreadsheetId = '1ixedGP5FLnWpKjsyuCWs3H8ewGOHh3tDR-0mer_UpF4';
+    const sheetName = 'Sheet1';
+    const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${columnAndRows}?key=${apiKey}`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => processDataAndDisplay(data.values))
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// ambil data setiap 3 detik tanpa mengubah ukuran font
+setInterval(() => fetchDataAndDisplay('A:A'), 3000);
+fetchDataAndDisplay('A:A');
+</script>
+</body>
+</html>
