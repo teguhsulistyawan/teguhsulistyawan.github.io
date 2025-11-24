@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Server WiFi Teguhan</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --primary: #3080f7;
+    --primary-dark: #1a6fd8;
+    --primary-light: #e3f2fd;
+    --success: #4caf50;
+    --success-dark: #3d8b40;
+    --danger: #f44336;
+    --danger-dark: #d32f2f;
+    --warning: #ff9800;
+    --gray: #757575;
+    --light-gray: #f5f5f5;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+    --radius: 8px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Header yang lebih profesional */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.5s ease-out;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--success) 0%, var(--primary) 50%, var(--warning) 100%);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .logo i {
+    font-size: 2.5rem;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+
+  .logo-text h1 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .logo-text p {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+  }
+
+  .refresh-btn {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .refresh-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .server-status {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .status-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 25px;
+    animation: slideUp 0.5s ease-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .status-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+
+  .status-card.online::before {
+    background: var(--success);
+    transform: scaleX(1);
+  }
+
+  .status-card.offline::before {
+    background: var(--danger);
+    transform: scaleX(1);
+  }
+
+  .status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .status-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+
+  .status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: pulse 2s infinite;
+  }
+
+  .status-online {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+  }
+
+  .status-offline {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+  }
+
+  .status-time {
+    font-size: 0.9rem;
+    color: var(--gray);
+  }
+
+  .quality-indicator {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: var(--radius);
+    background: var(--light-gray);
+  }
+
+  .quality-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .quality-excellent {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+  }
+
+  .quality-good {
+    background: rgba(33, 150, 243, 0.2);
+    color: var(--primary);
+    border: 1px solid rgba(33, 150, 243, 0.3);
+  }
+
+  .quality-fair {
+    background: rgba(255, 152, 0, 0.2);
+    color: var(--warning);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+  }
+
+  .quality-poor {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--danger);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+  }
+
+  .ping-details-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 25px;
+    margin-bottom: 20px;
+    animation: slideUp 0.6s ease-out;
+  }
+
+  .ping-details-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ping-details {
+    background: var(--light-gray);
+    border-radius: var(--radius);
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  .ping-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: var(--light-gray);
+    border-radius: var(--radius);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-3px);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray);
+  }
+
+  .loading i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  /* Footer Watermark */
+  .footer-watermark {
+    position: relative;
+    width: 100%;
+    background: rgba(248, 250, 252, 0.95);
+    color: #64748b;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 13px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 50px;
+    border-top: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    border-radius: var(--radius);
+  }
+  
+  .footer-watermark:hover {
+    background: rgba(248, 250, 252, 0.98);
+    color: #475569;
+  }
+  
+  .watermark-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .copyright {
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    color: #64748b;
+  }
+  
+  .author {
+    font-weight: 500;
+    color: #475569;
+  }
+  
+  .separator {
+    color: #cbd5e1;
+    font-weight: 300;
+  }
+  
+  /* Animasi */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes statusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+  }
+
+  @keyframes statusPulseOffline {
+    0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+  }
+
+  .status-online {
+    animation: statusPulse 2s infinite;
+  }
+
+  .status-offline {
+    animation: statusPulseOffline 2s infinite;
+  }
+
+  /* Responsif */
+  @media (max-width: 768px) {
+    .server-status {
+      grid-template-columns: 1fr;
+    }
+    
+    .ping-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    header {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+    
+    .watermark-content {
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .separator {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 10px;
+    }
+    
+    .footer-watermark {
+      font-size: 11px;
+      padding: 16px 0;
+      margin-top: 30px;
+    }
+    
+    .copyright, .author {
+      font-size: 10.5px;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-wifi"></i>
+        <div class="logo-text">
+          <h1>WIFI TEGUHAN</h1>
+          <p>Sistem Pemantauan Server Jaringan Profesional</p>
+        </div>
+      </div>
+      <button class="refresh-btn" id="refresh-btn">
+        <i class="fas fa-sync-alt"></i> Refresh Data
+      </button>
+    </header>
+
+    <div id="monitoring-content">
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Memuat data monitoring...</p>
+      </div>
+    </div>
+
+    <div class="footer-watermark">
+      <div class="watermark-content">
+        <span class="copyright">© 2025 All Rights Reserved</span>
+        <span class="separator">|</span>
+        <span class="author">By: Teguh Sulistyawan</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = 'AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
+    const SPREADSHEET_ID = '1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
+    const RANGE = 'Monitoring';
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+    async function loadData() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const rows = data.values;
+        if (!rows || rows.length < 2) {
+          document.getElementById('monitoring-content').innerHTML = `
+            <div class="loading">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>Tidak ada data monitoring yang ditemukan</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Ambil data terbaru (baris terakhir)
+        const latestRow = rows[rows.length - 1];
+        const time = latestRow[0];
+        const status = latestRow[1];
+        const details = latestRow[2] || '';
+        
+        // Parse ping details untuk mendapatkan statistik
+        const pingStats = parsePingDetails(details);
+        const quality = assessNetworkQuality(pingStats);
+        
+        // Format status dengan kapitalisasi yang benar
+        const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+
+        // Buat konten monitoring
+        let contentHTML = `
+          <div class="server-status">
+            <div class="status-card ${status.toLowerCase()}">
+              <h2><i class="fas fa-server"></i> Status Server</h2>
+              <div class="status-indicator">
+                <div class="status-badge ${status.toLowerCase() === 'online' ? 'status-online' : 'status-offline'}">
+                  <i class="fas ${status.toLowerCase() === 'online' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                  ${formattedStatus}
+                </div>
+                <div class="status-time">
+                  <i class="far fa-clock"></i> ${time}
+                </div>
+              </div>
+              <div class="quality-indicator">
+                <p>Kualitas Jaringan:</p>
+                <div class="quality-badge ${quality.class}">
+                  <i class="fas ${quality.icon}"></i>
+                  ${quality.text}
+                </div>
+                ${quality.description ? `<p style="margin-top: 10px; font-size: 0.9rem;">${quality.description}</p>` : ''}
+              </div>
+            </div>
+            
+            <div class="status-card">
+              <h2><i class="fas fa-chart-line"></i> Statistik Ping</h2>
+              ${pingStats ? `
+              <div class="ping-stats">
+                <div class="stat-item">
+                  <div class="stat-value">${pingStats.packetsSent}</div>
+                  <div class="stat-label">Packets Sent</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${pingStats.packetsReceived}</div>
+                  <div class="stat-label">Packets Received</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${pingStats.packetLoss}</div>
+                  <div class="stat-label">Packet Loss</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${pingStats.avgTime}</div>
+                  <div class="stat-label">Avg Time</div>
+                </div>
+              </div>
+              ` : '<p>Tidak ada data statistik ping</p>'}
+            </div>
+          </div>
+          
+          <div class="ping-details-card">
+            <h2><i class="fas fa-info-circle"></i> Detail Ping</h2>
+            <div class="ping-details">${formatPingDetails(details)}</div>
+          </div>
+        `;
+
+        document.getElementById('monitoring-content').innerHTML = contentHTML;
+
+      } catch (err) {
+        console.error("Gagal mengambil data", err);
+        document.getElementById('monitoring-content').innerHTML = `
+          <div class="loading">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Gagal memuat data monitoring. Silakan coba lagi.</p>
+          </div>
+        `;
+      }
+    }
+
+    function parsePingDetails(details) {
+      if (!details) return null;
+      
+      const packetsSentMatch = details.match(/Packets:\s+Sent\s*=\s*(\d+)/);
+      const packetsReceivedMatch = details.match(/Received\s*=\s*(\d+)/);
+      const packetLossMatch = details.match(/Lost\s*=\s*(\d+)\s*\((\d+)%/);
+      const avgTimeMatch = details.match(/Average\s*=\s*(\d+)ms/);
+      const minTimeMatch = details.match(/Minimum\s*=\s*(\d+)ms/);
+      const maxTimeMatch = details.match(/Maximum\s*=\s*(\d+)ms/);
+      
+      if (packetsSentMatch && packetsReceivedMatch && packetLossMatch && avgTimeMatch) {
+        return {
+          packetsSent: packetsSentMatch[1],
+          packetsReceived: packetsReceivedMatch[1],
+          packetLoss: packetLossMatch[2] + '%',
+          avgTime: avgTimeMatch[1] + 'ms',
+          minTime: minTimeMatch ? minTimeMatch[1] + 'ms' : 'N/A',
+          maxTime: maxTimeMatch ? maxTimeMatch[1] + 'ms' : 'N/A'
+        };
+      }
+      
+      return null;
+    }
+
+    function assessNetworkQuality(pingStats) {
+      if (!pingStats) {
+        return {
+          class: 'quality-poor',
+          icon: 'fa-exclamation-triangle',
+          text: 'Tidak Diketahui',
+          description: 'Tidak ada data ping yang valid'
+        };
+      }
+      
+      const packetLoss = parseInt(pingStats.packetLoss);
+      const avgTime = parseInt(pingStats.avgTime);
+      
+      if (packetLoss === 0 && avgTime < 50) {
+        return {
+          class: 'quality-excellent',
+          icon: 'fa-star',
+          text: 'Sangat Baik',
+          description: 'Koneksi sangat stabil dengan latency rendah'
+        };
+      } else if (packetLoss <= 5 && avgTime < 100) {
+        return {
+          class: 'quality-good',
+          icon: 'fa-thumbs-up',
+          text: 'Baik',
+          description: 'Koneksi stabil dengan performa baik'
+        };
+      } else if (packetLoss <= 15 && avgTime < 200) {
+        return {
+          class: 'quality-fair',
+          icon: 'fa-info-circle',
+          text: 'Cukup',
+          description: 'Koneksi cukup stabil, ada sedikit packet loss'
+        };
+      } else {
+        return {
+          class: 'quality-poor',
+          icon: 'fa-exclamation-triangle',
+          text: 'Buruk',
+          description: 'Koneksi tidak stabil dengan packet loss tinggi'
+        };
+      }
+    }
+
+    function formatPingDetails(details) {
+      if (!details) return 'Tidak ada data ping';
+      return details;
+    }
+
+    // Refresh button functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const refreshButton = document.getElementById('refresh-btn');
+      
+      // Refresh button functionality
+      refreshButton.addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+        loadData().then(() => {
+          this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+        });
+      });
+      
+      // Auto refresh setiap 30 detik
+      setInterval(loadData, 30000);
+      
+      // Initial load
+      loadData();
+    });
+  </script>
+</body>
+</html>
