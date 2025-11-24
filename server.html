@@ -576,7 +576,7 @@
                   <div class="stat-label">Avg Time</div>
                 </div>
               </div>
-              ` : '<p>Tidak ada data statistik ping</p>'}
+              ` : '<p>Tidak ada data statistik ping yang dapat diparsing</p>'}
             </div>
           </div>
           
@@ -602,24 +602,63 @@
     function parsePingDetails(details) {
       if (!details) return null;
       
-      const packetsSentMatch = details.match(/Packets:\s+Sent\s*=\s*(\d+)/);
-      const packetsReceivedMatch = details.match(/Received\s*=\s*(\d+)/);
-      const packetLossMatch = details.match(/Lost\s*=\s*(\d+)\s*\((\d+)%/);
-      const avgTimeMatch = details.match(/Average\s*=\s*(\d+)ms/);
-      const minTimeMatch = details.match(/Minimum\s*=\s*(\d+)ms/);
-      const maxTimeMatch = details.match(/Maximum\s*=\s*(\d+)ms/);
+      console.log("Parsing ping details:", details);
+      
+      // Coba format Windows/Linux standar
+      let packetsSentMatch, packetsReceivedMatch, packetLossMatch, avgTimeMatch;
+      
+      // Format 1: Format Windows (dengan "Packets: Sent = ...")
+      packetsSentMatch = details.match(/Packets:\s+Sent\s*=\s*(\d+)/);
+      packetsReceivedMatch = details.match(/Received\s*=\s*(\d+)/);
+      packetLossMatch = details.match(/Lost\s*=\s*(\d+)\s*\((\d+)%/);
+      avgTimeMatch = details.match(/Average\s*=\s*(\d+)ms/);
       
       if (packetsSentMatch && packetsReceivedMatch && packetLossMatch && avgTimeMatch) {
         return {
           packetsSent: packetsSentMatch[1],
           packetsReceived: packetsReceivedMatch[1],
           packetLoss: packetLossMatch[2] + '%',
-          avgTime: avgTimeMatch[1] + 'ms',
-          minTime: minTimeMatch ? minTimeMatch[1] + 'ms' : 'N/A',
-          maxTime: maxTimeMatch ? maxTimeMatch[1] + 'ms' : 'N/A'
+          avgTime: avgTimeMatch[1] + 'ms'
         };
       }
       
+      // Format 2: Format Linux (dengan "packets transmitted")
+      packetsSentMatch = details.match(/(\d+)\s*packets\s*transmitted/);
+      packetsReceivedMatch = details.match(/(\d+)\s*received/);
+      packetLossMatch = details.match(/(\d+)%\s*packet\s*loss/);
+      
+      // Cari waktu rata-rata dalam format rtt
+      const rttMatch = details.match(/rtt.*?=\s*[\d.]+\/([\d.]+)\/[\d.]+\/[\d.]+/);
+      if (rttMatch) {
+        avgTimeMatch = [null, rttMatch[1]];
+      } else {
+        // Coba format waktu lainnya
+        avgTimeMatch = details.match(/time\s*([\d.]+)\s*ms/) || 
+                      details.match(/([\d.]+)\s*ms\s*time/) ||
+                      details.match(/time=([\d.]+)\s*ms/);
+      }
+      
+      if (packetsSentMatch && packetsReceivedMatch && packetLossMatch) {
+        return {
+          packetsSent: packetsSentMatch[1],
+          packetsReceived: packetsReceivedMatch[1],
+          packetLoss: packetLossMatch[1] + '%',
+          avgTime: avgTimeMatch ? (parseFloat(avgTimeMatch[1]).toFixed(2) + 'ms') : 'N/A'
+        };
+      }
+      
+      // Format 3: Format sederhana dengan hanya time
+      const simpleTimeMatch = details.match(/time[=<]\s*([\d.]+)\s*ms/);
+      if (simpleTimeMatch) {
+        return {
+          packetsSent: '1',
+          packetsReceived: '1',
+          packetLoss: '0%',
+          avgTime: parseFloat(simpleTimeMatch[1]).toFixed(2) + 'ms'
+        };
+      }
+      
+      console.log("Tidak dapat memparse format ping");
       return null;
     }
 
@@ -633,8 +672,18 @@
         };
       }
       
+      // Ekstrak nilai numerik dari string
       const packetLoss = parseInt(pingStats.packetLoss);
-      const avgTime = parseInt(pingStats.avgTime);
+      const avgTime = parseFloat(pingStats.avgTime);
+      
+      if (isNaN(packetLoss) || isNaN(avgTime)) {
+        return {
+          class: 'quality-poor',
+          icon: 'fa-exclamation-triangle',
+          text: 'Data Tidak Valid',
+          description: 'Data ping tidak dapat diproses'
+        };
+      }
       
       if (packetLoss === 0 && avgTime < 50) {
         return {
@@ -692,5 +741,4 @@
     });
   </script>
 </body>
-
 </html>
