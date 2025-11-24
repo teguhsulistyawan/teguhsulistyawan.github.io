@@ -103,28 +103,64 @@ body {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.status-indicator {
+/* Status Server Button */
+.server-status-button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 15px;
-  padding: 8px 16px;
+  padding: 12px 24px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   backdrop-filter: blur(5px);
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-.status-indicator .pulse {
+.server-status-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.server-status-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.server-status-button:hover::before {
+  opacity: 1;
+}
+
+.server-status-button .pulse {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--success);
   position: relative;
 }
 
-.status-indicator .pulse::after {
+.server-status-button.online .pulse {
+  background: var(--success);
+}
+
+.server-status-button.offline .pulse {
+  background: var(--danger);
+}
+
+.server-status-button.online .pulse::after {
   content: '';
   position: absolute;
   top: -3px;
@@ -134,6 +170,19 @@ body {
   border-radius: 50%;
   background: var(--success);
   animation: pulse 2s infinite;
+  opacity: 0.6;
+}
+
+.server-status-button.offline .pulse::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: var(--danger);
+  animation: blink 1.5s infinite;
   opacity: 0.6;
 }
 
@@ -149,6 +198,18 @@ body {
   100% {
     transform: scale(1);
     opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.6;
   }
 }
 
@@ -612,6 +673,62 @@ body {
   opacity: 0.5;
 }
 
+/* FOOTER WATERMARK */
+.footer-watermark {
+  position: relative;
+  width: 100%;
+  background: rgba(248, 250, 252, 0.95);
+  color: #64748b;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  margin-top: 50px;
+  border-top: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.footer-watermark:hover {
+  background: rgba(248, 250, 252, 0.98);
+  color: #475569;
+}
+
+.watermark-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.copyright {
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  color: #64748b;
+}
+
+.author {
+  font-weight: 500;
+  color: #475569;
+}
+
+.separator {
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+/* Efek halus pada hover */
+.footer-watermark:hover .copyright {
+  color: #475569;
+}
+
+.footer-watermark:hover .author {
+  color: #334155;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .container {
@@ -650,6 +767,15 @@ body {
   .header-subtitle::after {
     width: 20px;
   }
+  
+  .watermark-content {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .separator {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -678,6 +804,16 @@ body {
   .payment-table td {
     padding: 10px 12px;
   }
+  
+  .footer-watermark {
+    font-size: 11px;
+    padding: 16px 0;
+    margin-top: 30px;
+  }
+  
+  .copyright, .author {
+    font-size: 10.5px;
+  }
 }
 </style>
 </head>
@@ -691,10 +827,11 @@ body {
       <div class="header-subtitle">
         Dashboard Monitoring Jaringan & Pembayaran Terintegrasi
       </div>
-      <div class="status-indicator">
+      <a href="server.html" class="server-status-button" id="server-status-button">
         <div class="pulse"></div>
-        Sistem Aktif - Data Real-time
-      </div>
+        <span id="server-status-text">Memuat Status Server...</span>
+        <i class="fas fa-external-link-alt"></i>
+      </a>
     </div>
   </div>
 
@@ -789,12 +926,27 @@ body {
       </table>
     </div>
   </div>
+  
+  <!-- FOOTER -->
+  <div class="footer-watermark">
+    <div class="watermark-content">
+      <span class="copyright">© 2025 All Rights Reserved</span>
+      <span class="separator">|</span>
+      <span class="author">By: Teguh Sulistyawan</span>
+    </div>
+  </div>
 </div>
 
 <script>
 // API URLs
 const NETWORK_API_URL = "https://script.google.com/macros/s/AKfycbw7WUK1zmoqfxaVuvIGlmG4w0_NP87jrQrhNoY-cFvdlXpsJXFF-DFucCMH7kg7N7Gh9Q/exec";
 const PAYMENT_API_URL = "https://script.google.com/macros/s/AKfycbyqAiVx-IY8IdHSDuBWmBqhAYbwTWhXyBrghze2ABAjlWQhG1sKogT66z1DCj8Yo7xhGg/exec";
+
+// Server Monitoring API
+const SERVER_API_KEY = 'AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
+const SERVER_SPREADSHEET_ID = '1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
+const SERVER_RANGE = 'Monitoring';
+const SERVER_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SERVER_SPREADSHEET_ID}/values/${SERVER_RANGE}?key=${SERVER_API_KEY}`;
 
 // Tab Navigation
 const tabButtons = document.querySelectorAll('.tab-button');
@@ -813,6 +965,46 @@ tabButtons.forEach(button => {
     document.getElementById(`${tabId}-content`).classList.add('active');
   });
 });
+
+// SERVER STATUS FUNCTION
+async function fetchServerStatus() {
+  try {
+    const res = await fetch(SERVER_URL);
+    const data = await res.json();
+    const rows = data.values;
+    
+    if (!rows || rows.length < 2) {
+      updateServerStatus('offline', 'Server Offline');
+      return;
+    }
+    
+    // Ambil baris terakhir
+    const latestRow = rows[rows.length - 1];
+    const status = latestRow[1]; // Kolom ke-2 adalah status
+    
+    if (status && status.toLowerCase() === 'online') {
+      updateServerStatus('online', 'Server Online');
+    } else {
+      updateServerStatus('offline', 'Server Offline');
+    }
+    
+  } catch (err) {
+    console.error('Gagal mengambil status server:', err);
+    updateServerStatus('offline', 'Server Offline');
+  }
+}
+
+function updateServerStatus(status, text) {
+  const serverButton = document.getElementById('server-status-button');
+  const serverText = document.getElementById('server-status-text');
+  
+  // Update teks
+  serverText.textContent = text;
+  
+  // Update kelas untuk styling
+  serverButton.classList.remove('online', 'offline');
+  serverButton.classList.add(status);
+}
 
 // NETWORK MONITORING FUNCTIONS
 async function fetchNetworkData() {
@@ -1085,107 +1277,14 @@ async function bayar(name, btn){
   }
 }
 
-// Initialize both data sources
+// Initialize all data sources
+fetchServerStatus();
 fetchNetworkData();
 loadPaymentData();
 
-// Refresh network data every 10 seconds
-setInterval(fetchNetworkData, 10000);
+// Refresh data periodically
+setInterval(fetchServerStatus, 30000); // Server status every 30 seconds
+setInterval(fetchNetworkData, 10000);  // Network data every 10 seconds
 </script>
-<!-- TEMPATKAN KODE INI DI DALAM TAG <body> PROGRAM ANDA, DI BAWAH SEMUA KONTEN -->
-    <div class="footer-watermark">
-        <div class="watermark-content">
-            <span class="copyright">© 2025 All Rights Reserved</span>
-            <span class="separator">|</span>
-            <span class="author">By: Teguh Sulistyawan</span>
-        </div>
-    </div>
-    
-    <!-- TEMPATKAN CSS INI DI DALAM TAG <style> PROGRAM ANDA -->
-    <style>
-    .footer-watermark {
-        position: relative;
-        width: 100%;
-        background: rgba(248, 250, 252, 0.95);
-        color: #64748b;
-        padding: 20px 0;
-        text-align: center;
-        font-size: 13px;
-        font-family: 'Inter', sans-serif;
-        margin-top: 50px;
-        border-top: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-    
-    .footer-watermark:hover {
-        background: rgba(248, 250, 252, 0.98);
-        color: #475569;
-    }
-    
-    .watermark-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .copyright {
-        font-weight: 400;
-        letter-spacing: 0.3px;
-        color: #64748b;
-    }
-    
-    .author {
-        font-weight: 500;
-        color: #475569;
-    }
-    
-    .separator {
-        color: #cbd5e1;
-        font-weight: 300;
-    }
-    
-    /* Efek halus pada hover */
-    .footer-watermark:hover .copyright {
-        color: #475569;
-    }
-    
-    .footer-watermark:hover .author {
-        color: #334155;
-    }
-    
-    /* Responsif */
-    @media (max-width: 768px) {
-        .footer-watermark {
-            font-size: 12px;
-            padding: 18px 0;
-            margin-top: 40px;
-        }
-        
-        .watermark-content {
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .separator {
-            display: none;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .footer-watermark {
-            font-size: 11px;
-            padding: 16px 0;
-            margin-top: 0px;
-        }
-        
-        .copyright, .author {
-            font-size: 10.5px;
-        }
-    }
-    </style>
 </body>
 </html>
