@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* VARIABEL CSS UNTUK KONSISTENSI DESAIN */
 :root {
   --primary: #2563eb;
   --primary-light: #3b82f6;
@@ -24,6 +25,7 @@
   --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* RESET DAN STYLE DASAR */
 * { 
   box-sizing: border-box; 
   margin: 0; 
@@ -43,7 +45,7 @@ body {
   padding: 10px;
 }
 
-/* HEADER */
+/* HEADER STYLE */
 .header {
   text-align: center;
   margin-bottom: 30px;
@@ -103,7 +105,7 @@ body {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Status Server Button */
+/* STATUS SERVER BUTTON */
 .server-status-button {
   display: inline-flex;
   align-items: center;
@@ -479,6 +481,29 @@ body {
   font-weight: 600;
   color: var(--text);
   font-size: 0.95rem;
+}
+
+/* TOMBOL LOKASI */
+.location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--info);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.location-btn:hover {
+  background: #0891b2;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
 }
 
 .metrics {
@@ -938,50 +963,69 @@ body {
 </div>
 
 <script>
-// API URLs
+// ============================================
+// KONFIGURASI API DAN URL
+// ============================================
+
+// URL API untuk data jaringan pelanggan
 const NETWORK_API_URL = "https://script.google.com/macros/s/AKfycbw7WUK1zmoqfxaVuvIGlmG4w0_NP87jrQrhNoY-cFvdlXpsJXFF-DFucCMH7kg7N7Gh9Q/exec";
+
+// URL API untuk data pembayaran
 const PAYMENT_API_URL = "https://script.google.com/macros/s/AKfycbyqAiVx-IY8IdHSDuBWmBqhAYbwTWhXyBrghze2ABAjlWQhG1sKogT66z1DCj8Yo7xhGg/exec";
 
-// Server Monitoring API
+// Konfigurasi API untuk monitoring server
 const SERVER_API_KEY = 'AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
 const SERVER_SPREADSHEET_ID = '1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
 const SERVER_RANGE = 'Monitoring';
 const SERVER_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SERVER_SPREADSHEET_ID}/values/${SERVER_RANGE}?key=${SERVER_API_KEY}`;
 
-// Tab Navigation
+// ============================================
+// FUNGSI NAVIGASI TAB
+// ============================================
+
+// Mendapatkan semua elemen tab button dan content area
 const tabButtons = document.querySelectorAll('.tab-button');
 const contentAreas = document.querySelectorAll('.content-area');
 
+// Menambahkan event listener untuk setiap tab button
 tabButtons.forEach(button => {
   button.addEventListener('click', () => {
     const tabId = button.getAttribute('data-tab');
     
-    // Update active tab
+    // Mengupdate tab aktif
     tabButtons.forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
     
-    // Show corresponding content
+    // Menampilkan konten yang sesuai
     contentAreas.forEach(area => area.classList.remove('active'));
     document.getElementById(`${tabId}-content`).classList.add('active');
   });
 });
 
-// SERVER STATUS FUNCTION
+// ============================================
+// FUNGSI STATUS SERVER
+// ============================================
+
+/**
+ * Fungsi untuk mengambil status server dari Google Sheets
+ */
 async function fetchServerStatus() {
   try {
     const res = await fetch(SERVER_URL);
     const data = await res.json();
     const rows = data.values;
     
+    // Jika tidak ada data atau data kurang dari 2 baris (header + data)
     if (!rows || rows.length < 2) {
       updateServerStatus('offline', 'Server Offline');
       return;
     }
     
-    // Ambil baris terakhir
+    // Mengambil baris terakhir (data terbaru)
     const latestRow = rows[rows.length - 1];
     const status = latestRow[1]; // Kolom ke-2 adalah status
     
+    // Memperbarui status berdasarkan nilai di Google Sheets
     if (status && status.toLowerCase() === 'online') {
       updateServerStatus('online', 'Server Online');
     } else {
@@ -994,29 +1038,40 @@ async function fetchServerStatus() {
   }
 }
 
+/**
+ * Fungsi untuk memperbarui tampilan status server
+ * @param {string} status - Status server ('online' atau 'offline')
+ * @param {string} text - Teks yang akan ditampilkan
+ */
 function updateServerStatus(status, text) {
   const serverButton = document.getElementById('server-status-button');
   const serverText = document.getElementById('server-status-text');
   
-  // Update teks
+  // Memperbarui teks status
   serverText.textContent = text;
   
-  // Update kelas untuk styling
+  // Memperbarui kelas untuk styling
   serverButton.classList.remove('online', 'offline');
   serverButton.classList.add(status);
 }
 
-// NETWORK MONITORING FUNCTIONS
+// ============================================
+// FUNGSI MONITORING JARINGAN
+// ============================================
+
+/**
+ * Fungsi untuk mengambil data jaringan dari API
+ */
 async function fetchNetworkData() {
   try {
     const res = await fetch(NETWORK_API_URL);
     const data = await res.json();
     const container = document.getElementById('networkCards');
     
-    // Reset container
+    // Mengosongkan container sebelum menambahkan data baru
     container.innerHTML = '';
     
-    // Hitung statistik
+    // Menghitung statistik (online dan offline)
     let onlineCount = 0;
     let offlineCount = 0;
     
@@ -1025,15 +1080,16 @@ async function fetchNetworkData() {
       else offlineCount++;
     });
     
-    // Update statistik
+    // Memperbarui statistik di stats bar
     document.getElementById('onlineCount').textContent = onlineCount;
     document.getElementById('offlineCount').textContent = offlineCount;
     
-    // Render cards
+    // Merender kartu untuk setiap pelanggan
     data.forEach(item => {
       let statusClass = 'OFFLINE';
       let statusIcon = 'fas fa-times-circle';
       
+      // Menentukan kelas dan ikon berdasarkan status
       if(item.status === 'ONLINE') {
         statusClass = 'ONLINE';
         statusIcon = 'fas fa-check-circle';
@@ -1042,14 +1098,19 @@ async function fetchNetworkData() {
         statusIcon = 'fas fa-exclamation-triangle';
       }
 
+      // Membuat elemen kartu
       const card = document.createElement('div');
       card.className = 'card';
       
-      // Tambahkan class 'online' untuk kartu dengan status online
+      // Menambahkan class 'online' untuk kartu dengan status online
       if(item.status === 'ONLINE') {
         card.classList.add('online');
       }
 
+      // Memeriksa apakah ada data lokasi dengan format yang valid
+      const hasLocation = item.location && item.location.includes(',');
+      
+      // Mengisi konten kartu
       card.innerHTML = `
         <div class="card-header">
           <div class="card-title">
@@ -1071,7 +1132,13 @@ async function fetchNetworkData() {
           </div>
           <div class="info-row">
             <span class="info-label">Lokasi:</span>
-            <span class="info-value">${item.location || 'Tidak diketahui'}</span>
+            ${
+              hasLocation 
+                ? `<button class="location-btn" onclick="openLocationInMaps('${item.location}')">
+                     <i class="fas fa-map-marker-alt"></i> Lihat di Maps
+                   </button>` 
+                : '<span class="info-value">Tidak diketahui</span>'
+            }
           </div>
         </div>
         
@@ -1099,6 +1166,7 @@ async function fetchNetworkData() {
         </div>
       `;
 
+      // Menambahkan kartu ke container
       container.appendChild(card);
     });
 
@@ -1114,7 +1182,38 @@ async function fetchNetworkData() {
   }
 }
 
-// Network search functionality
+/**
+ * Fungsi untuk membuka Google Maps dengan marker merah di lokasi tertentu
+ * @param {string} location - Koordinat lokasi dalam format "lat, lng"
+ */
+function openLocationInMaps(location) {
+  // Membersihkan koordinat dari spasi berlebih
+  const cleanCoords = location.replace(/\s+/g, '');
+  
+  // Memisahkan latitude dan longitude
+  const [lat, lng] = cleanCoords.split(',');
+  
+  // Validasi koordinat
+  if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+    alert('Koordinat tidak valid: ' + location);
+    return;
+  }
+  
+  // Membuat URL Google Maps dengan marker merah dan tampilan satelit
+  // Parameter:
+  // - q: query/lokasi (dalam format latitude,longitude)
+  // - z: zoom level (19 untuk tampilan yang cukup dekat)
+  // - t: tipe peta (k untuk satelit)
+  // - hl: bahasa (id untuk Indonesia)
+  const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}&z=19&t=k&hl=id`;
+  
+  // Membuka tab baru dengan Google Maps
+  window.open(mapsUrl, '_blank');
+}
+
+/**
+ * Fungsi untuk pencarian pada tab jaringan
+ */
 document.getElementById('networkSearch').addEventListener('input', function() {
   const filter = this.value.toLowerCase();
   const cards = document.querySelectorAll('#networkCards .card');
@@ -1131,13 +1230,25 @@ document.getElementById('networkSearch').addEventListener('input', function() {
   });
 });
 
-// PAYMENT MONITORING FUNCTIONS
+// ============================================
+// FUNGSI MONITORING PEMBAYARAN
+// ============================================
+
+/**
+ * Fungsi untuk menambahkan bulan ke tanggal
+ * @param {Date} date - Tanggal awal
+ * @param {number} months - Jumlah bulan yang akan ditambahkan
+ * @returns {Date} Tanggal setelah ditambahkan bulan
+ */
 function addMonths(date, months){
   const d = new Date(date);
   d.setMonth(d.getMonth() + months);
   return d;
 }
 
+/**
+ * Fungsi untuk memuat data pembayaran dari API
+ */
 async function loadPaymentData(){
   try {
     const res = await fetch(PAYMENT_API_URL);
@@ -1157,10 +1268,15 @@ async function loadPaymentData(){
   }
 }
 
+/**
+ * Fungsi untuk merender tabel pembayaran
+ * @param {Array} data - Data pembayaran dari API
+ */
 function renderPaymentTable(data){
   const tbody = document.getElementById("paymentTableBody");
   const today = new Date();
 
+  // Jika tidak ada data, tampilkan pesan
   if (!data || data.length === 0) {
     tbody.innerHTML = `
       <tr>
@@ -1180,14 +1296,15 @@ function renderPaymentTable(data){
     const totalPaid = Number(r.TotalPaid) || 0;
     const tglPemasangan = new Date(r['Tanggal Pemasangan']);
 
-    // Jatuh tempo berikutnya = tanggal pemasangan + TotalPaid bulan
+    // Menghitung jatuh tempo berikutnya = tanggal pemasangan + TotalPaid bulan
     const jatuhTempo = addMonths(tglPemasangan, totalPaid + 1);
 
-    // Status
+    // Menentukan status pembayaran
     const status = today >= jatuhTempo ? 'Nunggak' :
                    totalPaid > 0 ? 'Lunas' : 'Belum Jatuh Tempo';
     const statusClass = status.toLowerCase().replace(/\s/g, '');
 
+    // Membuat baris tabel
     html += `
       <tr>
         <td>${name}</td>
@@ -1210,6 +1327,10 @@ function renderPaymentTable(data){
   tbody.innerHTML = html;
 }
 
+/**
+ * Fungsi untuk memperbarui statistik pembayaran
+ * @param {Array} data - Data pembayaran dari API
+ */
 function updatePaymentStats(data) {
   if (!data) return;
   
@@ -1221,6 +1342,7 @@ function updatePaymentStats(data) {
     const tglPemasangan = new Date(r['Tanggal Pemasangan']);
     const jatuhTempo = addMonths(tglPemasangan, totalPaid + 1);
     
+    // Menghitung jumlah yang lunas dan nunggak
     if (today >= jatuhTempo) {
       nunggak++;
     } else if (totalPaid > 0) {
@@ -1228,11 +1350,14 @@ function updatePaymentStats(data) {
     }
   });
   
+  // Memperbarui tampilan statistik
   document.getElementById('lunasCount').textContent = lunas;
   document.getElementById('nunggakCount').textContent = nunggak;
 }
 
-// Payment search functionality
+/**
+ * Fungsi untuk pencarian pada tab pembayaran
+ */
 document.getElementById('paymentSearch').addEventListener('input', function() {
   const filter = this.value.toLowerCase();
   const rows = document.querySelectorAll('#paymentTableBody tr');
@@ -1250,17 +1375,25 @@ document.getElementById('paymentSearch').addEventListener('input', function() {
   });
 });
 
+/**
+ * Fungsi untuk memproses pembayaran
+ * @param {string} name - Nama pelanggan yang akan membayar
+ * @param {HTMLElement} btn - Tombol yang ditekan
+ */
 async function bayar(name, btn){
+  // Menonaktifkan tombol sementara
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
   
   try {
+    // Mengirim permintaan pembayaran ke API
     const res = await fetch(PAYMENT_API_URL, {
       method: 'POST',
       body: new URLSearchParams({name})
     });
     const json = await res.json();
     
+    // Jika berhasil, tampilkan pesan dan muat ulang data
     if(json.success){
       alert(`${name} berhasil membayar. TotalPaid sekarang: ${json.totalPaid}`);
       loadPaymentData();
@@ -1277,15 +1410,18 @@ async function bayar(name, btn){
   }
 }
 
-// Initialize all data sources
+// ============================================
+// INISIALISASI DAN PEMANGGILAN FUNGSI
+// ============================================
+
+// Memuat data saat halaman pertama kali dibuka
 fetchServerStatus();
 fetchNetworkData();
 loadPaymentData();
 
-// Refresh data periodically
-setInterval(fetchServerStatus, 30000); // Server status every 30 seconds
-setInterval(fetchNetworkData, 10000);  // Network data every 10 seconds
+// Refresh data secara berkala
+setInterval(fetchServerStatus, 30000); // Server status setiap 30 detik
+setInterval(fetchNetworkData, 10000);  // Data jaringan setiap 10 detik
 </script>
 </body>
 </html>
-
