@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WIFI TEGUHAN - Network Monitoring Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<style>
+/* VARIABEL CSS UNTUK KONSISTENSI DESAIN */
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #06b6d4;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* RESET DAN STYLE DASAR */
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  font-family: 'Inter', sans-serif; 
+}
+
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* HEADER STYLE */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 25px 20px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+  box-shadow: var(--shadow);
+  color: white;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to right, #ffffff, #e0f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.header-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  margin: 0 auto 15px;
+  font-weight: 500;
+}
+
+/* STATUS SERVER BUTTON */
+.server-status-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.server-status-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.server-status-button .pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.server-status-button.online .pulse {
+  background: var(--success);
+}
+
+.server-status-button.offline .pulse {
+  background: var(--danger);
+}
+
+.server-status-button.online .pulse::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse 2s infinite;
+  opacity: 0.6;
+}
+
+/* TAB NAVIGATION */
+.tab-navigation {
+  display: flex;
+  margin-bottom: 20px;
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: var(--shadow);
+  gap: 8px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tab-button.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+/* DASHBOARD LAYOUT */
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  height: calc(100vh - 200px);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+/* SIDEBAR PANEL */
+.sidebar-panel {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  max-height: 600px;
+}
+
+.sidebar-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header h2 {
+  font-size: 1.3rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* FILTERS */
+.filters {
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.filter-group h3 {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.filter-btn i {
+  margin-right: 5px;
+}
+
+/* STATS SUMMARY */
+.stats-summary {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.stat-online .stat-value { color: var(--success); }
+.stat-offline .stat-value { color: var(--danger); }
+.stat-pending .stat-value { color: var(--warning); }
+
+/* CUSTOMERS LIST */
+.customers-list {
+  margin-top: 20px;
+}
+
+.customer-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid var(--primary);
+}
+
+.customer-item:hover {
+  background: #eef2ff;
+  transform: translateX(5px);
+}
+
+.customer-item.online { border-left-color: var(--success); }
+.customer-item.offline { border-left-color: var(--danger); }
+.customer-item.pending { border-left-color: var(--warning); }
+
+.customer-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.customer-info {
+  flex: 1;
+}
+
+.customer-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+
+.customer-ip {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* MAP CONTAINER */
+.map-container {
+  background: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+#networkMap {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border-radius: 10px;
+}
+
+.map-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map-btn {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.2s;
+}
+
+.map-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* LEGEND */
+.map-legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  max-width: 200px;
+}
+
+.legend-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.legend-online { background: var(--success); }
+.legend-offline { background: var(--danger); }
+.legend-pending { background: var(--warning); }
+
+/* PAYMENT CONTENT */
+#payment-content {
+  display: none;
+}
+
+.payment-container {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* FOOTER */
+.footer-watermark {
+  position: relative;
+  width: 100%;
+  background: rgba(248, 250, 252, 0.95);
+  color: #64748b;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 13px;
+  margin-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 5px;
+}
+
+.watermark-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+/* CUSTOM LEAFLET STYLES */
+.leaflet-popup-content {
+  min-width: 250px;
+}
+
+.customer-popup {
+  padding: 10px;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.popup-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.popup-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.popup-info {
+  margin-bottom: 15px;
+}
+
+.popup-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.popup-label {
+  color: var(--text-light);
+}
+
+.popup-value {
+  font-weight: 500;
+}
+
+.popup-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.popup-metric {
+  text-align: center;
+}
+
+.popup-metric .value {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.popup-metric .label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.popup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.popup-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.popup-btn.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.popup-btn.secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.popup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* LOADING */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-light);
+}
+
+.loading i {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  color: var(--primary);
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  70% { transform: scale(2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .header-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-panel {
+    max-height: 300px;
+  }
+  
+  .map-controls {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .map-legend {
+    bottom: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+  
+  .watermark-content {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <h1>WIFI TEGUHAN</h1>
+      <div class="header-subtitle">
+        Network Monitoring Dashboard - Visualisasi Berbasis Peta
+      </div>
+      <a href="server.html" class="server-status-button online" id="server-status-button">
+        <div class="pulse"></div>
+        <span id="server-status-text">Server Online</span>
+        <i class="fas fa-external-link-alt"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAB NAVIGATION -->
+  <div class="tab-navigation">
+    <button class="tab-button active" data-tab="network">
+      <i class="fas fa-map-marked-alt"></i>
+      Peta Jaringan
+    </button>
+    <button class="tab-button" data-tab="payment">
+      <i class="fas fa-credit-card"></i>
+      Kelola Pembayaran
+    </button>
+    <button class="tab-button" data-tab="analytics">
+      <i class="fas fa-chart-bar"></i>
+      Analitik
+    </button>
+  </div>
+
+  <!-- MAIN DASHBOARD -->
+  <div id="network-content" class="dashboard-layout">
+    <!-- SIDEBAR PANEL -->
+    <div class="sidebar-panel">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-filter"></i> Filter & Kontrol</h2>
+      </div>
+      
+      <!-- FILTERS -->
+      <div class="filters">
+        <div class="filter-group">
+          <h3>Status Jaringan</h3>
+          <div class="filter-options">
+            <button class="filter-btn active" data-filter="all">
+              <i class="fas fa-globe"></i> Semua
+            </button>
+            <button class="filter-btn" data-filter="online">
+              <i class="fas fa-wifi"></i> Online
+            </button>
+            <button class="filter-btn" data-filter="offline">
+              <i class="fas fa-plug"></i> Offline
+            </button>
+            <button class="filter-btn" data-filter="pending">
+              <i class="fas fa-exclamation-triangle"></i> Bermasalah
+            </button>
+          </div>
+        </div>
+        
+        <div class="filter-group">
+          <h3>Paket Layanan</h3>
+          <div class="filter-options">
+            <button class="filter-btn active" data-package="all">Semua</button>
+            <button class="filter-btn" data-package="basic">Basic</button>
+            <button class="filter-btn" data-package="premium">Premium</button>
+            <button class="filter-btn" data-package="business">Business</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- STATS SUMMARY -->
+      <div class="stats-summary">
+        <h3 style="margin-bottom: 15px;">Ringkasan Status</h3>
+        <div class="stat-item stat-online">
+          <div class="stat-label">
+            <i class="fas fa-check-circle"></i>
+            <span>Online</span>
+          </div>
+          <div class="stat-value" id="onlineCount">0</div>
+        </div>
+        <div class="stat-item stat-offline">
+          <div class="stat-label">
+            <i class="fas fa-times-circle"></i>
+            <span>Offline</span>
+          </div>
+          <div class="stat-value" id="offlineCount">0</div>
+        </div>
+        <div class="stat-item stat-pending">
+          <div class="stat-label">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Bermasalah</span>
+          </div>
+          <div class="stat-value" id="warningCount">0</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">
+            <i class="fas fa-users"></i>
+            <span>Total Pelanggan</span>
+          </div>
+          <div class="stat-value" id="totalCount">0</div>
+        </div>
+      </div>
+      
+      <!-- CUSTOMERS LIST -->
+      <div class="customers-list">
+        <h3 style="margin-bottom: 15px; font-size: 1rem;">Daftar Pelanggan</h3>
+        <div id="customersList">
+          <div class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Memuat daftar pelanggan...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- MAP CONTAINER -->
+    <div class="map-container">
+      <div id="networkMap"></div>
+      
+      <!-- MAP CONTROLS -->
+      <div class="map-controls">
+        <button class="map-btn" id="zoomIn" title="Zoom In">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="map-btn" id="zoomOut" title="Zoom Out">
+          <i class="fas fa-minus"></i>
+        </button>
+        <button class="map-btn" id="locateMe" title="Lokasi Saya">
+          <i class="fas fa-location-arrow"></i>
+        </button>
+        <button class="map-btn" id="resetView" title="Reset View">
+          <i class="fas fa-globe"></i>
+        </button>
+      </div>
+      
+      <!-- LEGEND -->
+      <div class="map-legend">
+        <div class="legend-title">Keterangan Status</div>
+        <div class="legend-item">
+          <div class="legend-color legend-online"></div>
+          <span>Online</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-offline"></div>
+          <span>Offline</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-pending"></div>
+          <span>Bermasalah</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT CONTENT -->
+  <div id="payment-content" class="content-area">
+    <div class="payment-container">
+      <h2 style="margin-bottom: 20px;">Kelola Pembayaran</h2>
+      <div class="search-bar" style="margin-bottom: 20px;">
+        <i class="fas fa-search"></i>
+        <input type="text" id="paymentSearch" placeholder="Cari nama pelanggan...">
+      </div>
+      <div id="paymentTable">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Memuat data pembayaran...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS CONTENT -->
+  <div id="analytics-content" class="content-area">
+    <div class="payment-container">
+      <h2 style="margin-bottom: 20px;">Analitik Jaringan</h2>
+      <div id="analyticsContent">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Memuat data analitik...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FOOTER -->
+  <div class="footer-watermark">
+    <div class="watermark-content">
+      <span class="copyright">© 2025 All Rights Reserved</span>
+      <span class="separator">|</span>
+      <span class="author">By: Teguh Sulistyawan</span>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<script>
+// ============================================
+// KONFIGURASI DAN INISIALISASI
+// ============================================
+
+// URL API
+const NETWORK_API_URL = "https://script.google.com/macros/s/AKfycbw7WUK1zmoqfxaVuvIGlmG4w0_NP87jrQrhNoY-cFvdlXpsJXFF-DFucCMH7kg7N7Gh9Q/exec";
+const PAYMENT_API_URL = "https://script.google.com/macros/s/AKfycbyqAiVx-IY8IdHSDuBWmBqhAYbwTWhXyBrghze2ABAjlWQhG1sKogT66z1DCj8Yo7xhGg/exec";
+
+// Variabel global
+let map;
+let markers = L.markerClusterGroup();
+let allCustomers = [];
+let currentFilter = 'all';
+
+// ============================================
+// INISIALISASI PETA
+// ============================================
+
+function initMap() {
+  // Default ke lokasi Indonesia (Jakarta)
+  map = L.map('networkMap').setView([-6.2088, 106.8456], 12);
+  
+  // Tambahkan tile layer (OpenStreetMap)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+  
+  // Tambahkan marker cluster group ke peta
+  map.addLayer(markers);
+  
+  // Setup map controls
+  document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
+  document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+  document.getElementById('resetView').addEventListener('click', () => map.setView([-6.2088, 106.8456], 12));
+  document.getElementById('locateMe').addEventListener('click', locateUser);
+}
+
+// ============================================
+// FUNGSI UTAMA
+// ============================================
+
+async function fetchNetworkData() {
+  try {
+    const res = await fetch(NETWORK_API_URL);
+    const data = await res.json();
+    allCustomers = data;
+    
+    updateStats(data);
+    renderCustomerList(data);
+    addMarkersToMap(data);
+    
+  } catch (err) {
+    console.error('Gagal fetch data jaringan:', err);
+    showError('Gagal memuat data monitoring jaringan');
+  }
+}
+
+function updateStats(data) {
+  const online = data.filter(c => c.status === 'ONLINE').length;
+  const offline = data.filter(c => c.status === 'OFFLINE').length;
+  const warning = data.filter(c => c.status === 'SEDANG').length;
+  const total = data.length;
+  
+  document.getElementById('onlineCount').textContent = online;
+  document.getElementById('offlineCount').textContent = offline;
+  document.getElementById('warningCount').textContent = warning;
+  document.getElementById('totalCount').textContent = total;
+}
+
+function renderCustomerList(customers) {
+  const container = document.getElementById('customersList');
+  if (customers.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Tidak ada data pelanggan</p>';
+    return;
+  }
+  
+  let html = '';
+  customers.forEach(customer => {
+    const statusClass = getStatusClass(customer.status);
+    const statusColor = getStatusColor(customer.status);
+    
+    html += `
+      <div class="customer-item ${statusClass}" data-id="${customer.name}" onclick="focusOnCustomer('${customer.name}')">
+        <div class="customer-status" style="background: ${statusColor}"></div>
+        <div class="customer-info">
+          <div class="customer-name">${customer.name}</div>
+          <div class="customer-ip">${customer.ip}</div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-light);"></i>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function addMarkersToMap(customers) {
+  // Clear existing markers
+  markers.clearLayers();
+  
+  customers.forEach(customer => {
+    if (customer.location && customer.location.includes(',')) {
+      const [lat, lng] = customer.location.split(',').map(coord => parseFloat(coord.trim()));
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const marker = L.marker([lat, lng], {
+          icon: createCustomIcon(customer.status)
+        });
+        
+        marker.bindPopup(createPopupContent(customer));
+        marker.customerData = customer;
+        
+        markers.addLayer(marker);
+      }
+    }
+  });
+  
+  // Fit bounds to show all markers
+  if (markers.getLayers().length > 0) {
+    map.fitBounds(markers.getBounds());
+  }
+}
+
+function createCustomIcon(status) {
+  const color = getStatusColor(status);
+  const iconClass = getStatusIcon(status);
+  
+  return L.divIcon({
+    html: `<div style="
+      background: ${color};
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    "><i class="${iconClass}"></i></div>`,
+    className: 'custom-marker',
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
+  });
+}
+
+function createPopupContent(customer) {
+  const statusClass = getStatusClass(customer.status);
+  const statusColor = getStatusColor(customer.status);
+  
+  return `
+    <div class="customer-popup">
+      <div class="popup-header">
+        <div class="popup-status" style="background: ${statusColor}"></div>
+        <div class="popup-title">${customer.name}</div>
+      </div>
+      <div class="popup-info">
+        <div class="popup-row">
+          <span class="popup-label">Status:</span>
+          <span class="popup-value" style="color: ${statusColor}; font-weight: 600">${customer.status}</span>
+        </div>
+        <div class="popup-row">
+          <span class="popup-label">Alamat IP:</span>
+          <span class="popup-value">${customer.ip}</span>
+        </div>
+        <div class="popup-row">
+          <span class="popup-label">Lokasi:</span>
+          <span class="popup-value">${customer.location || 'Tidak tersedia'}</span>
+        </div>
+      </div>
+      <div class="popup-metrics">
+        <div class="popup-metric">
+          <div class="value" style="color: var(--success)">${customer.latency || '-'} ms</div>
+          <div class="label">Latensi</div>
+        </div>
+        <div class="popup-metric">
+          <div class="value" style="color: var(--warning)">${customer.jitter || '-'} ms</div>
+          <div class="label">Jitter</div>
+        </div>
+        <div class="popup-metric">
+          <div class="value" style="color: var(--danger)">${customer.loss || '-'}%</div>
+          <div class="label">Loss</div>
+        </div>
+      </div>
+      <div class="popup-actions">
+        <button class="popup-btn primary" onclick="window.open('http://${customer.ip}:8080', '_blank')">
+          <i class="fas fa-desktop"></i> Remote
+        </button>
+        <button class="popup-btn secondary" onclick="focusOnCustomer('${customer.name}')">
+          <i class="fas fa-search"></i> Fokus
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// FUNGSI BANTUAN
+// ============================================
+
+function getStatusColor(status) {
+  switch(status) {
+    case 'ONLINE': return '#10b981';
+    case 'OFFLINE': return '#ef4444';
+    case 'SEDANG': return '#f59e0b';
+    default: return '#64748b';
+  }
+}
+
+function getStatusClass(status) {
+  switch(status) {
+    case 'ONLINE': return 'online';
+    case 'OFFLINE': return 'offline';
+    case 'SEDANG': return 'pending';
+    default: return '';
+  }
+}
+
+function getStatusIcon(status) {
+  switch(status) {
+    case 'ONLINE': return 'fas fa-wifi';
+    case 'OFFLINE': return 'fas fa-plug';
+    case 'SEDANG': return 'fas fa-exclamation-triangle';
+    default: return 'fas fa-question';
+  }
+}
+
+function focusOnCustomer(customerName) {
+  const customer = allCustomers.find(c => c.name === customerName);
+  if (customer && customer.location) {
+    const [lat, lng] = customer.location.split(',').map(coord => parseFloat(coord.trim()));
+    map.setView([lat, lng], 16);
+    
+    // Open popup for this customer
+    markers.getLayers().forEach(layer => {
+      if (layer.customerData && layer.customerData.name === customerName) {
+        layer.openPopup();
+      }
+    });
+  }
+}
+
+function locateUser() {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        map.setView([position.coords.latitude, position.coords.longitude], 14);
+      },
+      error => {
+        alert("Tidak dapat mendapatkan lokasi Anda: " + error.message);
+      }
+    );
+  } else {
+    alert("Browser Anda tidak mendukung geolokasi");
+  }
+}
+
+function showError(message) {
+  const container = document.getElementById('customersList');
+  container.innerHTML = `
+    <div style="text-align: center; padding: 20px; color: var(--danger);">
+      <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+      <p>${message}</p>
+      <button onclick="fetchNetworkData()" style="
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+      ">Coba Lagi</button>
+    </div>
+  `;
+}
+
+// ============================================
+// FILTER FUNGSIONALITAS
+// ============================================
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const filterType = this.closest('.filter-group').querySelector('h3').textContent;
+    
+    if (filterType.includes('Status')) {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.filter;
+      applyFilters();
+    }
+  });
+});
+
+function applyFilters() {
+  let filtered = allCustomers;
+  
+  if (currentFilter !== 'all') {
+    filtered = allCustomers.filter(customer => {
+      if (currentFilter === 'online') return customer.status === 'ONLINE';
+      if (currentFilter === 'offline') return customer.status === 'OFFLINE';
+      if (currentFilter === 'pending') return customer.status === 'SEDANG';
+      return true;
+    });
+  }
+  
+  renderCustomerList(filtered);
+  addMarkersToMap(filtered);
+}
+
+// ============================================
+// TAB NAVIGATION
+// ============================================
+
+document.querySelectorAll('.tab-button').forEach(button => {
+  button.addEventListener('click', () => {
+    const tabId = button.getAttribute('data-tab');
+    
+    // Update active tab button
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    
+    // Show corresponding content
+    document.querySelectorAll('.content-area, .dashboard-layout').forEach(el => el.style.display = 'none');
+    document.getElementById('network-content').style.display = 'grid';
+    
+    if (tabId === 'payment' || tabId === 'analytics') {
+      document.getElementById('network-content').style.display = 'none';
+      document.getElementById(`${tabId}-content`).style.display = 'block';
+    }
+    
+    if (tabId === 'payment') {
+      loadPaymentData();
+    }
+  });
+});
+
+// ============================================
+// PAYMENT FUNCTIONS (disederhanakan)
+// ============================================
+
+async function loadPaymentData() {
+  try {
+    const res = await fetch(PAYMENT_API_URL);
+    const json = await res.json();
+    renderPaymentTable(json.data || json);
+  } catch (error) {
+    console.error("Error loading payment data:", error);
+  }
+}
+
+function renderPaymentTable(data) {
+  const container = document.getElementById('paymentTable');
+  // Implementasi tabel pembayaran (sama seperti sebelumnya)
+  // Disederhanakan untuk fokus pada peta
+  container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Fitur pembayaran dalam pengembangan...</p>';
+}
+
+// ============================================
+// INISIALISASI APLIKASI
+// ============================================
+
+// Initialize map when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  fetchNetworkData();
+  
+  // Auto-refresh every 30 seconds
+  setInterval(fetchNetworkData, 30000);
+});
+</script>
+</body>
+</html>
