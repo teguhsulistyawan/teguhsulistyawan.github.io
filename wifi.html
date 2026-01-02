@@ -764,10 +764,6 @@ body {
     font-size: 2rem;
   }
   
-  .tab-navigation {
-    flex-direction: column;
-  }
-  
   .stats-bar {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
@@ -864,12 +860,17 @@ body {
   <div class="tab-navigation">
     <button class="tab-button active" data-tab="network">
       <i class="fas fa-network-wired"></i>
-      Monitor Jaringan
+      Monitor
     </button>
     <button class="tab-button" data-tab="payment">
       <i class="fas fa-credit-card"></i>
-      Kelola Pembayaran
+     Pembayaran
     </button>
+    <button class="tab-button" data-tab="payment" onclick="goToMap()">
+        <i class="fas fa-map-marked-alt"></i>
+        Peta
+      </button>
+            
   </div>
 
   <!-- STATS BAR -->
@@ -1422,6 +1423,10 @@ loadPaymentData();
 // Refresh data secara berkala
 setInterval(fetchServerStatus, 30000); // Server status setiap 30 detik
 setInterval(fetchNetworkData, 10000);  // Data jaringan setiap 10 detik
+function goToMap() {
+    window.location.href = "/maps.html"; // ganti dengan halaman tujuan
+  }
+  
 </script>
 </body>
 </html>
