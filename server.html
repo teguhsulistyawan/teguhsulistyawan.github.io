@@ -165,10 +165,10 @@ body{
     0%,100%{opacity:1}
     50%{opacity:.5}
 }
-/* ================= SYSTEM MONITOR ================= */
+/* ================= SYSTEM MONITOR (VERTIKAL) ================= */
 .system-section{
-    display:grid;
-    grid-template-columns:1fr 1fr;
+    display:flex;
+    flex-direction:column;
     gap:12px;
 }
 
@@ -214,6 +214,30 @@ body{
     font-size:.8rem;
     color:#555;
 }
+/* ================= TRAFFIC LABEL ================= */
+.traffic-label{
+    margin-top:6px;
+    font-size:.75rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    letter-spacing:.3px;
+}
+
+.traffic-label i{
+    font-size:.85rem;
+}
+
+/* WARNA PROFESIONAL */
+.traffic-label.download{
+    color:var(--success);
+}
+
+.traffic-label.upload{
+    color:var(--success);
+}
 
 </style>
 </head>
@@ -226,45 +250,59 @@ body{
     <div class="status-indicator">
         <span class="status-dot"></span> Sistem Aktif • Realtime
     </div>
-    <div id="datetime"></div>
 </header>
 
 <main class="content">
-<section class="traffic-section">
+    <section class="traffic-section">
 
-<!-- RX -->
-<div class="traffic-card">
-    <div class="speedometer-container">
-        <svg class="speedometer-svg" viewBox="0 0 160 160">
-            <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-            <path id="rxArc" class="speedometer-arc speed-low"
-                  d="M30,80 A50,50 0 1 1 130,80"/>
-        </svg>
-        <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
-        <div class="speedometer-center">
-            <div class="speedometer-value" id="rxValue">0</div>
-            <div class="speedometer-unit">Mbps</div>
+        <!-- RX / DOWNLOAD -->
+        <div class="traffic-card">
+            <div class="speedometer-container">
+                <svg class="speedometer-svg" viewBox="0 0 160 160">
+                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                    <path id="rxArc" class="speedometer-arc speed-low"
+                          d="M30,80 A50,50 0 1 1 130,80"/>
+                </svg>
+                <div class="needle-container" id="rxNeedle">
+                    <div class="needle"></div>
+                </div>
+                <div class="speedometer-center">
+                    <div class="speedometer-value" id="rxValue">0</div>
+                    <div class="speedometer-unit">Mbps</div>
+                </div>
+            </div>
+        
+            <!-- LABEL DOWNLOAD -->
+            <div class="traffic-label download">
+                <i class="fas fa-arrow-down"></i> Download
+            </div>
         </div>
-    </div>
-</div>
-
-<!-- TX -->
-<div class="traffic-card">
-    <div class="speedometer-container">
-        <svg class="speedometer-svg" viewBox="0 0 160 160">
-            <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-            <path id="txArc" class="speedometer-arc speed-low"
-                  d="M30,80 A50,50 0 1 1 130,80"/>
-        </svg>
-        <div class="needle-container" id="txNeedle"><div class="needle"></div></div>
-        <div class="speedometer-center">
-            <div class="speedometer-value" id="txValue">0</div>
-            <div class="speedometer-unit">Mbps</div>
+        
+        <!-- TX / UPLOAD -->
+        <div class="traffic-card">
+            <div class="speedometer-container">
+                <svg class="speedometer-svg" viewBox="0 0 160 160">
+                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                    <path id="txArc" class="speedometer-arc speed-low"
+                          d="M30,80 A50,50 0 1 1 130,80"/>
+                </svg>
+                <div class="needle-container" id="txNeedle">
+                    <div class="needle"></div>
+                </div>
+                <div class="speedometer-center">
+                    <div class="speedometer-value" id="txValue">0</div>
+                    <div class="speedometer-unit">Mbps</div>
+                </div>
+            </div>
+        
+            <!-- LABEL UPLOAD -->
+            <div class="traffic-label upload">
+                <i class="fas fa-arrow-up"></i> Upload
+            </div>
         </div>
-    </div>
-</div>
-
-</section>
+        
+        </section>
+        
 </main>
 <br>
 <section class="system-section">
