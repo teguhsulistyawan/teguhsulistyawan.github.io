@@ -3,874 +3,440 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Server WiFi Teguhan</title>
+<title>MikroTik Realtime Monitor</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-  :root {
-    --primary: #3080f7;
-    --primary-dark: #1a6fd8;
-    --primary-light: #e3f2fd;
-    --success: #4caf50;
-    --success-dark: #3d8b40;
-    --danger: #f44336;
-    --danger-dark: #d32f2f;
-    --warning: #ff9800;
-    --gray: #757575;
-    --light-gray: #f5f5f5;
-    --white: #ffffff;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
-    --radius: 8px;
-  }
+/* ================= ROOT ================= */
+:root{
+    --primary:#2a5bd7;
+    --primary-dark:#1e4ac4;
+    --success:#00c9a7;
+    --warning:#ffa502;
+    --danger:#ff4757;
+    --bg:#f5f7fb;
+    --card:#fff;
+    --shadow:rgba(42,91,215,.1);
+}
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+*{margin:0;padding:0;box-sizing:border-box}
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-    color: #333;
-    line-height: 1.6;
-    padding: 5px;
-    min-height: 100vh;
-  }
+body{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    background:var(--bg);
+    padding:12px;
+    color:#333;
+}
 
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-  }
+/* ================= LAYOUT ================= */
+.container{max-width:480px;margin:auto}
 
-  /* Header yang lebih profesional dan bersih */
-  header {
-    margin-bottom: 30px;
-    padding: 0;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    animation: fadeIn 0.5s ease-out;
-    position: relative;
-    overflow: hidden;
-  }
+.header{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    padding:16px;
+    border-radius:6px;
+    margin-bottom:14px;
+}
 
-  .header-top {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    padding: 25px;
-    color: white;
-    position: relative;
-  }
+.header h1{font-size:1.3rem}
 
-  .header-top::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--success) 0%, var(--primary) 50%, var(--warning) 100%);
-  }
+.status-indicator{
+    font-size:.8rem;
+    margin-top:6px;
+}
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
+.status-dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:#2ed573;
+    display:inline-block;
+    animation:pulse 2s infinite;
+}
 
-  .logo i {
-    font-size: 2.2rem;
-    color: white;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-  }
+.content{display:flex;flex-direction:column;gap:14px}
 
-  .logo-text h1 {
-    font-size: 1.8rem;
-    color: white;
-    margin-bottom: 5px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    letter-spacing: 0.5px;
-  }
+/* ================= TRAFFIC ================= */
+.traffic-section{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
 
-  .logo-text p {
-    color: rgba(255,255,255,0.8);
-    font-size: 0.9rem;
-  }
+.traffic-card{
+    background:var(--card);
+    border-radius:6px;
+    padding:12px;
+    box-shadow:0 6px 14px var(--shadow);
+    text-align:center;
+}
 
-  .device-specs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: var(--radius);
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
+/* ================= SPEEDOMETER ================= */
+.speedometer-container{
+    position:relative;
+    width:120px;
+    height:120px;
+    margin:auto;
+}
 
-  .spec-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-  }
+.speedometer-svg{width:100%;height:100%}
 
-  .spec-icon {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    font-size: 1rem;
-  }
+.speedometer-track{
+    fill:none;
+    stroke:#e9ecef;
+    stroke-width:7;
+}
 
-  .spec-details h3 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 3px;
-    color: white;
-  }
+.speedometer-arc{
+    fill:none;
+    stroke-width:7;
+    stroke-linecap:round;
+    stroke-dasharray:157;
+    stroke-dashoffset:157;
+    transition:stroke-dashoffset .7s ease,stroke .4s ease;
+}
 
-  .spec-details p {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
-  }
+/* COLOR STATE */
+.speed-low{stroke:var(--success)}
+.speed-medium{stroke:var(--warning)}
+.speed-high{stroke:var(--danger)}
 
-  .refresh-container {
-    background: var(--white);
-    padding: 15px 25px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px;
-    border-bottom-left-radius: var(--radius);
-    border-bottom-right-radius: var(--radius);
-  }
-  
- .refresh-btn {
-    padding: 10px 20px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    box-shadow: var(--shadow);
-  
-    min-width: 160px;   /* 👉 tombol sama panjang */
-    height: 50px;
-    justify-content: center;
-  }
-  
-  .refresh-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-  }
-  
+/* NEEDLE */
+.needle-container{
+    position:absolute;
+    inset:0;
+    transition:transform .6s cubic-bezier(.34,1.56,.64,1);
+}
 
-  .server-status {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
+.needle{
+    position:absolute;
+    width:3px;
+    height:48px;
+    background:#333;
+    top:50%;
+    left:50%;
+    transform-origin:bottom center;
+    transform:translate(-50%,-100%);
+    border-radius:3px;
+}
 
-  .status-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 25px;
-    animation: slideUp 0.5s ease-out;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
+.needle::after{
+    content:'';
+    width:12px;height:12px;
+    background:#333;
+    border-radius:50%;
+    position:absolute;
+    bottom:-6px;
+    left:50%;
+    transform:translateX(-50%);
+}
 
-  .status-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
-  }
+/* VALUE */
+.speedometer-center{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
 
-  .status-card.online::before {
-    background: var(--success);
-    transform: scaleX(1);
-  }
+.speedometer-value{
+    font-size:1.35rem;
+    font-weight:800;
+    line-height:1;
+}
 
-  .status-card.offline::before {
-    background: var(--danger);
-    transform: scaleX(1);
-  }
+.speedometer-unit{
+    font-size:.7rem;
+    color:#666;
+    margin-top:2px;
+}
 
-  .status-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
-  }
+/* FOOTER */
+.footer{
+    margin-top:14px;
+    text-align:center;
+    font-size:.75rem;
+    color:#666;
+}
 
-  .status-card h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: var(--gray);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+@keyframes pulse{
+    0%,100%{opacity:1}
+    50%{opacity:.5}
+}
+/* ================= SYSTEM MONITOR ================= */
+.system-section{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
 
-  .status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
-  }
+.system-card{
+    background:var(--card);
+    border-radius:6px;
+    padding:12px;
+    box-shadow:0 6px 14px var(--shadow);
+}
 
-  .status-badge {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: pulse 2s infinite;
-  }
+.system-title{
+    font-size:.75rem;
+    color:#666;
+    margin-bottom:6px;
+}
 
-  .status-online {
-    background: rgba(76, 175, 80, 0.1);
-    color: var(--success);
-    border: 1px solid rgba(76, 175, 80, 0.3);
-  }
+.system-value{
+    font-size:1.1rem;
+    font-weight:700;
+    margin-bottom:6px;
+}
 
-  .status-offline {
-    background: rgba(244, 67, 54, 0.1);
-    color: var(--danger);
-    border: 1px solid rgba(244, 67, 54, 0.3);
-  }
+.progress-bar{
+    height:8px;
+    background:#e9ecef;
+    border-radius:6px;
+    overflow:hidden;
+}
 
-  .status-time {
-    font-size: 0.9rem;
-    color: var(--gray);
-  }
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--success);
+    transition:width .6s ease,background .4s ease;
+}
 
-  .quality-indicator {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: var(--radius);
-    background: var(--light-gray);
-  }
+.progress-warning{background:var(--warning)}
+.progress-danger{background:var(--danger)}
 
-  .quality-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    margin-top: 10px;
-    transition: all 0.3s ease;
-  }
+.system-wide{
+    grid-column:1 / -1;
+    text-align:center;
+    font-size:.8rem;
+    color:#555;
+}
 
-  .quality-excellent {
-    background: rgba(76, 175, 80, 0.2);
-    color: var(--success);
-    border: 1px solid rgba(76, 175, 80, 0.3);
-  }
-
-  .quality-good {
-    background: rgba(33, 150, 243, 0.2);
-    color: var(--primary);
-    border: 1px solid rgba(33, 150, 243, 0.3);
-  }
-
-  .quality-fair {
-    background: rgba(255, 152, 0, 0.2);
-    color: var(--warning);
-    border: 1px solid rgba(255, 152, 0, 0.3);
-  }
-
-  .quality-poor {
-    background: rgba(244, 67, 54, 0.2);
-    color: var(--danger);
-    border: 1px solid rgba(244, 67, 54, 0.3);
-  }
-
-  .ping-details-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 25px;
-    margin-bottom: 20px;
-    animation: slideUp 0.6s ease-out;
-  }
-
-  .ping-details-card h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: var(--gray);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .ping-details {
-    background: var(--light-gray);
-    border-radius: var(--radius);
-    padding: 20px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
-    max-height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    line-height: 1.5;
-  }
-
-  .ping-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 15px;
-    background: var(--light-gray);
-    border-radius: var(--radius);
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-
-  .stat-item:hover {
-    transform: translateY(-3px);
-  }
-
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary);
-    margin-bottom: 5px;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    color: var(--gray);
-  }
-
-  .loading {
-    text-align: center;
-    padding: 40px;
-    color: var(--gray);
-  }
-
-  .loading i {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    color: var(--primary);
-  }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    color: var(--gray);
-    font-size: 0.9rem;
-  }
-
-  /* Footer Watermark */
-  .footer-watermark {
-    position: relative;
-    width: 100%;
-    background: rgba(248, 250, 252, 0.95);
-    color: #64748b;
-    padding: 20px 0;
-    text-align: center;
-    font-size: 13px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-top: 50px;
-    border-top: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-    border-radius: var(--radius);
-  }
-  
-  .footer-watermark:hover {
-    background: rgba(248, 250, 252, 0.98);
-    color: #475569;
-  }
-  
-  .watermark-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .copyright {
-    font-weight: 400;
-    letter-spacing: 0.3px;
-    color: #64748b;
-  }
-  
-  .author {
-    font-weight: 500;
-    color: #475569;
-  }
-  
-  .separator {
-    color: #cbd5e1;
-    font-weight: 300;
-  }
-  
-  /* Animasi */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    from { 
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to { 
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-
-  @keyframes statusPulse {
-    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-  }
-
-  @keyframes statusPulseOffline {
-    0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
-  }
-
-  .status-online {
-    animation: statusPulse 2s infinite;
-  }
-
-  .status-offline {
-    animation: statusPulseOffline 2s infinite;
-  }
-
-  /* Responsif */
-  @media (max-width: 768px) {
-    .server-status {
-      grid-template-columns: 1fr;
-    }
-    
-    .ping-stats {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .device-specs {
-      grid-template-columns: 1fr;
-    }
-    
-    .watermark-content {
-      flex-direction: column;
-      gap: 6px;
-    }
-    
-    .separator {
-      display: none;
-    }
-    
-    .refresh-container {
-      justify-content: center;
-    }
-  }
-
-  @media (max-width: 480px) {
-    body {
-      padding: 5px;
-    }
-    
-    .footer-watermark {
-      font-size: 11px;
-      padding: 16px 0;
-      margin-top: 30px;
-    }
-    
-    .copyright, .author {
-      font-size: 10.5px;
-    }
-    
-    
-    .logo {
-      flex-direction: column;
-      text-align: center;
-      gap: 10px;
-    }
-  }
 </style>
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <div class="header-top">
-        <div class="logo">
-          <i class="fas fa-wifi"></i>
-          <div class="logo-text">
-            <h1>SERVER TEGUHAN</h1>
-            <p>Monitoring Server Teguhan</p>
-          </div>
-        </div>
-        
-        <div class="device-specs">
-          <div class="spec-item">
-            <div class="spec-icon">
-              <i class="fas fa-microchip"></i>
-            </div>
-            <div class="spec-details">
-              <h3>CPU</h3>
-              <p>Quad-core ARM 1.4 GHz</p>
-            </div>
-          </div>
-          
-          <div class="spec-item">
-            <div class="spec-icon">
-              <i class="fas fa-memory"></i>
-            </div>
-            <div class="spec-details">
-              <h3>RAM</h3>
-              <p>1 GB DDR3</p>
-            </div>
-          </div>
-          
-          <div class="spec-item">
-            <div class="spec-icon">
-              <i class="fas fa-hdd"></i>
-            </div>
-            <div class="spec-details">
-              <h3>Storage</h3>
-              <p>512 MB NAND</p>
-            </div>
-          </div>
-          
-          <div class="spec-item">
-            <div class="spec-icon">
-              <i class="fas fa-ethernet"></i>
-            </div>
-            <div class="spec-details">
-              <h3>Ports</h3>
-              <p>5x Gigabit Ethernet</p>
-            </div>
-          </div>
-          
-          <div class="spec-item">
-            <div class="spec-icon">
-              <i class="fas fa-server"></i>
-            </div>
-            <div class="spec-details">
-              <h3>Model</h3>
-              <p>MikroTik RB450Gx4</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="refresh-container">
-        <button class="refresh-btn" id="refresh-btn">
-          <i class="fas fa-sync-alt"></i> Refresh Data
-        </button>
-        <button class="refresh-btn" id="refresh-btn" onclick="location.href='http://192.168.30.1'">
-          <i class="fas fa-network-wired"></i> Remote Mikrotik
-        </button>        
-      </div>
-    </header>
+<div class="container">
 
-    <div id="monitoring-content">
-      <div class="loading">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Memuat data monitoring...</p>
-      </div>
+<header class="header">
+    <h1><i class="fas fa-satellite-dish"></i> SERVER TEGUHAN</h1>
+    <div class="status-indicator">
+        <span class="status-dot"></span> Sistem Aktif • Realtime
     </div>
+    <div id="datetime"></div>
+</header>
 
-    <div class="footer-watermark">
-      <div class="watermark-content">
-        <span class="copyright">© 2025 All Rights Reserved</span>
-        <span class="separator">|</span>
-        <span class="author">By: Teguh Sulistyawan</span>
-      </div>
+<main class="content">
+<section class="traffic-section">
+
+<!-- RX -->
+<div class="traffic-card">
+    <div class="speedometer-container">
+        <svg class="speedometer-svg" viewBox="0 0 160 160">
+            <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+            <path id="rxArc" class="speedometer-arc speed-low"
+                  d="M30,80 A50,50 0 1 1 130,80"/>
+        </svg>
+        <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
+        <div class="speedometer-center">
+            <div class="speedometer-value" id="rxValue">0</div>
+            <div class="speedometer-unit">Mbps</div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const API_KEY = 'AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
-    const SPREADSHEET_ID = '1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
-    const RANGE = 'Monitoring';
+<!-- TX -->
+<div class="traffic-card">
+    <div class="speedometer-container">
+        <svg class="speedometer-svg" viewBox="0 0 160 160">
+            <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+            <path id="txArc" class="speedometer-arc speed-low"
+                  d="M30,80 A50,50 0 1 1 130,80"/>
+        </svg>
+        <div class="needle-container" id="txNeedle"><div class="needle"></div></div>
+        <div class="speedometer-center">
+            <div class="speedometer-value" id="txValue">0</div>
+            <div class="speedometer-unit">Mbps</div>
+        </div>
+    </div>
+</div>
 
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+</section>
+</main>
+<br>
+<section class="system-section">
 
-    async function loadData() {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
+    <!-- CPU -->
+    <div class="system-card">
+        <div class="system-title">CPU Usage</div>
+        <div class="system-value"><span id="cpuVal">0</span>%</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="cpuBar"></div>
+        </div>
+    </div>
+    
+    <!-- RAM -->
+    <div class="system-card">
+        <div class="system-title">RAM Usage</div>
+        <div class="system-value">
+            <span id="ramUsed">0</span> / <span id="ramTotal">0</span> MB
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="ramBar"></div>
+        </div>
+    </div>
+    
+    <!-- DISK -->
+    <div class="system-card">
+        <div class="system-title">Disk Usage</div>
+        <div class="system-value">
+            <span id="diskUsed">0</span> / <span id="diskTotal">0</span> GB
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="diskBar"></div>
+        </div>
+    </div>
+    
+    <!-- UPTIME -->
+    <div class="system-card">
+        <div class="system-title">Uptime</div>
+        <div class="system-value" id="uptimeVal">-</div>
+    </div>
+    
+    </section>
+    
+<!-- <footer class="footer">
+MikroTik Realtime Monitor • Python Backend
+</footer> -->
 
-        const rows = data.values;
-        if (!rows || rows.length < 2) {
-          document.getElementById('monitoring-content').innerHTML = `
-            <div class="loading">
-              <i class="fas fa-exclamation-circle"></i>
-              <p>Tidak ada data monitoring yang ditemukan</p>
-            </div>
-          `;
-          return;
+</div>
+
+<script>
+    const API = "http://192.168.30.50:8000/api/status";
+    const MAX_MBPS = 100; // 🔒 FIX 100 Mbps
+    
+    /* =======================
+       SPEEDOMETER (JANGAN DIUBAH)
+    ======================= */
+    function updateNeedle(id,value){
+        const v = Math.min(parseFloat(value), MAX_MBPS);
+        const percent = v / MAX_MBPS;
+        const angle = -90 + (percent * 180);
+    
+        const needle = document.getElementById(id);
+        const arc = document.getElementById(id === "rxNeedle" ? "rxArc" : "txArc");
+        const val = document.getElementById(id === "rxNeedle" ? "rxValue" : "txValue");
+    
+        needle.style.transform = `rotate(${angle}deg)`;
+    
+        const arcLen = 157;
+        arc.style.strokeDashoffset = arcLen - (arcLen * percent);
+    
+        arc.className = "speedometer-arc " +
+            (percent < 0.4 ? "speed-low" :
+             percent < 0.75 ? "speed-medium" : "speed-high");
+    
+        val.style.color =
+            percent < 0.4 ? "#00c9a7" :
+            percent < 0.75 ? "#ffa502" : "#ff4757";
+    
+        val.textContent = v.toFixed(2);
+    }
+    
+    /* =======================
+       SYSTEM MONITOR (REVISI FIX)
+    ======================= */
+    function updateSystem(sys){
+        if(!sys) return;
+    
+        /* CPU */
+        const cpu = sys.cpu || 0;
+        document.getElementById("cpuVal").textContent = cpu;
+        const cpuBar = document.getElementById("cpuBar");
+        cpuBar.style.width = cpu + "%";
+        cpuBar.className =
+            "progress-fill " +
+            (cpu < 50 ? "" : cpu < 80 ? "progress-warning" : "progress-danger");
+    
+        /* RAM */
+        const ramUsed = sys.ram_used || 0;
+        const ramTotal = sys.ram_total || 1;
+        const ramPercent = (ramUsed / ramTotal) * 100;
+    
+        document.getElementById("ramUsed").textContent = ramUsed;
+        document.getElementById("ramTotal").textContent = ramTotal;
+    
+        const ramBar = document.getElementById("ramBar");
+        ramBar.style.width = ramPercent + "%";
+        ramBar.className =
+            "progress-fill " +
+            (ramPercent < 50 ? "" : ramPercent < 80 ? "progress-warning" : "progress-danger");
+    
+        /* DISK */
+        const diskUsed = sys.disk_used || 0;
+        const diskTotal = sys.disk_total || 1;
+        const diskPercent = (diskUsed / diskTotal) * 100;
+    
+        document.getElementById("diskUsed").textContent = diskUsed;
+        document.getElementById("diskTotal").textContent = diskTotal;
+    
+        const diskBar = document.getElementById("diskBar");
+        diskBar.style.width = diskPercent + "%";
+        diskBar.className =
+            "progress-fill " +
+            (diskPercent < 50 ? "" : diskPercent < 80 ? "progress-warning" : "progress-danger");
+    
+        /* UPTIME */
+        document.getElementById("uptimeVal").textContent = sys.uptime || "-";
+    }
+    
+    /* =======================
+       FETCH DATA
+    ======================= */
+    async function loadData(){
+        try{
+            const r = await fetch(API);
+            const d = await r.json();
+    
+            /* Speedometer */
+            if(d.traffic){
+                updateNeedle("rxNeedle", d.traffic.rx_bps / 1e6);
+                updateNeedle("txNeedle", d.traffic.tx_bps / 1e6);
+            }
+    
+            /* System */
+            if(d.system){
+                updateSystem(d.system);
+            }
+    
+        }catch(e){
+            console.error("API Error:", e);
         }
-
-        // Ambil data terbaru (baris terakhir)
-        const latestRow = rows[rows.length - 1];
-        const time = latestRow[0];
-        const status = latestRow[1];
-        const details = latestRow[2] || '';
-        
-        // Parse ping details untuk mendapatkan statistik
-        const pingStats = parsePingDetails(details);
-        const quality = assessNetworkQuality(pingStats);
-        
-        // Format status dengan kapitalisasi yang benar
-        const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-
-        // Buat konten monitoring
-        let contentHTML = `
-          <div class="server-status">
-            <div class="status-card ${status.toLowerCase()}">
-              <h2><i class="fas fa-server"></i> Status Server</h2>
-              <div class="status-indicator">
-                <div class="status-badge ${status.toLowerCase() === 'online' ? 'status-online' : 'status-offline'}">
-                  <i class="fas ${status.toLowerCase() === 'online' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                  ${formattedStatus}
-                </div>
-                <div class="status-time">
-                  <i class="far fa-clock"></i> ${time}
-                </div>
-              </div>
-              <div class="quality-indicator">
-                <p>Kualitas Jaringan:</p>
-                <div class="quality-badge ${quality.class}">
-                  <i class="fas ${quality.icon}"></i>
-                  ${quality.text}
-                </div>
-                ${quality.description ? `<p style="margin-top: 10px; font-size: 0.9rem;">${quality.description}</p>` : ''}
-              </div>
-            </div>
-            
-            <div class="status-card">
-              <h2><i class="fas fa-chart-line"></i> Statistik Ping</h2>
-              ${pingStats ? `
-              <div class="ping-stats">
-                <div class="stat-item">
-                  <div class="stat-value">${pingStats.packetsSent}</div>
-                  <div class="stat-label">Packets Sent</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value">${pingStats.packetsReceived}</div>
-                  <div class="stat-label">Packets Received</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value">${pingStats.packetLoss}</div>
-                  <div class="stat-label">Packet Loss</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value">${pingStats.avgTime}</div>
-                  <div class="stat-label">Avg Time</div>
-                </div>
-              </div>
-              ` : '<p>Tidak ada data statistik ping yang dapat diparsing</p>'}
-            </div>
-          </div>
-          
-          <div class="ping-details-card">
-            <h2><i class="fas fa-info-circle"></i> Detail Ping</h2>
-            <div class="ping-details">${formatPingDetails(details)}</div>
-          </div>
-        `;
-
-        document.getElementById('monitoring-content').innerHTML = contentHTML;
-
-      } catch (err) {
-        console.error("Gagal mengambil data", err);
-        document.getElementById('monitoring-content').innerHTML = `
-          <div class="loading">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>Gagal memuat data monitoring. Silakan coba lagi.</p>
-          </div>
-        `;
-      }
     }
-
-    function parsePingDetails(details) {
-      if (!details) return null;
-      
-      console.log("Parsing ping details:", details);
-      
-      // Coba format Windows/Linux standar
-      let packetsSentMatch, packetsReceivedMatch, packetLossMatch, avgTimeMatch;
-      
-      // Format 1: Format Windows (dengan "Packets: Sent = ...")
-      packetsSentMatch = details.match(/Packets:\s+Sent\s*=\s*(\d+)/);
-      packetsReceivedMatch = details.match(/Received\s*=\s*(\d+)/);
-      packetLossMatch = details.match(/Lost\s*=\s*(\d+)\s*\((\d+)%/);
-      avgTimeMatch = details.match(/Average\s*=\s*(\d+)ms/);
-      
-      if (packetsSentMatch && packetsReceivedMatch && packetLossMatch && avgTimeMatch) {
-        return {
-          packetsSent: packetsSentMatch[1],
-          packetsReceived: packetsReceivedMatch[1],
-          packetLoss: packetLossMatch[2] + '%',
-          avgTime: avgTimeMatch[1] + 'ms'
-        };
-      }
-      
-      // Format 2: Format Linux (dengan "packets transmitted")
-      packetsSentMatch = details.match(/(\d+)\s*packets\s*transmitted/);
-      packetsReceivedMatch = details.match(/(\d+)\s*received/);
-      packetLossMatch = details.match(/(\d+)%\s*packet\s*loss/);
-      
-      // Cari waktu rata-rata dalam format rtt
-      const rttMatch = details.match(/rtt.*?=\s*[\d.]+\/([\d.]+)\/[\d.]+\/[\d.]+/);
-      if (rttMatch) {
-        avgTimeMatch = [null, rttMatch[1]];
-      } else {
-        // Coba format waktu lainnya
-        avgTimeMatch = details.match(/time\s*([\d.]+)\s*ms/) || 
-                      details.match(/([\d.]+)\s*ms\s*time/) ||
-                      details.match(/time=([\d.]+)\s*ms/);
-      }
-      
-      if (packetsSentMatch && packetsReceivedMatch && packetLossMatch) {
-        return {
-          packetsSent: packetsSentMatch[1],
-          packetsReceived: packetsReceivedMatch[1],
-          packetLoss: packetLossMatch[1] + '%',
-          avgTime: avgTimeMatch ? (parseFloat(avgTimeMatch[1]).toFixed(2) + 'ms') : 'N/A'
-        };
-      }
-      
-      // Format 3: Format sederhana dengan hanya time
-      const simpleTimeMatch = details.match(/time[=<]\s*([\d.]+)\s*ms/);
-      if (simpleTimeMatch) {
-        return {
-          packetsSent: '1',
-          packetsReceived: '1',
-          packetLoss: '0%',
-          avgTime: parseFloat(simpleTimeMatch[1]).toFixed(2) + 'ms'
-        };
-      }
-      
-      console.log("Tidak dapat memparse format ping");
-      return null;
+    
+    /* =======================
+       CLOCK
+    ======================= */
+    function clock(){
+        document.getElementById("datetime").textContent =
+            new Date().toLocaleString("id-ID",{
+                weekday:"long",
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            });
     }
-
-    function assessNetworkQuality(pingStats) {
-      if (!pingStats) {
-        return {
-          class: 'quality-poor',
-          icon: 'fa-exclamation-triangle',
-          text: 'Tidak Diketahui',
-          description: 'Tidak ada data ping yang valid'
-        };
-      }
-      
-      // Ekstrak nilai numerik dari string
-      const packetLoss = parseInt(pingStats.packetLoss);
-      const avgTime = parseFloat(pingStats.avgTime);
-      
-      if (isNaN(packetLoss) || isNaN(avgTime)) {
-        return {
-          class: 'quality-poor',
-          icon: 'fa-exclamation-triangle',
-          text: 'Data Tidak Valid',
-          description: 'Data ping tidak dapat diproses'
-        };
-      }
-      
-      if (packetLoss === 0 && avgTime < 50) {
-        return {
-          class: 'quality-excellent',
-          icon: 'fa-star',
-          text: 'Sangat Baik',
-          description: 'Koneksi sangat stabil dengan latency rendah'
-        };
-      } else if (packetLoss <= 5 && avgTime < 100) {
-        return {
-          class: 'quality-good',
-          icon: 'fa-thumbs-up',
-          text: 'Baik',
-          description: 'Koneksi stabil dengan performa baik'
-        };
-      } else if (packetLoss <= 15 && avgTime < 200) {
-        return {
-          class: 'quality-fair',
-          icon: 'fa-info-circle',
-          text: 'Cukup',
-          description: 'Koneksi cukup stabil, ada sedikit packet loss'
-        };
-      } else {
-        return {
-          class: 'quality-poor',
-          icon: 'fa-exclamation-triangle',
-          text: 'Buruk',
-          description: 'Koneksi tidak stabil dengan packet loss tinggi'
-        };
-      }
-    }
-
-    function formatPingDetails(details) {
-      if (!details) return 'Tidak ada data ping';
-      return details;
-    }
-
-    // Refresh button functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const refreshButton = document.getElementById('refresh-btn');
-      
-      // Refresh button functionality
-      refreshButton.addEventListener('click', function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-        loadData().then(() => {
-          this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
-        });
-      });
-      
-      // Auto refresh setiap 30 detik
-      setInterval(loadData, 30000);
-      
-      // Initial load
-      loadData();
-    });
-  </script>
+    
+    /* =======================
+       LOOP
+    ======================= */
+    setInterval(loadData, 1000);
+    setInterval(clock, 1000);
+    clock();
+    loadData();
+</script>
 </body>
 </html>
-
-
