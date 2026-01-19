@@ -754,6 +754,38 @@ body {
   color: #334155;
 }
 
+/* STYLE UNTUK NOTIFIKASI SUCCESS */
+.success-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease;
+}
+
+.success-notification i {
+  font-size: 20px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .container {
@@ -1316,7 +1348,7 @@ function renderPaymentTable(data){
         <td>${tglPemasangan.toISOString().slice(0,10)}</td>
         <td>${jatuhTempo.toISOString().slice(0,10)}</td>
         <td>
-          <button class="btn-pay" onclick="bayar('${name}',this)" ${status=='Lunas'?'disabled':''}>
+          <button class="btn-pay" onclick="processPayment('${name}',this)" ${status=='Lunas'?'disabled':''}>
             <i class="fas fa-money-bill-wave"></i>
             Bayar
           </button>
@@ -1376,28 +1408,58 @@ document.getElementById('paymentSearch').addEventListener('input', function() {
   });
 });
 
+// ============================================
+// FUNGSI PEMBAYARAN DAN INVOICE
+// ============================================
+
 /**
- * Fungsi untuk memproses pembayaran
+ * Fungsi untuk memproses pembayaran dan membuka invoice
  * @param {string} name - Nama pelanggan yang akan membayar
  * @param {HTMLElement} btn - Tombol yang ditekan
  */
-async function bayar(name, btn){
-  // Menonaktifkan tombol sementara
+async function processPayment(name, btn){
+  // Nonaktifkan tombol sementara
+  const originalText = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
   
   try {
-    // Mengirim permintaan pembayaran ke API
+    // Ambil data pelanggan dari baris tabel
+    const row = btn.closest('tr');
+    const cells = row.querySelectorAll('td');
+    
+    const package = cells[1].textContent;
+    const amountText = cells[2].textContent.replace('Rp ', '').replace(/\./g, '');
+    const amount = parseInt(amountText);
+    
+    // Kirim permintaan pembayaran ke API
     const res = await fetch(PAYMENT_API_URL, {
       method: 'POST',
-      body: new URLSearchParams({name})
+      body: new URLSearchParams({ name })
     });
     const json = await res.json();
     
-    // Jika berhasil, tampilkan pesan dan muat ulang data
-    if(json.success){
-      alert(`${name} berhasil membayar. TotalPaid sekarang: ${json.totalPaid}`);
+    // Jika berhasil
+    if (json.success) {
+      // Tampilkan notifikasi
+      const notification = document.createElement('div');
+      notification.className = 'success-notification';
+      notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${name} berhasil membayar. TotalPaid: ${json.totalPaid}</span>
+      `;
+      document.body.appendChild(notification);
+      
+      // Hapus notifikasi setelah 3 detik
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+      
+      // Muat ulang data
       loadPaymentData();
+      
+      // Buka invoice
+      await openInvoice(name, package, amount);
     } else {
       alert(`Error: ${json.message}`);
       btn.disabled = false;
@@ -1409,6 +1471,54 @@ async function bayar(name, btn){
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Bayar';
   }
+}
+
+/**
+ * Fungsi untuk membuka invoice setelah pembayaran berhasil
+ * @param {string} name - Nama pelanggan
+ * @param {string} package - Paket internet
+ * @param {number} amount - Biaya yang dibayar
+ */
+async function openInvoice(name, package, amount) {
+  // Format tanggal untuk invoice
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  
+  // Buat ID pelanggan unik dari timestamp
+  const customerId = `CUST-${Date.now()}`;
+  
+  // Siapkan data untuk invoice
+  const invoiceData = {
+    nama: name,
+    idpel: customerId,
+    paket: package,
+    biaya: amount,
+    lain: 0, // Biaya lain-lain (bisa disesuaikan)
+    tanggal: formattedDate
+  };
+  
+  // Encode data untuk dikirim ke halaman invoice
+  const encodedData = encodeURIComponent(JSON.stringify(invoiceData));
+  
+  // Buka invoice di tab baru dengan data
+  // Pastikan invoice.html berada di direktori yang sama
+  const invoiceWindow = window.open(`invoice.html?data=${encodedData}`, '_blank');
+  
+  // Jika ingin otomatis download setelah beberapa detik
+  // Note: Beberapa browser memblokir pop-up, jadi mungkin perlu konfirmasi pengguna
+  setTimeout(() => {
+    try {
+      if (invoiceWindow && !invoiceWindow.closed && typeof invoiceWindow.downloadInvoice === 'function') {
+        invoiceWindow.downloadInvoice();
+      }
+    } catch (error) {
+      console.log('Tidak dapat mengakses invoice window atau fungsi downloadInvoice tidak tersedia');
+    }
+  }, 2000);
 }
 
 // ============================================
@@ -1423,10 +1533,10 @@ loadPaymentData();
 // Refresh data secara berkala
 setInterval(fetchServerStatus, 30000); // Server status setiap 30 detik
 setInterval(fetchNetworkData, 10000);  // Data jaringan setiap 10 detik
+
 function goToMap() {
-    window.location.href = "/maps.html"; // ganti dengan halaman tujuan
-  }
-  
+  window.location.href = "/maps.html"; // ganti dengan halaman tujuan
+}
 </script>
 </body>
 </html>
