@@ -1152,7 +1152,9 @@ let showCables = true;
 function initMap() {
  // Default ke Desa Teguhan, Grobogan
 map = L.map('networkMap', {
-  zoomControl: false
+  zoomControl: false,
+  minZoom: 5,
+  maxZoom: 18   // ⬅ BATAS MAKS ZOOM
 }).setView([-7.038457, 110.940831], 13);
   
   // Tambahkan tile layer
