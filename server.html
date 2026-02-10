@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MikroTik Network Monitor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Monitor Jaringan MikroTik</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* ================= ROOT & VARIABLES ================= */
@@ -37,7 +37,7 @@ body {
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 16px;
+    padding: 2px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -380,36 +380,38 @@ body {
 .uptime-content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
 }
 
 .uptime-icon {
     background: var(--primary);
     color: white;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
+    flex-shrink: 0;
 }
 
 .uptime-text {
     flex: 1;
-    margin-left: 16px;
 }
 
 .uptime-value {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--primary-dark);
     margin-bottom: 4px;
+    line-height: 1.3;
 }
 
 .uptime-label {
     font-size: 0.9rem;
     color: var(--text-light);
+    font-weight: 500;
 }
 
 /* ================= FOOTER ================= */
@@ -468,6 +470,10 @@ body {
     .system-value {
         font-size: 1.3rem;
     }
+    
+    .uptime-value {
+        font-size: 1.2rem;
+    }
 }
 
 @media (max-width: 380px) {
@@ -492,7 +498,7 @@ body {
                 <i class="fas fa-server"></i>
             </div>
             <div class="header-text">
-                <h1>SERVER MONITOR</h1>
+                <h1>MONITOR SERVER</h1>
                 <div class="status-indicator">
                     <span class="status-dot"></span>
                     <span id="statusText">Sistem Aktif</span>
@@ -529,7 +535,7 @@ body {
             </div>
             
             <div class="traffic-description">
-                <i class="fas fa-arrow-down"></i> Incoming network traffic
+                <i class="fas fa-arrow-down"></i> Lalu lintas masuk jaringan
             </div>
         </div>
 
@@ -558,7 +564,7 @@ body {
             </div>
             
             <div class="traffic-description">
-                <i class="fas fa-arrow-up"></i> Outgoing network traffic
+                <i class="fas fa-arrow-up"></i> Lalu lintas keluar jaringan
             </div>
         </div>
     </section>
@@ -570,7 +576,7 @@ body {
             <div class="system-header">
                 <div class="system-title">
                     <i class="fas fa-microchip system-icon"></i>
-                    CPU Usage
+                    Penggunaan CPU
                 </div>
                 <div class="system-value"><span id="cpuVal">0</span>%</div>
             </div>
@@ -581,7 +587,7 @@ body {
             
             <div class="progress-label">
                 <span>Idle</span>
-                <span id="cpuLoad">Low Load</span>
+                <span id="cpuLoad">Beban Rendah</span>
             </div>
         </div>
 
@@ -590,7 +596,7 @@ body {
             <div class="system-header">
                 <div class="system-title">
                     <i class="fas fa-memory system-icon"></i>
-                    RAM Usage
+                    Penggunaan RAM
                 </div>
                 <div class="system-value">
                     <span id="ramUsed">0</span> / <span id="ramTotal">0</span> MB
@@ -602,8 +608,8 @@ body {
             </div>
             
             <div class="progress-label">
-                <span>Free</span>
-                <span id="ramPercent">0% Used</span>
+                <span>Tersedia</span>
+                <span id="ramPercent">0% Digunakan</span>
             </div>
         </div>
 
@@ -614,7 +620,7 @@ body {
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="uptime-text">
-                    <div class="system-title">System Uptime</div>
+                    <div class="uptime-label">Waktu Operasi</div>
                     <div class="uptime-value" id="uptimeVal">-</div>
                 </div>
             </div>
@@ -623,10 +629,10 @@ body {
 
     <!-- FOOTER -->
     <footer class="footer">
-        <div>Network Monitoring System v2.1</div>
+        <div>Sistem Monitoring Jaringan v2.1</div>
         <div class="update-info">
             <i class="fas fa-sync-alt"></i>
-            <span>Updated: <span id="lastUpdateTime">-</span></span>
+            <span>Update: <span id="lastUpdateTime">-</span></span>
         </div>
     </footer>
 </div>
@@ -653,11 +659,11 @@ function updateNeedle(id, value) {
         arc.style.strokeDashoffset = 157 - (157 * percent);
         
         // Update arc color based on percentage of MAX_MBPS
-        if (v <= MAX_MBPS * 0.4) {
+        if (percent <= 0.4) { // 40% dari MAX_MBPS = hijau
             arc.className = "speedometer-arc speed-low";
-        } else if (v <= MAX_MBPS * 0.75) {
+        } else if (percent <= 0.75) { // 40-75% dari MAX_MBPS = kuning
             arc.className = "speedometer-arc speed-medium";
-        } else {
+        } else { // >75% dari MAX_MBPS = merah
             arc.className = "speedometer-arc speed-high";
         }
     }
@@ -680,15 +686,15 @@ function updateProgressBar(elementId, percent, type = "cpu") {
         const cpuLoad = document.getElementById('cpuLoad');
         if (percent > 80) {
             bar.className = "progress-bar progress-danger";
-            cpuLoad.textContent = "High Load";
+            cpuLoad.textContent = "Beban Tinggi";
             cpuLoad.style.color = "var(--danger)";
         } else if (percent > 60) {
             bar.className = "progress-bar progress-warning";
-            cpuLoad.textContent = "Medium Load";
+            cpuLoad.textContent = "Beban Sedang";
             cpuLoad.style.color = "var(--warning)";
         } else {
             bar.className = "progress-bar";
-            cpuLoad.textContent = "Low Load";
+            cpuLoad.textContent = "Beban Rendah";
             cpuLoad.style.color = "var(--success)";
         }
     } else if (type === "ram") {
@@ -709,19 +715,40 @@ function updateProgressBar(elementId, percent, type = "cpu") {
 function formatUptime(uptimeString) {
     if (!uptimeString) return "-";
     
-    // Parse MikroTik uptime format: "6d55m29s"
+    // Parse MikroTik uptime format: "6d55m29s" or "6d55m" or "55m29s" or "29s"
     const daysMatch = uptimeString.match(/(\d+)d/);
     const hoursMatch = uptimeString.match(/(\d+)h/);
     const minutesMatch = uptimeString.match(/(\d+)m/);
     const secondsMatch = uptimeString.match(/(\d+)s/);
     
     let parts = [];
-    if (daysMatch) parts.push(`${daysMatch[1]}d`);
-    if (hoursMatch) parts.push(`${hoursMatch[1]}h`);
-    if (minutesMatch) parts.push(`${minutesMatch[1]}m`);
-    if (secondsMatch && !daysMatch && !hoursMatch) parts.push(`${secondsMatch[1]}s`);
     
-    return parts.join(' ') || uptimeString;
+    if (daysMatch) {
+        const days = parseInt(daysMatch[1]);
+        parts.push(`${days} hari`);
+    }
+    
+    if (hoursMatch) {
+        const hours = parseInt(hoursMatch[1]);
+        parts.push(`${hours} jam`);
+    }
+    
+    if (minutesMatch) {
+        const minutes = parseInt(minutesMatch[1]);
+        parts.push(`${minutes} menit`);
+    }
+    
+    if (secondsMatch && (!daysMatch && !hoursMatch && !minutesMatch)) {
+        const seconds = parseInt(secondsMatch[1]);
+        parts.push(`${seconds} detik`);
+    }
+    
+    if (parts.length === 0) {
+        return uptimeString;
+    }
+    
+    // Return only the most significant 2 parts
+    return parts.slice(0, 2).join(' ');
 }
 
 function formatTime(timestamp) {
@@ -765,15 +792,18 @@ function updateSystem(data) {
     
     document.getElementById("ramUsed").textContent = usedRamMB;
     document.getElementById("ramTotal").textContent = totalRamMB;
-    document.getElementById("ramPercent").textContent = `${Math.round(ramPercent)}% Used`;
+    document.getElementById("ramPercent").textContent = `${Math.round(ramPercent)}% Digunakan`;
     updateProgressBar("ramBar", ramPercent, "ram");
 
     // Update Uptime
     document.getElementById("uptimeVal").textContent = formatUptime(routerData.uptime);
 
     // Update traffic
-    updateNeedle("rxNeedle", (routerData.rx_bps || 0) / 1e6);
-    updateNeedle("txNeedle", (routerData.tx_bps || 0) / 1e6);
+    const rxMbps = (routerData.rx_bps || 0) / 1e6;
+    const txMbps = (routerData.tx_bps || 0) / 1e6;
+    
+    updateNeedle("rxNeedle", rxMbps);
+    updateNeedle("txNeedle", txMbps);
 
     // Update status
     lastUpdateTime = routerData.last_update;
