@@ -9,20 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f0f4f8;
+            --bg: #f4f7fb;
             --card: #ffffff;
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --muted: #6b7280;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
             --danger: #ef4444;
             --danger-hover: #dc2626;
-            --edit-bg: #fef3c7;
-            --edit-text: #92400e;
+            --edit-bg: #fef9c3;
+            --edit-text: #854d0e;
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.05);
+            --radius-xs: 6px;
+            --radius-sm: 8px;
             --radius: 12px;
+            --radius-lg: 16px;
             --gap: 20px;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
-            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.06);
             --transition: 0.2s ease;
         }
 
@@ -33,14 +41,16 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #eef2f6 0%, #f8fafc 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(160deg, #f1f5f9 0%, #f8fafc 100%);
             min-height: 100vh;
             padding: 32px 20px;
             display: flex;
             justify-content: center;
-            color: #1e293b;
+            color: var(--text-primary);
             line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
@@ -62,21 +72,20 @@
         h1 {
             font-size: 26px;
             font-weight: 600;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.4px;
             color: #0f172a;
         }
 
-        .muted-small {
+        .user-tag {
             font-size: 13px;
-            color: var(--muted);
-            background: #f1f5f9;
-            padding: 4px 12px;
-            border-radius: 20px;
             font-weight: 500;
-        }
-
-        #userTag {
+            color: var(--muted);
+            background: #ffffff;
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
             margin-left: auto;
+            white-space: nowrap;
         }
 
         .row {
@@ -87,11 +96,11 @@
 
         .card {
             background: var(--card);
-            border-radius: var(--radius);
-            padding: 24px;
+            border-radius: var(--radius-lg);
+            padding: 28px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
             transition: box-shadow var(--transition);
-            border: 1px solid #f1f5f9;
         }
 
         .card:hover {
@@ -112,7 +121,7 @@
             display: block;
             font-size: 13px;
             font-weight: 500;
-            color: #475569;
+            color: var(--text-secondary);
             margin-bottom: 6px;
         }
 
@@ -121,13 +130,14 @@
         textarea {
             width: 100%;
             padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
             background: #fff;
             font-size: 14px;
             font-family: inherit;
             transition: border 0.15s, box-shadow 0.15s;
             outline: none;
+            color: var(--text-primary);
         }
 
         input:focus,
@@ -152,15 +162,17 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             border: none;
+            letter-spacing: 0.01em;
         }
 
         button.primary {
             background: var(--primary);
             color: #fff;
-            padding: 10px 18px;
+            padding: 10px 20px;
             box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+            font-weight: 500;
         }
 
         button.primary:hover {
@@ -170,42 +182,48 @@
         }
 
         button.ghost {
-            background: #f8fafc;
-            color: #334155;
+            background: #ffffff;
+            color: var(--text-secondary);
             padding: 10px 16px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border);
+            font-weight: 500;
         }
 
         button.ghost:hover {
-            background: #f1f5f9;
+            background: #f8fafc;
             border-color: #cbd5e1;
+            color: #1e293b;
         }
 
         button.edit {
             background: var(--edit-bg);
             color: var(--edit-text);
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-xs);
             font-size: 13px;
             font-weight: 500;
+            border: 1px solid #fde68a;
         }
 
         button.edit:hover {
             background: #fde68a;
+            border-color: #fcd34d;
         }
 
         button.del {
             background: #fee2e2;
             color: #b91c1c;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-xs);
             font-size: 13px;
             font-weight: 500;
+            border: 1px solid #fecaca;
         }
 
         button.del:hover {
             background: #fecaca;
             color: #991b1b;
+            border-color: #fca5a5;
         }
 
         .totals {
@@ -217,12 +235,17 @@
 
         .totals .box {
             flex: 1;
-            padding: 16px 12px;
+            padding: 16px 14px;
             border-radius: var(--radius);
-            background: #f8fafc;
+            background: #ffffff;
             text-align: center;
-            border: 1px solid #f1f5f9;
-            transition: background var(--transition);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xs);
+            transition: box-shadow var(--transition);
+        }
+
+        .totals .box:hover {
+            box-shadow: var(--shadow-sm);
         }
 
         .totals .box h3 {
@@ -233,19 +256,20 @@
             word-break: break-word;
         }
 
-        .totals .box .muted-small {
-            background: transparent;
-            padding: 0;
-            color: #64748b;
-            font-weight: 400;
+        .totals .box .label-total {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .data-wrapper {
-            max-height: 380px;
+            max-height: 400px;
             overflow-y: auto;
             border-radius: var(--radius);
-            background: #fff;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 #f8fafc;
         }
@@ -265,27 +289,27 @@
         }
 
         .list {
-            padding: 8px;
+            padding: 10px;
         }
 
         .item {
             display: flex;
             justify-content: space-between;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 10px;
-            border: 1px solid #f1f5f9;
+            gap: 16px;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
             margin-bottom: 8px;
             align-items: flex-start;
             background: #fff;
             transition: all var(--transition);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-xs);
         }
 
         .item:hover {
             background: #fafbfc;
-            border-color: #e2e8f0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+            border-color: var(--border);
+            box-shadow: var(--shadow-sm);
         }
 
         .item:last-child {
@@ -307,18 +331,23 @@
 
         .item .header-row strong {
             font-size: 15px;
+            font-weight: 600;
             color: #0f172a;
         }
 
         .item .tanggal {
             font-size: 12px;
-            color: #94a3b8;
+            font-weight: 500;
+            color: var(--muted);
             white-space: nowrap;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 12px;
         }
 
         .item .deskripsi {
             font-size: 13px;
-            color: #64748b;
+            color: #475569;
             margin-top: 6px;
             word-break: break-word;
         }
@@ -341,15 +370,17 @@
         .status-area strong {
             font-size: 14px;
             color: #334155;
+            font-weight: 500;
         }
 
         #statusMsg {
             font-size: 13px;
             color: #475569;
             background: #f1f5f9;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 12px;
             margin: 0;
+            font-weight: 500;
         }
 
         #spinner {
@@ -357,6 +388,24 @@
             color: var(--primary);
             font-weight: 500;
             align-self: center;
+            display: none;
+            margin-left: auto;
+        }
+
+        .spinner-icon {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(37, 99, 235, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Toast */
@@ -409,7 +458,7 @@
         .modal {
             background: #fff;
             padding: 28px 24px;
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             max-width: 360px;
             width: 90%;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -484,11 +533,12 @@
             }
 
             .card {
-                padding: 18px;
+                padding: 20px;
             }
 
             .item {
                 flex-direction: column;
+                gap: 12px;
             }
 
             .actions {
@@ -501,8 +551,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>💰 Catatan Keuangan</h1>
-            <div id="userTag" class="muted-small"></div>
+            <h1>Catatan Keuangan</h1>
+            <div id="userTag" class="user-tag"></div>
         </header>
 
         <div class="row">
@@ -519,8 +569,8 @@
                             <label for="jenis">Jenis</label>
                             <select id="jenis" required>
                                 <option value="">Pilih Jenis</option>
-                                <option value="Pemasukan">📈 Pemasukan</option>
-                                <option value="Pengeluaran">📉 Pengeluaran</option>
+                                <option value="Pemasukan">Pemasukan</option>
+                                <option value="Pengeluaran">Pengeluaran</option>
                             </select>
                         </div>
                         <div style="flex: 1; min-width: 150px">
@@ -533,15 +583,15 @@
                         <textarea id="deskripsi" placeholder="Tulis catatan singkat..."></textarea>
                     </div>
                     <div style="margin-top: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
-                        <button class="primary" type="submit" id="btnSave">💾 Simpan</button>
-                        <button type="button" id="btnReset" class="ghost">↺ Reset</button>
-                        <span id="spinner" style="margin-left: auto; display: none;">⏳ Memproses...</span>
+                        <button class="primary" type="submit" id="btnSave">Simpan</button>
+                        <button type="button" id="btnReset" class="ghost">Reset</button>
+                        <span id="spinner"><span class="spinner-icon"></span>Memproses...</span>
                     </div>
                 </form>
                 <div class="status-area">
                     <strong>Status:</strong>
                     <span id="statusMsg">—</span>
-                    <button id="btnRefresh" class="ghost" style="margin-left: auto;">🔄 Refresh</button>
+                    <button id="btnRefresh" class="ghost" style="margin-left: auto;">Refresh</button>
                 </div>
             </div>
 
@@ -550,21 +600,21 @@
                 <div class="totals">
                     <div class="box">
                         <h3 id="totalIn">Rp 0</h3>
-                        <div class="muted-small">Total Pemasukan</div>
+                        <div class="label-total">Pemasukan</div>
                     </div>
                     <div class="box">
                         <h3 id="totalOut">Rp 0</h3>
-                        <div class="muted-small">Total Pengeluaran</div>
+                        <div class="label-total">Pengeluaran</div>
                     </div>
                     <div class="box">
                         <h3 id="saldo">Rp 0</h3>
-                        <div class="muted-small">Saldo</div>
+                        <div class="label-total">Saldo</div>
                     </div>
                 </div>
                 <div class="data-wrapper">
                     <div id="list" class="list"></div>
                 </div>
-                <div id="listContainer" class="hidden"></div> <!-- tetap dipertahankan untuk kompatibilitas -->
+                <div id="listContainer" class="hidden"></div> <!-- kompatibilitas -->
             </div>
         </div>
     </div>
@@ -599,7 +649,7 @@
             document.body.innerHTML = "<div style='padding:40px;text-align:center;color:#b91c1c'><h2>ID user tidak ditemukan. Tambahkan ?id=YOURID pada URL</h2></div>";
             throw new Error("User ID missing");
         }
-        userTag.textContent = "👤 " + userId;
+        userTag.textContent = "User: " + userId;
 
         function showToast(msg) {
             toast.textContent = msg;
@@ -620,7 +670,7 @@
         function showStatus(t) { statusMsg.textContent = t; }
 
         async function apiPost(data) {
-            spinner.style.display = "inline-block";
+            spinner.style.display = "inline-flex";
             try {
                 const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) });
                 const j = await res.json();
@@ -634,7 +684,7 @@
         }
 
         async function apiGet() {
-            spinner.style.display = "inline-block";
+            spinner.style.display = "inline-flex";
             try {
                 const url = `${SCRIPT_URL}?idUser=${encodeURIComponent(userId)}&ts=${Date.now()}`;
                 const res = await fetch(url);
@@ -653,9 +703,9 @@
             const r = await apiGet();
             if (r.status === "success") {
                 renderList(r.data || []);
-                showStatus("✅ Data terbaru");
+                showStatus("Data terbaru");
             } else {
-                document.getElementById("list").innerHTML = "<div class='muted-small' style='padding:16px;text-align:center'>Gagal mengambil data</div>";
+                document.getElementById("list").innerHTML = "<div style='padding:24px;text-align:center;color:#64748b;font-size:14px;'>Gagal mengambil data</div>";
             }
         }
 
@@ -676,7 +726,7 @@
         function renderList(data) {
             listEl.innerHTML = "";
             if (!data || data.length === 0) {
-                listEl.innerHTML = "<div class='muted-small' style='padding:24px;text-align:center'>📭 Belum ada catatan</div>";
+                listEl.innerHTML = "<div style='padding:24px;text-align:center;color:#64748b;font-size:14px;'>Belum ada catatan</div>";
                 totalIn.textContent = formatRp(0);
                 totalOut.textContent = formatRp(0);
                 saldoEl.textContent = formatRp(0);
@@ -700,14 +750,14 @@
                 node.innerHTML = `
                     <div class="content">
                         <div class="header-row">
-                            <strong>${item.jenis === "Pemasukan" ? "📈" : "📉"} ${item.jenis} • ${formatRp(item.jumlah)}</strong>
-                            <span class="tanggal">📅 ${item.tanggal}</span>
+                            <strong>${item.jenis} &middot; ${formatRp(item.jumlah)}</strong>
+                            <span class="tanggal">${item.tanggal}</span>
                         </div>
                         <div class="deskripsi">${item.deskripsi || "—"}</div>
                     </div>
                     <div class="actions">
-                        <button class="edit">✏️ Edit</button>
-                        <button class="del">🗑️ Hapus</button>
+                        <button class="edit">Edit</button>
+                        <button class="del">Hapus</button>
                     </div>`;
                 node.querySelector(".edit").addEventListener("click", () => {
                     noteId.value = item.idCatatan;
@@ -715,14 +765,14 @@
                     jenis.value = item.jenis;
                     jumlah.value = item.jumlah;
                     deskripsi.value = item.deskripsi || "";
-                    btnSave.textContent = "📝 Update";
+                    btnSave.textContent = "Update";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
                 node.querySelector(".del").addEventListener("click", async () => {
                     const ok = await customConfirm("Hapus catatan ini?");
                     if (!ok) return;
                     await apiPost({ action: "deleteCatatan", idUser: userId, idCatatan: item.idCatatan });
-                    showToast("🗑️ Catatan dihapus");
+                    showToast("Catatan dihapus");
                     loadData();
                 });
                 listEl.appendChild(node);
@@ -743,8 +793,8 @@
             await apiPost(data);
             form.reset();
             noteId.value = "";
-            btnSave.textContent = "💾 Simpan";
-            showToast("✅ Catatan berhasil disimpan");
+            btnSave.textContent = "Simpan";
+            showToast("Catatan berhasil disimpan");
             loadData();
         });
 
@@ -752,8 +802,8 @@
         btnReset.addEventListener("click", () => {
             form.reset();
             noteId.value = "";
-            btnSave.textContent = "💾 Simpan";
-            showToast("↺ Form direset");
+            btnSave.textContent = "Simpan";
+            showToast("Form direset");
         });
 
         // Inisialisasi
