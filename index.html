@@ -1,114 +1,1103 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pusat Data</title>
-  <link rel="stylesheet" href="style-dashboard.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Pusat Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <style>
+        :root {
+            /* === Dark Theme (Default) === */
+            --bg: #0b0d14;
+            --bg-secondary: #12151e;
+            --surface: #181b26;
+            --surface-hover: #1f2230;
+            --text: #e2e4ea;
+            --text-secondary: #949aad;
+            --text-muted: #6b7084;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 20px rgba(79, 142, 247, 0.15);
+            --accent: #5b9cf5;
+            --accent-dark: #3d7de0;
+            --accent-glow: rgba(91, 156, 245, 0.25);
+            --topbar-gradient: linear-gradient(135deg, #141a2e 0%, #1a2340 50%, #141a2e 100%);
+            --card-bg: #181b26;
+            --card-bg-hover: #1f2232;
+            --input-bg: #141720;
+            --input-border: #2a2d3a;
+            --input-focus-border: #5b9cf5;
+            --input-text: #e2e4ea;
+            --input-placeholder: #5c6072;
+            --btn-extra-bg: #181b26;
+            --btn-extra-text: #e2e4ea;
+            --btn-extra-hover-bg: #1f2232;
+            --btn-logout-bg: #3d1520;
+            --btn-logout-text: #f87189;
+            --btn-logout-hover-bg: #4d1d2a;
+            --watermark-bg: #0b0d14;
+            --watermark-text: #4a4e5e;
+            --popup-overlay: rgba(0, 0, 0, 0.7);
+            --popup-bg: #181b26;
+            --popup-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+            --scrollbar-thumb: #2a2d3a;
+            --scrollbar-track: #0b0d14;
+            --avatar-ring: rgba(91, 156, 245, 0.4);
+            --divider: rgba(255, 255, 255, 0.05);
+            --transition-speed: 0.35s;
+        }
+
+        body.light {
+            /* === Light Theme === */
+            --bg: #f0f4f8;
+            --bg-secondary: #ffffff;
+            --surface: #ffffff;
+            --surface-hover: #f7f9fb;
+            --text: #1a1d28;
+            --text-secondary: #5a6070;
+            --text-muted: #8890a4;
+            --border: rgba(0, 0, 0, 0.07);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 20px rgba(43, 113, 197, 0.12);
+            --accent: #2b71c5;
+            --accent-dark: #1a5194;
+            --accent-glow: rgba(43, 113, 197, 0.2);
+            --topbar-gradient: linear-gradient(135deg, #1e5ab5 0%, #2b71c5 50%, #1a4fa0 100%);
+            --card-bg: #ffffff;
+            --card-bg-hover: #f8fafc;
+            --input-bg: #f8fafc;
+            --input-border: #d5dae3;
+            --input-focus-border: #2b71c5;
+            --input-text: #1a1d28;
+            --input-placeholder: #9ca3b4;
+            --btn-extra-bg: #ffffff;
+            --btn-extra-text: #1a1d28;
+            --btn-extra-hover-bg: #f0f4f8;
+            --btn-logout-bg: #fff0f0;
+            --btn-logout-text: #d93030;
+            --btn-logout-hover-bg: #ffe5e5;
+            --watermark-bg: #f0f4f8;
+            --watermark-text: #8890a4;
+            --popup-overlay: rgba(0, 0, 0, 0.5);
+            --popup-bg: #ffffff;
+            --popup-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            --scrollbar-thumb: #c5cad4;
+            --scrollbar-track: #f0f4f8;
+            --avatar-ring: rgba(43, 113, 197, 0.5);
+            --divider: rgba(0, 0, 0, 0.06);
+            --transition-speed: 0.35s;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* === Scrollbar === */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* === Topbar === */
+        .topbar {
+            background: var(--topbar-gradient);
+            color: #ffffff;
+            padding: 14px 20px;
+            font-size: 19px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.6px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .topbar-title {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        .theme-toggle-btn {
+            all: unset;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            color: #ffffff;
+            transition: background 0.3s, transform 0.35s ease;
+            flex-shrink: 0;
+        }
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+        }
+        .theme-toggle-btn:active {
+            transform: rotate(180deg) scale(0.9);
+            transition: transform 0.25s ease;
+        }
+
+        /* === Profile Section === */
+        .profile-section {
+            padding: 18px 20px;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            background: linear-gradient(135deg, #2b71c5, #1a5194);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 0 0 3px var(--avatar-ring);
+            transition: box-shadow var(--transition-speed) ease, transform 0.3s ease;
+            position: relative;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+        .profile-avatar:hover {
+            transform: scale(1.04);
+        }
+
+        .profile-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text);
+            transition: color var(--transition-speed) ease;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .profile-pondok {
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: color var(--transition-speed) ease;
+            font-weight: 500;
+        }
+
+        /* === Menu Grid (Dynamic) === */
+        #menuGrid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 16px;
+            background-color: transparent !important;
+            height: auto;
+            box-shadow: none;
+            min-height: 60px;
+        }
+
+        #menuGrid>p {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 30px 0;
+            transition: color var(--transition-speed) ease;
+        }
+
+        #spinner {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px 0;
+            color: var(--accent);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color var(--transition-speed) ease;
+        }
+        #spinner i {
+            margin-right: 6px;
+        }
+
+        /* === Menu Card === */
+        .menu-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            padding: 18px 12px 14px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            min-height: 115px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 70%);
+        }
+        .menu-card:hover::before {
+            opacity: 1;
+        }
+        .menu-card:hover {
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+            transform: translateY(-3px);
+            border-color: var(--border-strong);
+            background-color: var(--card-bg-hover);
+        }
+        .menu-card:active {
+            transform: scale(0.96);
+            transition: transform 0.15s ease;
+        }
+        .menu-card img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            margin-bottom: 2px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+        .menu-card:hover img {
+            transform: scale(1.08);
+        }
+        .menu-card h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            transition: color var(--transition-speed) ease;
+            pointer-events: none;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        /* === Action Buttons (Edit & Delete) === */
+        .menu-card .actions {
+            position: absolute;
+            top: 8px;
+            right: 6px;
+            display: flex;
+            gap: 2px;
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .menu-card:hover .actions,
+        .menu-card:focus-within .actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .menu-card .actions button {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 7px;
+            border-radius: 50%;
+            transition: all 0.25s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .menu-card .actions button:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+            transform: scale(1.1);
+        }
+        .menu-card .actions button:last-child:hover {
+            background: #e53e3e;
+            border-color: #e53e3e;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(229, 62, 62, 0.4);
+        }
+
+        /* === Extra Section === */
+        .extra-section {
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .extra-btn,
+        .logout-btn {
+            all: unset;
+            font-weight: 600;
+            background-color: var(--btn-extra-bg);
+            color: var(--btn-extra-text);
+            border: 1px solid var(--border);
+            padding: 13px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            height: auto;
+            min-height: 50px;
+            letter-spacing: 0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .extra-btn i,
+        .logout-btn i {
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        .extra-btn:hover,
+        .logout-btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            background-color: var(--btn-extra-hover-bg);
+            border-color: var(--border-strong);
+        }
+        .extra-btn:hover i {
+            transform: scale(1.15);
+        }
+        .extra-btn:active,
+        .logout-btn:active {
+            transform: scale(0.97);
+            transition: transform 0.12s ease;
+        }
+
+        .logout-btn {
+            background-color: var(--btn-logout-bg);
+            color: var(--btn-logout-text);
+            border-color: transparent;
+        }
+        .logout-btn:hover {
+            background-color: var(--btn-logout-hover-bg);
+            box-shadow: 0 4px 16px rgba(229, 62, 62, 0.2);
+        }
+        .logout-btn i {
+            color: var(--btn-logout-text);
+        }
+
+        /* === Watermark === */
+        .watermark {
+            text-align: center;
+            padding: 16px;
+            font-size: 12px;
+            color: var(--watermark-text);
+            background-color: var(--watermark-bg);
+            font-style: italic;
+            border-top: 1px solid var(--divider);
+            margin-top: 40px;
+            letter-spacing: 0.3px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* === Popup Form === */
+        #formPopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--popup-overlay);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        #formContainer {
+            background: var(--popup-bg);
+            border-radius: 16px;
+            padding: 24px 20px 20px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: var(--popup-shadow);
+            position: relative;
+            animation: slideUp 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            border: 1px solid var(--border);
+            transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+        #formContainer h3 {
+            margin: 0 0 18px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            letter-spacing: 0.4px;
+            transition: color var(--transition-speed) ease;
+        }
+        #formContainer,
+        #formContainer * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        #formContainer input {
+            width: 100%;
+            height: 48px;
+            margin-bottom: 12px;
+            padding: 0 14px;
+            font-size: 14px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            display: block;
+            background: var(--input-bg);
+            color: var(--input-text);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        #formContainer input::placeholder {
+            color: var(--input-placeholder);
+        }
+        #formContainer input:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 4px rgba(91, 156, 245, 0.1);
+        }
+        #formContainer button {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(135deg, #2b71c5, #1a5194);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            letter-spacing: 0.4px;
+            box-shadow: 0 4px 14px rgba(43, 113, 197, 0.35);
+        }
+        #formContainer button:hover {
+            background: linear-gradient(135deg, #1a5194, #143d70);
+            box-shadow: 0 6px 20px rgba(43, 113, 197, 0.5);
+            transform: translateY(-1px);
+        }
+        #formContainer button:active {
+            transform: scale(0.97);
+            transition: transform 0.12s ease;
+        }
+        #formContainer .close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--btn-extra-bg);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #formContainer .close:hover {
+            background: #e53e3e;
+            color: #fff;
+            border-color: #e53e3e;
+            transform: rotate(90deg);
+            box-shadow: 0 0 14px rgba(229, 62, 62, 0.4);
+        }
+
+        /* === Tambah Button (Floating) === */
+        #tambahBtn {
+            all: unset;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2b71c5, #1a5194);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(43, 113, 197, 0.4);
+            cursor: pointer;
+            margin: 16px auto;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #tambahBtn:hover {
+            transform: scale(1.12) rotate(5deg);
+            box-shadow: 0 8px 24px rgba(43, 113, 197, 0.6);
+        }
+        #tambahBtn:active {
+            transform: scale(0.9) rotate(-5deg);
+            transition: transform 0.15s ease;
+        }
+        #tambahBtn svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        /* === Responsive === */
+        @media (min-width: 480px) {
+            #menuGrid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                padding: 20px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .extra-section {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 16px 20px;
+            }
+            .profile-section {
+                max-width: 600px;
+                margin: 0 auto;
+                border-radius: 0;
+                padding: 20px 24px;
+            }
+            .menu-card {
+                min-height: 130px;
+                padding: 20px 14px 16px;
+            }
+            .menu-card img {
+                width: 52px;
+                height: 52px;
+            }
+            .menu-card h4 {
+                font-size: 15px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #menuGrid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+                padding: 24px;
+                max-width: 800px;
+            }
+            .extra-section {
+                max-width: 550px;
+            }
+            .topbar {
+                padding: 16px 28px;
+                font-size: 20px;
+            }
+            .topbar-title {
+                font-size: 19px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            #menuGrid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+                max-width: 900px;
+                padding: 28px;
+            }
+            .extra-section {
+                max-width: 600px;
+            }
+            .menu-card {
+                min-height: 140px;
+            }
+            .menu-card img {
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        /* === Accessibility: Reduced Motion === */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="topbar">PUSAT DATA</header>
+    <header class="topbar">
+        <span class="topbar-title">PUSAT DATA</span>
+        <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle theme" title="Ganti tema">
+            <i class="fa-solid fa-sun"></i>
+        </button>
+    </header>
 
-<section class="profile-section">
-  <div class="profile-info">
-    <!-- ✅ Avatar -->
-    <div class="profile-avatar" id="avatar"></div>
-
-    <!-- ✅ Nama dan pondok -->
-    <div>
-      <div id="nama-user" class="profile-name">Nama</div>
-      <div id="pondok-user" class="profile-pondok">Alamat</div>
-    </div>
-  </div>
-</section>
-  <!-- <section class="menu-grid">
-    <button class="menu-item" onclick="goTo('catatan')">
-      <img src="/GAMBAR/CATATAN.png" alt="soal" class="icon-img">
-      <p>Catatan Ibaroh</p>
-    </button>
-    
-    <button class="menu-item" onclick="goTo('soal')">
-      <img src="/GAMBAR/IBAROH.png" alt="pesan" class="icon-img">
-      <p>Bahtsul Masail</p>
-    </button>
-    
-    <button class="menu-item" onclick="goTo('upKitab')">
-      <img src="/GAMBAR/PERPUSTAKAAN.png" alt="upload" class="icon-img">
-      <p>Perpustakaan</p>
-    </button>
-    
-    <button class="menu-item" onclick="goTo('chatt')">
-      <img src="/GAMBAR/PROGRAM.png" alt="kitab" class="icon-img">
-      <p>Program</p>
-    </button>
-
-    <button class="menu-item" onclick="goTo('catatan')">
-      <img src="/GAMBAR/DESAIN.png" alt="kitab" class="icon-img">
-      <p>Desain</p>
-    </button>
-    
-    <button class="menu-item" onclick="goTo('catatan')">
-      <img src="/GAMBAR/PRIFASI.png" alt="catatan" class="icon-img">
-      <p>Dokumen</p>
-    </button>
-    
-      </section> -->
-
-      <div id="menuGrid" class="menu-item">
-        <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat menu...</div>
-      </div>
-  
-      <!-- Pakai inline SVG -->
-      <!-- <button id="tambahBtn" onclick="openForm()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button> -->
-
-      <div id="formPopup">
-        <div id="formContainer">
-          <button class="close" onclick="closeForm()" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-          <h3 id="formTitle">Tambahkan Menu</h3>
-          <input type="hidden" id="editIdMenu">
-          <input type="text" id="judulInput" placeholder="Judul menu">
-          <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
-          <input type="text" id="linkInput" placeholder="Link tujuan">
-          <button onclick="submitMenu()">Simpan</button>
+    <section class="profile-section">
+        <div class="profile-info">
+            <div class="profile-avatar" id="avatar"></div>
+            <div>
+                <div id="nama-user" class="profile-name">Nama</div>
+                <div id="pondok-user" class="profile-pondok">Alamat</div>
+            </div>
         </div>
-      </div>
-      <section class="extra-section">
+    </section>
+
+    <div id="menuGrid" class="menu-item">
+        <div id="spinner"><i class="fas fa-spinner fa-spin"></i> Memuat menu...</div>
+    </div>
+
+    <div id="formPopup">
+        <div id="formContainer">
+            <button class="close" onclick="closeForm()" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <h3 id="formTitle">Tambahkan Menu</h3>
+            <input type="hidden" id="editIdMenu">
+            <input type="text" id="judulInput" placeholder="Judul menu">
+            <input type="text" id="ikonInput" placeholder="ID file Google Drive ikon">
+            <input type="text" id="linkInput" placeholder="Link tujuan">
+            <button onclick="submitMenu()">Simpan</button>
+        </div>
+    </div>
+
+    <section class="extra-section">
         <button onclick="openForm()" class="extra-btn">
-          <i class="fa-solid fa-plus-circle"></i> Tambahkan Menu
+            <i class="fa-solid fa-plus-circle"></i> Tambahkan Menu
         </button>
-      
+
         <button onclick="goTo('setting')" class="extra-btn">
-          <i class="fa-solid fa-user-gear"></i> Pengaturan Akun
+            <i class="fa-solid fa-user-gear"></i> Pengaturan Akun
         </button>
-      
+
         <button onclick="openSheet('')" class="extra-btn">
-          <i class="fa-solid fa-database"></i> Database
+            <i class="fa-solid fa-database"></i> Database
         </button>
-      
+
         <button onclick="goTo('https://wa.me/6285182347948?text=Halo,%20saya%20butuh%20bantuan%20developer')" class="extra-btn">
-          <i class="fa-solid fa-circle-question"></i> Bantuan Developer
-        </button>        
-      
-        <button onclick="goTo('log')" class="logout-btn">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <i class="fa-solid fa-circle-question"></i> Bantuan Developer
         </button>
-      </section>
-      
-      <div class="watermark">
+
+        <button onclick="goTo('log')" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+    </section>
+
+    <div class="watermark">
         &copy; Teguh Sulistyawan | All rights reserved
-      </div>
-      
-  <script src="script-dashboard.js"></script>
+    </div>
+
+    <script>
+        const API_URL =
+            'https://script.google.com/macros/s/AKfycbwWjf1hvKvZB0CArcuS1vkhHa7ai6_-X0iY66tgx1SexxF_-nExs7dVYn44ySeFwI5CoQ/exec';
+
+        const SCRIPT_URL =
+            'https://script.google.com/macros/s/AKfycbzTbmok0i6AtgLr4ebPcm2Gujl7n75yXH2IpM3B-D2tzhZeGLHfcyCyydHD7m9QsZFH/exec';
+
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get("id")?.toUpperCase();
+
+        const menuGrid = document.getElementById("menuGrid");
+        const spinner = document.getElementById("spinner");
+        const formPopup = document.getElementById("formPopup");
+        const editIdMenu = document.getElementById("editIdMenu");
+        const formTitle = document.getElementById("formTitle");
+        const themeToggle = document.getElementById("themeToggle");
+
+        // === THEME TOGGLE ===
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('pusatdata-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                updateThemeIcon(true);
+            } else {
+                document.body.classList.remove('light');
+                updateThemeIcon(false);
+            }
+        })();
+
+        themeToggle.addEventListener('click', function() {
+            const isLight = document.body.classList.toggle('light');
+            localStorage.setItem('pusatdata-theme', isLight ? 'light' : 'dark');
+            updateThemeIcon(isLight);
+        });
+
+        function updateThemeIcon(isLight) {
+            const icon = themeToggle.querySelector('i');
+            if (isLight) {
+                icon.className = 'fa-solid fa-moon';
+                themeToggle.setAttribute('aria-label', 'Switch to dark theme');
+                themeToggle.setAttribute('title', 'Ganti ke tema gelap');
+            } else {
+                icon.className = 'fa-solid fa-sun';
+                themeToggle.setAttribute('aria-label', 'Switch to light theme');
+                themeToggle.setAttribute('title', 'Ganti ke tema terang');
+            }
+        }
+
+        // === LOGIN & LOAD MENU ===
+        window.onload = () => {
+            const id = new URLSearchParams(window.location.search).get("id");
+
+            if (!id) {
+                window.location.href = "log.html";
+                return;
+            }
+
+            // cek user
+            fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "getUser",
+                        id: id
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "found") {
+                        document.getElementById("nama-user").innerText = data.nama;
+                        document.getElementById("pondok-user").innerText = data.pondok;
+
+                        if (data.fileId) {
+                            const imageUrl = `https://drive.google.com/thumbnail?id=${data.fileId}`;
+                            document.getElementById("avatar").innerHTML =
+                                `<img src="${imageUrl}" alt="Avatar" style="width:60px;height:60px;border-radius:50%;object-fit:cover;">`;
+                        } else {
+                            document.getElementById("avatar").innerText = data.nama.charAt(0).toUpperCase();
+                        }
+
+                        // load menu setelah user valid
+                        loadMenu();
+                    } else {
+                        alert("ID tidak ditemukan. Silakan login ulang.");
+                        window.location.href = "log.html";
+                    }
+                })
+                .catch(err => {
+                    console.error("Gagal ambil data:", err);
+                    window.location.href = "log.html";
+                });
+        };
+
+        // Navigasi ke halaman lain dengan tetap membawa id
+        function goTo(page) {
+            const userId = new URLSearchParams(window.location.search).get("id");
+            if (!userId) {
+                alert("ID user tidak ditemukan!");
+                window.location.href = "log.html";
+                return;
+            }
+            window.location.href = `${page}.html?id=${userId}`;
+        }
+
+        // Logout
+        function logout() {
+            if (typeof AndroidFunction !== "undefined") {
+                AndroidFunction.logout();
+            }
+            window.location.href = "log.html";
+        }
+
+        function openForm(editData = null) {
+            formPopup.style.display = "flex";
+            if (editData) {
+                formTitle.innerText = "Edit Menu";
+                editIdMenu.value = editData.idMenu;
+                document.getElementById("judulInput").value = editData.judul;
+                document.getElementById("ikonInput").value = editData.ikon;
+                document.getElementById("linkInput").value = editData.link;
+            } else {
+                formTitle.innerText = "Tambah Menu";
+                editIdMenu.value = "";
+                document.getElementById("judulInput").value = "";
+                document.getElementById("ikonInput").value = "";
+                document.getElementById("linkInput").value = "";
+            }
+        }
+
+        function closeForm() {
+            formPopup.style.display = "none";
+        }
+
+        // Tutup popup saat klik di luar form container
+        formPopup.addEventListener('click', function(e) {
+            if (e.target === formPopup) {
+                closeForm();
+            }
+        });
+
+        // Tutup popup dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && formPopup.style.display === 'flex') {
+                closeForm();
+            }
+        });
+
+        function loadMenu() {
+            if (!userId) {
+                menuGrid.innerHTML = '<p style="color:var(--text-muted);">ID User tidak ditemukan di URL</p>';
+                return;
+            }
+            spinner.style.display = 'block';
+            fetch(`${SCRIPT_URL}?idUser=${userId}&ts=${Date.now()}`)
+                .then(res => res.json())
+                .then(data => {
+                    spinner.style.display = 'none';
+                    tampilkanMenu(data.reverse());
+                })
+                .catch(() => {
+                    spinner.style.display = 'none';
+                    menuGrid.innerHTML =
+                        '<p style="color:var(--text-muted);">Gagal mengambil data</p>';
+                });
+        }
+
+        // Fungsi untuk ambil ID Google Drive dari berbagai format link
+        function extractDriveId(url) {
+            if (!url) return "";
+
+            // Pola umum Google Drive
+            const regex = /(?:\/d\/|id=)([-\w]{10,})/;
+            const match = url.match(regex);
+            return match ? match[1] : url;
+            // kalau bukan link drive, kembalikan apa adanya (anggap user sudah input ID)
+        }
+
+        function tampilkanMenu(data) {
+            menuGrid.innerHTML = '';
+            if (data.length === 0) {
+                menuGrid.innerHTML = '<p style="color:var(--text-muted);">Belum ada menu</p>';
+                return;
+            }
+            data.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "menu-card";
+
+                const img = document.createElement("img");
+
+                // 🔹 Cek apakah ikon dari Google Drive atau Flaticon/link langsung
+                if (item.ikon.includes("drive.google.com")) {
+                    const driveId = extractDriveId(item.ikon);
+                    img.src = `https://drive.google.com/thumbnail?id=${driveId}`;
+                } else if (item.ikon.startsWith("http")) {
+                    // Asumsikan ini link langsung (Flaticon, CDN, atau gambar lain)
+                    img.src = item.ikon;
+                } else {
+                    // Jika kosong atau tidak valid, pakai ikon default
+                    img.src = "https://cdn-icons-png.flaticon.com/512/1828/1828673.png"; // default icon
+                }
+
+                card.appendChild(img);
+
+                const h4 = document.createElement("h4");
+                h4.innerText = item.judul;
+                card.appendChild(h4);
+
+                const actions = document.createElement("div");
+                actions.className = "actions";
+
+                const editBtn = document.createElement("button");
+                editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                editBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    openForm(item);
+                };
+                actions.appendChild(editBtn);
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    hapusMenu(item.idMenu);
+                };
+                actions.appendChild(deleteBtn);
+
+                card.appendChild(actions);
+
+                card.onclick = () => {
+                    if (item.link) {
+                        if (item.link.startsWith("http")) {
+                            // Link eksternal
+                            window.open(item.link, "_blank");
+                        } else {
+                            // Link internal, arahkan dengan tetap membawa id user
+                            goTo(item.link);
+                        }
+                    } else {
+                        alert("Link belum tersedia!");
+                    }
+                };
+
+                menuGrid.appendChild(card);
+            });
+        }
+
+        function submitMenu() {
+            const idMenu = editIdMenu.value;
+            const judul = document.getElementById("judulInput").value.trim();
+            const ikon = document.getElementById("ikonInput").value.trim();
+            const link = document.getElementById("linkInput").value.trim();
+
+            if (!judul || !ikon || !link) {
+                alert("Lengkapi semua isian!");
+                return;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append("idUser", userId);
+            formData.append("judul", judul);
+            formData.append("ikon", ikon);
+            formData.append("link", link);
+
+            if (idMenu) {
+                formData.append("aksi", "edit");
+                formData.append("idMenu", idMenu);
+            } else {
+                formData.append("aksi", "tambah");
+            }
+
+            spinner.style.display = 'block';
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(res => {
+                    spinner.style.display = 'none';
+                    if (res.success) {
+                        closeForm();
+                        loadMenu();
+                    } else {
+                        alert("Gagal menyimpan: " + res.error);
+                    }
+                })
+                .catch(err => {
+                    spinner.style.display = 'none';
+                    alert("Error: " + err);
+                });
+        }
+
+        function hapusMenu(idMenu) {
+            if (!confirm("Yakin ingin menghapus menu ini?")) return;
+            const formData = new URLSearchParams();
+            formData.append("aksi", "hapus");
+            formData.append("idMenu", idMenu);
+
+            spinner.style.display = 'block';
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(res => {
+                    spinner.style.display = 'none';
+                    if (res.success) loadMenu();
+                    else alert("Gagal hapus: " + res.error);
+                })
+                .catch(err => {
+                    spinner.style.display = 'none';
+                    alert("Error: " + err);
+                });
+        }
+
+        // === Stub untuk openSheet (jika belum didefinisikan di tempat lain) ===
+        if (typeof openSheet === 'undefined') {
+            window.openSheet = function(url) {
+                if (url) {
+                    window.open(url, '_blank');
+                } else {
+                    alert('Fitur Database akan segera hadir.');
+                }
+            };
+        }
+    </script>
 </body>
 </html>
