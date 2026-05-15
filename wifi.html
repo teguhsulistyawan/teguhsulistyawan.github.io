@@ -1,773 +1,2049 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Dashboard Monitoring Terpadu</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-:root {
-  --primary: #6366f1;
-  --primary-light: #818cf8;
-  --primary-dark: #4f46e5;
-  --primary-glow: rgba(99,102,241,0.25);
-  --success: #10b981;
-  --success-glow: rgba(16,185,129,0.2);
-  --warning: #f59e0b;
-  --warning-glow: rgba(245,158,11,0.2);
-  --danger: #ef4444;
-  --danger-glow: rgba(239,68,68,0.2);
-  --info: #06b6d4;
-  --info-glow: rgba(6,182,212,0.2);
-  --bg: #0f1117;
-  --bg2: #161b27;
-  --bg3: #1e2433;
-  --card-bg: #1a1f2e;
-  --card-border: rgba(255,255,255,0.07);
-  --card-border-hover: rgba(99,102,241,0.4);
-  --text: #e2e8f0;
-  --text-light: #94a3b8;
-  --text-muted: #64748b;
-  --border: rgba(255,255,255,0.08);
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
-  --shadow-glow: 0 0 30px var(--primary-glow);
-  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-[data-theme="light"] {
-  --bg: #f0f2f8;
-  --bg2: #e8eaf0;
-  --bg3: #dde1ea;
-  --card-bg: #ffffff;
-  --card-border: rgba(0,0,0,0.07);
-  --card-border-hover: rgba(99,102,241,0.4);
-  --text: #1e293b;
-  --text-light: #475569;
-  --text-muted: #94a3b8;
-  --border: rgba(0,0,0,0.08);
-  --shadow: 0 4px 24px rgba(0,0,0,0.08);
-}
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
-body{background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.4s,color 0.4s;}
-.container{max-width:1400px;margin:0 auto;padding:16px;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard Monitoring Terpadu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ============================================
+           VARIABEL CSS - TEMA GELAP (DEFAULT)
+           ============================================ */
+        :root {
+            --primary: #4b8bf5;
+            --primary-light: #6ba3f8;
+            --primary-dark: #3570d9;
+            --primary-glow: rgba(75, 139, 245, 0.35);
+            --success: #3fb950;
+            --success-glow: rgba(63, 185, 80, 0.35);
+            --warning: #d2991d;
+            --warning-glow: rgba(210, 153, 29, 0.35);
+            --danger: #f85149;
+            --danger-glow: rgba(248, 81, 73, 0.35);
+            --info: #39d2c0;
+            --info-glow: rgba(57, 210, 192, 0.3);
 
-/* HEADER */
-.header{
-  text-align:center;
-  margin-bottom:28px;
-  padding:36px 24px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#1a0533 0%,#0d1a4a 40%,#0a1628 100%);
-  border:1px solid rgba(99,102,241,0.2);
-  box-shadow:0 0 60px rgba(99,102,241,0.12),var(--shadow);
-  position:relative;
-  overflow:hidden;
-}
-[data-theme="light"] .header{
-  background:linear-gradient(135deg,#4338ca 0%,#3b82f6 60%,#1d4ed8 100%);
-}
-.header::before{
-  content:'';
-  position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity:1;
-}
-.header-orb{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(60px);
-  pointer-events:none;
-}
-.orb1{width:300px;height:300px;background:rgba(99,102,241,0.15);top:-100px;left:-50px;}
-.orb2{width:200px;height:200px;background:rgba(6,182,212,0.1);bottom:-50px;right:100px;}
-.header-content{position:relative;z-index:1;}
-.header h1{
-  font-size:2.8rem;font-weight:800;
-  background:linear-gradient(135deg,#ffffff 0%,#c7d2fe 50%,#a5b4fc 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  display:inline-block;letter-spacing:-1px;margin-bottom:10px;
-}
-.header-subtitle{
-  color:rgba(255,255,255,0.7);font-size:1rem;font-weight:400;
-  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;
-}
-.header-subtitle::before,.header-subtitle::after{content:'';height:1px;width:30px;background:rgba(255,255,255,0.25);}
+            --bg: #0b0f17;
+            --bg-secondary: #111620;
+            --bg-elevated: #171c28;
+            --card-bg: #161c28;
+            --card-bg-hover: #1b2232;
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #e8edf4;
+            --text-heading: #f0f4fa;
+            --text-light: #8b949e;
+            --text-muted: #5c6570;
+            --border: #252b36;
+            --border-light: #1e2430;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(75, 139, 245, 0.2);
+            --header-gradient-1: #0a1628;
+            --header-gradient-2: #111d3a;
+            --header-gradient-3: #162544;
+            --metric-bg: #1b2232;
+            --table-stripe: #141b28;
+            --table-hover: #1a2234;
+            --input-bg: #141b28;
+            --input-border: #252b36;
+            --input-focus-border: #4b8bf5;
+            --tab-bg: #111620;
+            --tab-active-bg: #1c2640;
+            --overlay: rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(22, 28, 40, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --divider: rgba(255, 255, 255, 0.05);
+            --icon-bg-network: rgba(75, 139, 245, 0.12);
+            --icon-bg-success: rgba(63, 185, 80, 0.12);
+            --icon-bg-warning: rgba(210, 153, 29, 0.12);
+            --icon-bg-danger: rgba(248, 81, 73, 0.12);
+            --scrollbar-thumb: #2d3544;
+            --scrollbar-track: #111620;
+            --header-pattern-opacity: 0.03;
+            --badge-online-bg: rgba(63, 185, 80, 0.15);
+            --badge-online-text: #3fb950;
+            --badge-offline-bg: rgba(248, 81, 73, 0.15);
+            --badge-offline-text: #f85149;
+            --badge-warning-bg: rgba(210, 153, 29, 0.15);
+            --badge-warning-text: #d2991d;
+            --card-online-glow: rgba(63, 185, 80, 0.18);
+            --btn-remote-bg: #4b8bf5;
+            --btn-remote-hover: #5d99f7;
+            --btn-pay-bg: #4b8bf5;
+            --btn-pay-hover: #5d99f7;
+            --footer-bg: rgba(11, 15, 23, 0.9);
+            --footer-text: #5c6570;
+            --footer-border: #1e2430;
+            --notification-bg: #3fb950;
+            --header-text-glow: rgba(255, 255, 255, 0.15);
+            --tab-text-inactive: #6b7385;
+            --card-icon-bg: rgba(75, 139, 245, 0.1);
+        }
 
-/* THEME TOGGLE */
-.header-controls{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
-.theme-toggle{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:9px 18px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:50px;color:#fff;
-  font-size:0.85rem;font-weight:500;
-  cursor:pointer;transition:var(--transition);
-  backdrop-filter:blur(8px);
-}
-.theme-toggle:hover{background:rgba(255,255,255,0.15);transform:translateY(-2px);}
+        /* ============================================
+           VARIABEL CSS - TEMA TERANG
+           ============================================ */
+        [data-theme="light"] {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.2);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --info: #06b6d4;
+            --info-glow: rgba(6, 182, 212, 0.2);
 
-/* SERVER STATUS BUTTON */
-.server-status-button{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:9px 20px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:50px;color:#fff;
-  font-size:0.85rem;font-weight:600;
-  text-decoration:none;transition:var(--transition);
-  backdrop-filter:blur(8px);
-}
-.server-status-button:hover{background:rgba(255,255,255,0.15);transform:translateY(-2px);}
-.pulse{width:9px;height:9px;border-radius:50%;position:relative;}
-.server-status-button.online .pulse{background:var(--success);}
-.server-status-button.offline .pulse{background:var(--danger);}
-.server-status-button.online .pulse::after{
-  content:'';position:absolute;inset:-4px;
-  border-radius:50%;background:var(--success);
-  animation:pulseRing 2s infinite;opacity:0.5;
-}
-@keyframes pulseRing{0%{transform:scale(1);opacity:.5}70%{transform:scale(2.2);opacity:0}100%{transform:scale(1);opacity:0}}
+            --bg: #f1f5f9;
+            --bg-secondary: #e8ecf1;
+            --bg-elevated: #f8fafc;
+            --card-bg: #ffffff;
+            --card-bg-hover: #fafcfd;
+            --card-border: rgba(0, 0, 0, 0.06);
+            --text: #1e293b;
+            --text-heading: #0f172a;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.12);
+            --header-gradient-1: #1e3a8a;
+            --header-gradient-2: #2563eb;
+            --header-gradient-3: #3b82f6;
+            --metric-bg: #f8fafc;
+            --table-stripe: #f8fafc;
+            --table-hover: #eff6ff;
+            --input-bg: #ffffff;
+            --input-border: #e2e8f0;
+            --input-focus-border: #2563eb;
+            --tab-bg: #ffffff;
+            --tab-active-bg: #2563eb;
+            --overlay: rgba(255, 255, 255, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --divider: rgba(0, 0, 0, 0.05);
+            --icon-bg-network: rgba(37, 99, 235, 0.08);
+            --icon-bg-success: rgba(16, 185, 129, 0.08);
+            --icon-bg-warning: rgba(245, 158, 11, 0.08);
+            --icon-bg-danger: rgba(239, 68, 68, 0.08);
+            --scrollbar-thumb: #cbd5e1;
+            --scrollbar-track: #f1f5f9;
+            --header-pattern-opacity: 0.06;
+            --badge-online-bg: rgba(16, 185, 129, 0.12);
+            --badge-online-text: #059669;
+            --badge-offline-bg: rgba(239, 68, 68, 0.12);
+            --badge-offline-text: #dc2626;
+            --badge-warning-bg: rgba(245, 158, 11, 0.12);
+            --badge-warning-text: #b45309;
+            --card-online-glow: rgba(16, 185, 129, 0.12);
+            --btn-remote-bg: #2563eb;
+            --btn-remote-hover: #1d4ed8;
+            --btn-pay-bg: #2563eb;
+            --btn-pay-hover: #1d4ed8;
+            --footer-bg: rgba(248, 250, 252, 0.95);
+            --footer-text: #64748b;
+            --footer-border: #e2e8f0;
+            --notification-bg: #10b981;
+            --header-text-glow: rgba(255, 255, 255, 0.08);
+            --tab-text-inactive: #64748b;
+            --card-icon-bg: rgba(37, 99, 235, 0.08);
+        }
 
-/* TAB NAVIGATION */
-.tab-navigation{
-  display:flex;gap:6px;margin-bottom:24px;
-  background:var(--card-bg);border:1px solid var(--card-border);
-  border-radius:14px;padding:6px;
-  box-shadow:var(--shadow);
-}
-.tab-button{
-  flex:1;padding:12px 8px;background:transparent;
-  border:none;border-radius:10px;
-  font-weight:600;font-size:0.9rem;color:var(--text-muted);
-  cursor:pointer;transition:var(--transition);
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.tab-button:hover:not(.active){background:var(--bg2);color:var(--text-light);}
-.tab-button.active{
-  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
-  color:#fff;
-  box-shadow:0 4px 15px var(--primary-glow);
-}
-.tab-button i{font-size:1rem;}
+        /* ============================================
+           RESET & STYLE DASAR
+           ============================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
 
-/* STATS BAR */
-.stats-bar{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;margin-bottom:24px;
-}
-.stat-card{
-  background:var(--card-bg);border:1px solid var(--card-border);
-  border-radius:14px;padding:20px;
-  display:flex;align-items:center;gap:16px;
-  transition:var(--transition);
-  position:relative;overflow:hidden;
-}
-.stat-card::before{
-  content:'';position:absolute;inset:0;opacity:0;transition:var(--transition);
-  border-radius:14px;
-}
-.stat-card:hover{transform:translateY(-4px);border-color:var(--card-border-hover);}
-.stat-card:hover::before{opacity:1;}
-.stat-card.network::before{background:linear-gradient(135deg,rgba(99,102,241,0.05),transparent);}
-.stat-card.danger::before{background:linear-gradient(135deg,rgba(239,68,68,0.05),transparent);}
-.stat-card.payment::before{background:linear-gradient(135deg,rgba(16,185,129,0.05),transparent);}
-.stat-card.warning::before{background:linear-gradient(135deg,rgba(245,158,11,0.05),transparent);}
-.stat-icon{
-  width:52px;height:52px;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:12px;font-size:1.4rem;flex-shrink:0;
-  transition:var(--transition);
-}
-.stat-card:hover .stat-icon{transform:scale(1.1);}
-.stat-card.network .stat-icon{background:var(--primary-glow);color:var(--primary-light);}
-.stat-card.danger .stat-icon{background:var(--danger-glow);color:var(--danger);}
-.stat-card.payment .stat-icon{background:var(--success-glow);color:var(--success);}
-.stat-card.warning .stat-icon{background:var(--warning-glow);color:var(--warning);}
-.stat-info h3{font-size:1.9rem;font-weight:700;margin-bottom:2px;color:var(--text);}
-.stat-info p{font-size:0.82rem;color:var(--text-muted);font-weight:500;}
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
 
-/* CONTENT AREA */
-.content-area{
-  display:none;background:var(--card-bg);
-  border:1px solid var(--card-border);
-  border-radius:16px;padding:24px;
-  box-shadow:var(--shadow);margin-bottom:24px;
-  animation:fadeInUp 0.4s cubic-bezier(0.4,0,0.2,1);
-}
-.content-area.active{display:block;}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(75, 139, 245, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(57, 210, 192, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.02) 0%, transparent 70%);
+            background-attachment: fixed;
+        }
 
-/* SEARCH BAR */
-.search-bar{margin-bottom:20px;position:relative;}
-.search-bar input{
-  width:100%;padding:13px 18px 13px 48px;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:12px;font-size:0.95rem;color:var(--text);
-  transition:var(--transition);
-}
-.search-bar input::placeholder{color:var(--text-muted);}
-.search-bar input:focus{
-  outline:none;border-color:var(--primary);
-  box-shadow:0 0 0 3px var(--primary-glow);background:var(--bg3);
-}
-.search-bar i{
-  position:absolute;left:16px;top:50%;transform:translateY(-50%);
-  color:var(--text-muted);font-size:1rem;
-}
+        [data-theme="light"] body {
+            background-image:
+                radial-gradient(ellipse at 20% 10%, rgba(37, 99, 235, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(6, 182, 212, 0.02) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.015) 0%, transparent 70%);
+        }
 
-/* NETWORK CARDS */
-.cards-container{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:20px;
-}
-.card{
-  background:var(--bg2);
-  border:1px solid var(--card-border);
-  border-radius:14px;padding:20px;
-  transition:var(--transition);
-  position:relative;overflow:hidden;
-}
-.card::after{
-  content:'';position:absolute;
-  top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--primary),var(--info));
-  opacity:0;transition:var(--transition);
-}
-.card:hover{transform:translateY(-5px);border-color:var(--card-border-hover);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
-.card:hover::after{opacity:1;}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
-.card-title{display:flex;align-items:center;gap:10px;}
-.card-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
-  color:#fff;font-size:1.1rem;flex-shrink:0;
-  box-shadow:0 4px 12px var(--primary-glow);
-}
-.card-header h2{font-size:1.05rem;font-weight:600;color:var(--text);line-height:1.4;}
-.status-badge{
-  font-weight:600;padding:5px 11px;border-radius:50px;
-  font-size:0.75rem;display:flex;align-items:center;gap:5px;
-  letter-spacing:0.3px;
-}
-.status-badge.ONLINE{background:var(--success-glow);color:var(--success);border:1px solid rgba(16,185,129,0.3);}
-.status-badge.SEDANG{background:var(--warning-glow);color:var(--warning);border:1px solid rgba(245,158,11,0.3);}
-.status-badge.OFFLINE{background:var(--danger-glow);color:var(--danger);border:1px solid rgba(239,68,68,0.3);}
-.card-info{margin-bottom:16px;}
-.info-row{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:10px;padding-bottom:10px;
-  border-bottom:1px solid var(--border);
-}
-.info-row:last-child{margin-bottom:0;border-bottom:none;}
-.info-label{font-weight:500;color:var(--text-muted);font-size:0.85rem;}
-.info-value{font-weight:600;color:var(--text);font-size:0.9rem;}
-.location-btn{
-  display:inline-flex;align-items:center;gap:5px;
-  background:var(--info-glow);color:var(--info);
-  border:1px solid rgba(6,182,212,0.3);
-  padding:5px 10px;border-radius:6px;
-  text-decoration:none;font-size:0.8rem;font-weight:500;
-  transition:var(--transition);cursor:pointer;
-}
-.location-btn:hover{background:rgba(6,182,212,0.25);transform:translateY(-1px);}
-.metrics{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
-  margin-bottom:16px;
-  background:var(--bg3);padding:12px;border-radius:10px;
-}
-.metric{text-align:center;}
-.metric-label{font-size:0.75rem;color:var(--text-muted);margin-bottom:3px;font-weight:500;}
-.metric-value{font-size:1.05rem;font-weight:700;}
-.metric.latency .metric-value{color:var(--success);}
-.metric.jitter .metric-value{color:var(--warning);}
-.metric.loss .metric-value{color:var(--danger);}
-.card-footer{display:flex;justify-content:space-between;align-items:center;}
-.last-update{font-size:0.75rem;color:var(--text-muted);}
-.btn-remote{
-  display:inline-flex;align-items:center;gap:7px;
-  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
-  color:#fff;padding:8px 14px;border-radius:8px;
-  text-decoration:none;font-size:0.85rem;font-weight:500;
-  transition:var(--transition);box-shadow:0 4px 12px var(--primary-glow);
-}
-.btn-remote:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--primary-glow);}
+        /* ============================================
+           SCROLLBAR CUSTOM
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
 
-/* PAYMENT TABLE */
-.table-container{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
-.payment-table{width:100%;border-collapse:collapse;background:var(--card-bg);}
-.payment-table thead{background:linear-gradient(135deg,var(--primary-dark),var(--primary));}
-.payment-table th{
-  padding:14px 18px;text-align:left;
-  font-weight:600;font-size:0.82rem;
-  text-transform:uppercase;letter-spacing:0.6px;color:#fff;
-}
-.payment-table tbody tr{border-bottom:1px solid var(--border);transition:var(--transition);}
-.payment-table tbody tr:hover{background:var(--bg2);}
-.payment-table tbody tr:last-child{border-bottom:none;}
-.payment-table td{padding:14px 18px;font-size:0.9rem;color:var(--text);}
-.payment-status{
-  font-weight:600;padding:5px 12px;border-radius:50px;
-  font-size:0.78rem;display:inline-block;text-align:center;min-width:120px;
-}
-.payment-status.lunas{background:var(--success-glow);color:var(--success);border:1px solid rgba(16,185,129,0.3);}
-.payment-status.nunggak{background:var(--danger-glow);color:var(--danger);border:1px solid rgba(239,68,68,0.3);}
-.payment-status.belumjatuhtempo{background:var(--warning-glow);color:var(--warning);border:1px solid rgba(245,158,11,0.3);}
-.btn-pay{
-  display:inline-flex;align-items:center;gap:6px;
-  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
-  color:#fff;padding:7px 14px;border-radius:8px;
-  border:none;font-size:0.82rem;font-weight:500;
-  cursor:pointer;transition:var(--transition);
-  box-shadow:0 3px 10px var(--primary-glow);
-}
-.btn-pay:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 18px var(--primary-glow);}
-.btn-pay:disabled{background:var(--bg3);color:var(--text-muted);cursor:not-allowed;box-shadow:none;opacity:0.7;}
+        /* ============================================
+           CONTAINER
+           ============================================ */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 12px 16px;
+        }
 
-/* LOADING & NO DATA */
-.loading{text-align:center;padding:48px 24px;color:var(--text-muted);}
-.loading i{font-size:2rem;margin-bottom:12px;color:var(--primary);display:block;animation:spin 1.2s linear infinite;}
-.no-data{text-align:center;padding:48px 24px;color:var(--text-muted);}
-.no-data i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.4;}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        /* ============================================
+           HEADER - ANIMATED GRADIENT
+           ============================================ */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 32px 24px 28px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--header-gradient-1) 0%, var(--header-gradient-2) 40%, var(--header-gradient-3) 70%, var(--header-gradient-1) 100%);
+            background-size: 300% 300%;
+            animation: headerGradientShift 12s ease-in-out infinite;
+            box-shadow: var(--shadow), var(--shadow-glow);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-/* SKELETON LOADER */
-.skeleton{
-  background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);
-  background-size:200% 100%;
-  animation:shimmer 1.5s infinite;
-  border-radius:8px;
-}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        @keyframes headerGradientShift {
+            0% {
+                background-position: 0% 30%;
+            }
+            25% {
+                background-position: 50% 70%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            75% {
+                background-position: 50% 30%;
+            }
+            100% {
+                background-position: 0% 30%;
+            }
+        }
 
-/* NOTIFICATION */
-.success-notification{
-  position:fixed;top:20px;right:20px;
-  background:linear-gradient(135deg,#065f46,#059669);
-  color:#fff;padding:14px 20px;border-radius:12px;
-  display:flex;align-items:center;gap:10px;
-  z-index:9999;box-shadow:0 8px 32px rgba(16,185,129,0.4);
-  animation:slideInRight 0.4s cubic-bezier(0.4,0,0.2,1);
-  border:1px solid rgba(16,185,129,0.3);
-}
-@keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='1.2' fill='%23ffffff' fill-opacity='0.18'/%3E%3Ccircle cx='12' cy='18' r='0.8' fill='%23ffffff' fill-opacity='0.1'/%3E%3Ccircle cx='60' cy='55' r='1' fill='%23ffffff' fill-opacity='0.12'/%3E%3Ccircle cx='28' cy='62' r='0.7' fill='%23ffffff' fill-opacity='0.09'/%3E%3Ccircle cx='70' cy='20' r='0.9' fill='%23ffffff' fill-opacity='0.11'/%3E%3Ccircle cx='48' cy='8' r='0.6' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E");
+            opacity: var(--header-pattern-opacity);
+            animation: patternDrift 30s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* FOOTER */
-.footer-watermark{
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:12px;padding:18px;text-align:center;
-  font-size:0.82rem;color:var(--text-muted);margin-top:24px;
-  transition:var(--transition);
-}
-.footer-watermark:hover{border-color:var(--primary);color:var(--text-light);}
-.watermark-content{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;}
-.separator{color:var(--border);}
-.author{font-weight:600;color:var(--primary-light);}
+        @keyframes patternDrift {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(3%, 2%) rotate(1deg);
+            }
+        }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .container{padding:10px;}
-  .header h1{font-size:2rem;}
-  .stats-bar{grid-template-columns:1fr 1fr;gap:12px;}
-  .cards-container{grid-template-columns:1fr;}
-  .content-area{padding:14px;}
-  .tab-button{font-size:0.8rem;padding:10px 4px;}
-  .tab-button i{font-size:0.9rem;}
-}
-@media(max-width:480px){
-  .header h1{font-size:1.6rem;}
-  .stats-bar{grid-template-columns:1fr 1fr;}
-  .header-subtitle::before,.header-subtitle::after{display:none;}
-  .tab-button span{display:none;}
-  .watermark-content{flex-direction:column;gap:4px;}
-  .separator{display:none;}
-}
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* SCROLL BAR */
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:var(--bg2);}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
 
-/* SECTION LABEL */
-.section-label{
-  font-size:0.75rem;font-weight:600;letter-spacing:1px;
-  text-transform:uppercase;color:var(--text-muted);
-  margin-bottom:12px;padding-left:2px;
-}
-</style>
+        .header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #ffffff 0%, #d0e0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            filter: drop-shadow(0 2px 8px var(--header-text-glow));
+            animation: titleShimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes titleShimmer {
+            0%,
+            100% {
+                filter: drop-shadow(0 2px 8px var(--header-text-glow));
+            }
+            50% {
+                filter: drop-shadow(0 2px 16px rgba(255, 255, 255, 0.25));
+            }
+        }
+
+        .header-subtitle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 550px;
+            margin: 0 auto;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .header-subtitle::before,
+        .header-subtitle::after {
+            content: '';
+            height: 1.5px;
+            width: 35px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+        }
+
+        /* ============================================
+           TOMBOL THEME TOGGLE
+           ============================================ */
+        .theme-toggle-wrapper {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            z-index: 5;
+        }
+
+        .theme-toggle-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.45);
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-toggle-btn:active {
+            transform: scale(0.94);
+            transition: transform 0.15s ease;
+        }
+
+        .theme-toggle-btn i {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            position: absolute;
+        }
+
+        .theme-toggle-btn .fa-moon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        .theme-toggle-btn .fa-sun {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        [data-theme="light"] .theme-toggle-btn {
+            background: rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 0, 0, 0.15);
+            color: #475569;
+        }
+        [data-theme="light"] .theme-toggle-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.25);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============================================
+           SERVER STATUS BUTTON
+           ============================================ */
+        .server-status-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            text-decoration: none;
+            color: white;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+        }
+
+        .server-status-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .server-status-button:active {
+            transform: translateY(-1px) scale(0.97);
+        }
+
+        .server-status-button .pulse {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .server-status-button.online .pulse {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+        .server-status-button.offline .pulse {
+            background: var(--danger);
+            box-shadow: 0 0 10px var(--danger-glow);
+        }
+
+        .server-status-button.online .pulse::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            opacity: 0.7;
+        }
+        .server-status-button.offline .pulse::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: var(--danger);
+            animation: blinkRing 1.5s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            70% {
+                transform: scale(2.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+        @keyframes blinkRing {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(2);
+                opacity: 0.1;
+            }
+        }
+
+        /* ============================================
+           TAB NAVIGATION
+           ============================================ */
+        .tab-navigation {
+            display: flex;
+            margin-bottom: 28px;
+            background: var(--tab-bg);
+            border-radius: 14px;
+            padding: 5px;
+            box-shadow: var(--shadow);
+            gap: 6px;
+            border: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 13px 8px;
+            background: transparent;
+            border: none;
+            border-radius: 11px;
+            font-weight: 600;
+            color: var(--tab-text-inactive);
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            font-size: 0.9rem;
+            letter-spacing: 0.2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-button i {
+            font-size: 1.05rem;
+            transition: transform 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--text);
+            background: rgba(128, 128, 128, 0.06);
+        }
+        .tab-button:hover i {
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            font-weight: 700;
+        }
+        .tab-button.active i {
+            transform: scale(1.1);
+        }
+
+        [data-theme="light"] .tab-button.active {
+            color: #ffffff;
+            background: var(--tab-active-bg);
+        }
+
+        /* ============================================
+           STATS BAR
+           ============================================ */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px 18px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .stat-card.network::after {
+            background: var(--primary-glow);
+        }
+        .stat-card.payment::after {
+            background: var(--success-glow);
+        }
+        .stat-card.warning::after {
+            background: var(--warning-glow);
+        }
+        .stat-card.danger::after {
+            background: var(--danger-glow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(128, 128, 128, 0.2);
+        }
+        .stat-card:hover::after {
+            opacity: 0.7;
+        }
+
+        .stat-card i {
+            font-size: 1.7rem;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            flex-shrink: 0;
+            transition: all 0.35s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card:hover i {
+            transform: scale(1.1);
+        }
+        .stat-card.network i {
+            background: var(--icon-bg-network);
+            color: var(--primary);
+        }
+        .stat-card.payment i {
+            background: var(--icon-bg-success);
+            color: var(--success);
+        }
+        .stat-card.warning i {
+            background: var(--icon-bg-warning);
+            color: var(--warning);
+        }
+        .stat-card.danger i {
+            background: var(--icon-bg-danger);
+            color: var(--danger);
+        }
+
+        .stat-info {
+            position: relative;
+            z-index: 1;
+        }
+        .stat-info h3 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
+            color: var(--text-heading);
+        }
+        .stat-card:hover .stat-info h3 {
+            transform: scale(1.04);
+        }
+        .stat-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        /* ============================================
+           CONTENT AREAS
+           ============================================ */
+        .content-area {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 28px;
+            border: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .content-area.active {
+            display: block;
+            animation: contentFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+                filter: blur(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* ============================================
+           SEARCH BAR
+           ============================================ */
+        .search-bar {
+            margin-bottom: 22px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border: 1.5px solid var(--input-border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background-color: var(--input-bg);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.2px;
+            font-weight: 500;
+        }
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 4px var(--primary-glow), var(--shadow);
+            background-color: var(--card-bg);
+        }
+        .search-bar i {
+            position: absolute;
+            left: 17px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+        .search-bar input:focus~i,
+        .search-bar input:focus+i {
+            color: var(--primary);
+        }
+
+        /* ============================================
+           NETWORK CARDS GRID
+           ============================================ */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid var(--primary);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.04s;
+        }
+        .card:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+        .card:nth-child(3) {
+            animation-delay: 0.12s;
+        }
+        .card:nth-child(4) {
+            animation-delay: 0.16s;
+        }
+        .card:nth-child(5) {
+            animation-delay: 0.2s;
+        }
+        .card:nth-child(6) {
+            animation-delay: 0.24s;
+        }
+        .card:nth-child(7) {
+            animation-delay: 0.28s;
+        }
+        .card:nth-child(8) {
+            animation-delay: 0.32s;
+        }
+        .card:nth-child(9) {
+            animation-delay: 0.36s;
+        }
+        .card:nth-child(10) {
+            animation-delay: 0.4s;
+        }
+        .card:nth-child(n+11) {
+            animation-delay: 0.44s;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.96);
+                filter: blur(2px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.015) 0%, transparent 50%);
+            pointer-events: none;
+            border-radius: 14px;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(128, 128, 128, 0.25);
+        }
+
+        .card.online {
+            border-left-color: var(--success);
+            box-shadow: var(--shadow), 0 0 20px var(--card-online-glow);
+        }
+        .card.online:hover {
+            box-shadow: var(--shadow-hover), 0 0 30px var(--card-online-glow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-icon-bg);
+            color: var(--primary);
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .card:hover .card-icon {
+            transform: scale(1.08);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .card-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+
+        .status-badge {
+            font-weight: 600;
+            padding: 7px 13px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            cursor: default;
+        }
+        .status-badge.ONLINE {
+            background-color: var(--badge-online-bg);
+            color: var(--badge-online-text);
+            border: 1px solid rgba(63, 185, 80, 0.25);
+        }
+        .status-badge.SEDANG {
+            background-color: var(--badge-warning-bg);
+            color: var(--badge-warning-text);
+            border: 1px solid rgba(210, 153, 29, 0.25);
+        }
+        .status-badge.OFFLINE {
+            background-color: var(--badge-offline-bg);
+            color: var(--badge-offline-text);
+            border: 1px solid rgba(248, 81, 73, 0.25);
+        }
+        .status-badge i {
+            font-size: 0.65rem;
+        }
+        .card:hover .status-badge {
+            transform: scale(1.04);
+        }
+
+        .card-info {
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--divider);
+            gap: 10px;
+        }
+        .info-row:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .info-label {
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            letter-spacing: 0.2px;
+        }
+        .info-value {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .location-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--info);
+            color: #fff;
+            padding: 8px 13px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+        .location-btn:hover {
+            background: #2bb8a8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--info-glow);
+        }
+        .location-btn:active {
+            transform: scale(0.95);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+            background: var(--metric-bg);
+            padding: 14px;
+            border-radius: 10px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--border-light);
+        }
+        .metric {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .metric:hover {
+            transform: translateY(-3px);
+        }
+        .metric-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .metric-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .metric.latency .metric-value {
+            color: var(--success);
+        }
+        .metric.jitter .metric-value {
+            color: var(--warning);
+        }
+        .metric.loss .metric-value {
+            color: var(--danger);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .last-update {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .btn-remote {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--btn-remote-bg);
+            color: #fff;
+            padding: 9px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.2px;
+        }
+        .btn-remote:hover {
+            background: var(--btn-remote-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+        .btn-remote:active {
+            transform: scale(0.95);
+        }
+
+        /* ============================================
+           PAYMENT TABLE
+           ============================================ */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+        }
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            font-size: 0.9rem;
+        }
+        .payment-table thead {
+            background: var(--primary);
+            color: #ffffff;
+        }
+        .payment-table th {
+            padding: 15px 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+        }
+        .payment-table tbody tr {
+            border-bottom: 1px solid var(--divider);
+            transition: all 0.25s ease;
+            background: var(--card-bg);
+        }
+        .payment-table tbody tr:nth-child(even) {
+            background: var(--table-stripe);
+        }
+        .payment-table tbody tr:hover {
+            background: var(--table-hover);
+            transform: scale(1.003);
+        }
+        .payment-table td {
+            padding: 14px 18px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .payment-status {
+            font-weight: 700;
+            padding: 7px 13px;
+            border-radius: 50px;
+            font-size: 0.76rem;
+            display: inline-block;
+            text-align: center;
+            min-width: 115px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+        }
+        .payment-status.lunas {
+            background-color: var(--badge-online-bg);
+            color: var(--badge-online-text);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+        .payment-status.nunggak {
+            background-color: var(--badge-offline-bg);
+            color: var(--badge-offline-text);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+        .payment-status.belumjatuhtempo {
+            background-color: var(--badge-warning-bg);
+            color: var(--badge-warning-text);
+            border: 1px solid rgba(210, 153, 29, 0.3);
+        }
+        .btn-pay {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--btn-pay-bg);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+        .btn-pay:hover:not(:disabled) {
+            background: var(--btn-pay-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+        .btn-pay:active:not(:disabled) {
+            transform: scale(0.94);
+        }
+        .btn-pay:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ============================================
+           LOADING & NO DATA
+           ============================================ */
+        .loading {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+        }
+        .loading i {
+            font-size: 2.2rem;
+            margin-bottom: 14px;
+            color: var(--primary);
+            animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            display: block;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .no-data {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+        }
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 14px;
+            opacity: 0.4;
+            display: block;
+        }
+        .no-data p {
+            font-weight: 500;
+        }
+
+        /* ============================================
+           FOOTER WATERMARK
+           ============================================ */
+        .footer-watermark {
+            position: relative;
+            width: 100%;
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 22px 0;
+            text-align: center;
+            font-size: 12.5px;
+            font-family: 'Inter', sans-serif;
+            margin-top: 40px;
+            border-top: 1px solid var(--footer-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            letter-spacing: 0.3px;
+        }
+        .footer-watermark:hover {
+            color: var(--text-light);
+        }
+        .watermark-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .copyright {
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+        .author {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .separator {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* ============================================
+           NOTIFIKASI SUKSES
+           ============================================ */
+        .success-notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--notification-bg);
+            color: #ffffff;
+            padding: 16px 22px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+            animation: slideInNotif 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            font-size: 0.9rem;
+        }
+        .success-notification i {
+            font-size: 1.3rem;
+        }
+        @keyframes slideInNotif {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 1024px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+            }
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 8px 10px;
+            }
+            .header {
+                padding: 24px 16px 20px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+            }
+            .header h1 {
+                font-size: 1.9rem;
+            }
+            .header-subtitle {
+                font-size: 0.9rem;
+                gap: 8px;
+            }
+            .header-subtitle::before,
+            .header-subtitle::after {
+                width: 20px;
+            }
+            .theme-toggle-wrapper {
+                top: 10px;
+                right: 12px;
+            }
+            .theme-toggle-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            .stats-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px 14px;
+                gap: 12px;
+            }
+            .stat-card i {
+                width: 44px;
+                height: 44px;
+                font-size: 1.4rem;
+                border-radius: 10px;
+            }
+            .stat-info h3 {
+                font-size: 1.5rem;
+            }
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .content-area {
+                padding: 16px;
+                border-radius: 12px;
+            }
+            .tab-button {
+                padding: 11px 6px;
+                font-size: 0.8rem;
+                gap: 6px;
+            }
+            .tab-button i {
+                font-size: 0.9rem;
+            }
+            .tab-navigation {
+                border-radius: 10px;
+                gap: 3px;
+                padding: 4px;
+            }
+            .payment-table th,
+            .payment-table td {
+                padding: 10px 12px;
+                font-size: 0.78rem;
+            }
+            .payment-status {
+                min-width: 90px;
+                font-size: 0.7rem;
+                padding: 5px 10px;
+            }
+            .btn-pay {
+                padding: 7px 12px;
+                font-size: 0.75rem;
+            }
+            .search-bar input {
+                padding: 12px 16px 12px 40px;
+                font-size: 0.85rem;
+            }
+            .search-bar i {
+                left: 14px;
+                font-size: 0.9rem;
+            }
+            .card {
+                padding: 18px;
+                border-radius: 12px;
+            }
+            .footer-watermark {
+                font-size: 11px;
+                padding: 16px 0;
+                margin-top: 30px;
+                border-radius: 10px;
+            }
+            .watermark-content {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .separator {
+                display: none;
+            }
+            .server-status-button {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+                gap: 7px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            .header-subtitle {
+                font-size: 0.8rem;
+            }
+            .header-subtitle::before,
+            .header-subtitle::after {
+                display: none;
+            }
+            .card {
+                padding: 16px;
+            }
+            .card-header h2 {
+                font-size: 1.05rem;
+            }
+            .tab-button {
+                padding: 10px 4px;
+                font-size: 0.72rem;
+                gap: 4px;
+                border-radius: 8px;
+            }
+            .tab-button i {
+                font-size: 0.8rem;
+            }
+            .tab-navigation {
+                border-radius: 8px;
+                gap: 2px;
+            }
+            .payment-table {
+                font-size: 0.7rem;
+            }
+            .payment-table th,
+            .payment-table td {
+                padding: 8px 9px;
+                font-size: 0.68rem;
+            }
+            .metrics {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+                padding: 10px;
+            }
+            .metric-label {
+                font-size: 0.65rem;
+            }
+            .metric-value {
+                font-size: 0.9rem;
+            }
+            .footer-watermark {
+                font-size: 10px;
+                padding: 14px 0;
+                margin-top: 24px;
+            }
+            .copyright,
+            .author {
+                font-size: 10px;
+            }
+            .success-notification {
+                top: 12px;
+                right: 12px;
+                left: 12px;
+                padding: 14px 16px;
+                font-size: 0.8rem;
+                border-radius: 10px;
+                text-align: center;
+                justify-content: center;
+            }
+            .server-status-button {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                gap: 5px;
+                margin-top: 10px;
+            }
+            .theme-toggle-wrapper {
+                top: 8px;
+                right: 8px;
+            }
+            .theme-toggle-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <div class="header-orb orb1"></div>
-    <div class="header-orb orb2"></div>
-    <div class="header-content">
-      <h1>WIFI TEGUHAN</h1>
-      <div class="header-subtitle">Dashboard Monitoring Jaringan &amp; Pembayaran Terintegrasi</div>
-      <div class="header-controls">
-        <a href="server.html" class="server-status-button" id="server-status-button">
-          <div class="pulse"></div>
-          <span id="server-status-text">Memuat Status...</span>
-          <i class="fas fa-external-link-alt" style="font-size:0.75rem;opacity:0.7"></i>
-        </a>
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-          <i class="fas fa-moon" id="themeIcon"></i>
-          <span id="themeLabel">Tema Terang</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="tab-navigation">
-    <button class="tab-button active" data-tab="network">
-      <i class="fas fa-network-wired"></i>
-      <span>Monitor</span>
-    </button>
-    <button class="tab-button" data-tab="payment">
-      <i class="fas fa-credit-card"></i>
-      <span>Pembayaran</span>
-    </button>
-    <button class="tab-button" data-tab="payment" onclick="goToMap()">
-      <i class="fas fa-map-marked-alt"></i>
-      <span>Peta</span>
-    </button>
-  </div>
-
-  <div class="stats-bar">
-    <div class="stat-card network">
-      <div class="stat-icon"><i class="fas fa-wifi"></i></div>
-      <div class="stat-info">
-        <h3 id="onlineCount">0</h3>
-        <p>Pelanggan Online</p>
-      </div>
-    </div>
-    <div class="stat-card danger">
-      <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
-      <div class="stat-info">
-        <h3 id="offlineCount">0</h3>
-        <p>Pelanggan Offline</p>
-      </div>
-    </div>
-    <div class="stat-card payment">
-      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-      <div class="stat-info">
-        <h3 id="lunasCount">0</h3>
-        <p>Pembayaran Lunas</p>
-      </div>
-    </div>
-    <div class="stat-card warning">
-      <div class="stat-icon"><i class="fas fa-clock"></i></div>
-      <div class="stat-info">
-        <h3 id="nunggakCount">0</h3>
-        <p>Belum Membayar</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="network-content" class="content-area active">
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" id="networkSearch" placeholder="Cari nama atau IP pelanggan...">
-    </div>
-    <div class="cards-container" id="networkCards">
-      <div class="loading">
-        <i class="fas fa-spinner"></i>
-        <p>Memuat data monitoring jaringan...</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="payment-content" class="content-area">
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" id="paymentSearch" placeholder="Cari nama pelanggan...">
-    </div>
-    <div class="table-container">
-      <table class="payment-table">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Paket</th>
-            <th>Biaya</th>
-            <th>Total Paid</th>
-            <th>Status</th>
-            <th>Tgl Pemasangan</th>
-            <th>Jatuh Tempo</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="paymentTableBody">
-          <tr>
-            <td colspan="8" class="loading">
-              <i class="fas fa-spinner"></i>
-              <p>Memuat data pembayaran...</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="footer-watermark">
-    <div class="watermark-content">
-      <span class="copyright">© 2025 All Rights Reserved</span>
-      <span class="separator">|</span>
-      <span class="author">By: Teguh Sulistyawan</span>
-    </div>
-  </div>
-</div>
-
-<script>
-const NETWORK_API_URL="https://script.google.com/macros/s/AKfycbw7WUK1zmoqfxaVuvIGlmG4w0_NP87jrQrhNoY-cFvdlXpsJXFF-DFucCMH7kg7N7Gh9Q/exec";
-const PAYMENT_API_URL="https://script.google.com/macros/s/AKfycbyqAiVx-IY8IdHSDuBWmBqhAYbwTWhXyBrghze2ABAjlWQhG1sKogT66z1DCj8Yo7xhGg/exec";
-const SERVER_API_KEY='AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
-const SERVER_SPREADSHEET_ID='1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
-const SERVER_RANGE='Monitoring';
-const SERVER_URL=`https://sheets.googleapis.com/v4/spreadsheets/${SERVER_SPREADSHEET_ID}/values/${SERVER_RANGE}?key=${SERVER_API_KEY}`;
-
-// THEME
-let isDark=true;
-function toggleTheme(){
-  isDark=!isDark;
-  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-  document.getElementById('themeIcon').className=isDark?'fas fa-moon':'fas fa-sun';
-  document.getElementById('themeLabel').textContent=isDark?'Tema Terang':'Tema Gelap';
-}
-
-// TABS
-document.querySelectorAll('.tab-button').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const tabId=btn.getAttribute('data-tab');
-    document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.content-area').forEach(a=>a.classList.remove('active'));
-    document.getElementById(`${tabId}-content`).classList.add('active');
-  });
-});
-
-// SERVER STATUS
-async function fetchServerStatus(){
-  try{
-    const res=await fetch(SERVER_URL);
-    const data=await res.json();
-    const rows=data.values;
-    if(!rows||rows.length<2){updateServerStatus('offline','Server Offline');return;}
-    const latestRow=rows[rows.length-1];
-    const status=latestRow[1];
-    updateServerStatus(status&&status.toLowerCase()==='online'?'online':'offline',status&&status.toLowerCase()==='online'?'Server Online':'Server Offline');
-  }catch(err){updateServerStatus('offline','Server Offline');}
-}
-function updateServerStatus(status,text){
-  const btn=document.getElementById('server-status-button');
-  document.getElementById('server-status-text').textContent=text;
-  btn.classList.remove('online','offline');
-  btn.classList.add(status);
-}
-
-// NETWORK DATA
-async function fetchNetworkData(){
-  try{
-    const res=await fetch(NETWORK_API_URL);
-    const data=await res.json();
-    const container=document.getElementById('networkCards');
-    container.innerHTML='';
-    let onlineCount=0,offlineCount=0;
-    data.forEach(item=>{if(item.status==='ONLINE')onlineCount++;else offlineCount++;});
-    document.getElementById('onlineCount').textContent=onlineCount;
-    document.getElementById('offlineCount').textContent=offlineCount;
-
-    data.forEach(item=>{
-      let statusClass='OFFLINE',statusIcon='fas fa-times-circle';
-      if(item.status==='ONLINE'){statusClass='ONLINE';statusIcon='fas fa-check-circle';}
-      else if(item.status==='SEDANG'){statusClass='SEDANG';statusIcon='fas fa-exclamation-triangle';}
-      const card=document.createElement('div');
-      card.className='card';
-      const hasLocation=item.location&&item.location.includes(',');
-      card.innerHTML=`
-        <div class="card-header">
-          <div class="card-title">
-            <div class="card-icon"><i class="fas fa-network-wired"></i></div>
-            <h2>${item.name}</h2>
-          </div>
-          <span class="status-badge ${statusClass}">
-            <i class="${statusIcon}"></i>${statusClass}
-          </span>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="theme-toggle-wrapper">
+                <button class="theme-toggle-btn" id="theme-toggle" title="Ganti Tema" aria-label="Ganti tema tampilan">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <div class="header-content">
+                <h1>WIFI TEGUHAN</h1>
+                <div class="header-subtitle">
+                    Dashboard Monitoring Jaringan & Pembayaran Terintegrasi
+                </div>
+                <a href="server.html" class="server-status-button" id="server-status-button">
+                    <div class="pulse"></div>
+                    <span id="server-status-text">Memuat Status Server...</span>
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
         </div>
-        <div class="card-info">
-          <div class="info-row">
-            <span class="info-label">Alamat IP</span>
-            <span class="info-value">${item.ip}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Lokasi</span>
-            ${hasLocation?`<button class="location-btn" onclick="openLocationInMaps('${item.location}')"><i class="fas fa-map-marker-alt"></i> Lihat di Maps</button>`:'<span class="info-value">Tidak diketahui</span>'}
-          </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="network">
+                <i class="fas fa-network-wired"></i>
+                Monitor
+            </button>
+            <button class="tab-button" data-tab="payment">
+                <i class="fas fa-credit-card"></i>
+                Pembayaran
+            </button>
+            <button class="tab-button" data-tab="payment" onclick="goToMap()">
+                <i class="fas fa-map-marked-alt"></i>
+                Peta
+            </button>
         </div>
-        <div class="metrics">
-          <div class="metric latency">
-            <div class="metric-label">Latensi</div>
-            <div class="metric-value">${item.latency||'-'} ms</div>
-          </div>
-          <div class="metric jitter">
-            <div class="metric-label">Jitter</div>
-            <div class="metric-value">${item.jitter||'-'} ms</div>
-          </div>
-          <div class="metric loss">
-            <div class="metric-label">Loss</div>
-            <div class="metric-value">${item.loss||'-'}%</div>
-          </div>
+
+        <!-- STATS BAR -->
+        <div class="stats-bar">
+            <div class="stat-card network">
+                <i class="fas fa-wifi"></i>
+                <div class="stat-info">
+                    <h3 id="onlineCount">0</h3>
+                    <p>Pelanggan Online</p>
+                </div>
+            </div>
+            <div class="stat-card danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="stat-info">
+                    <h3 id="offlineCount">0</h3>
+                    <p>Pelanggan Offline</p>
+                </div>
+            </div>
+            <div class="stat-card payment">
+                <i class="fas fa-check-circle"></i>
+                <div class="stat-info">
+                    <h3 id="lunasCount">0</h3>
+                    <p>Pembayaran Lunas</p>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <i class="fas fa-clock"></i>
+                <div class="stat-info">
+                    <h3 id="nunggakCount">0</h3>
+                    <p>Belum Membayar</p>
+                </div>
+            </div>
         </div>
-        <div class="card-footer">
-          <span class="last-update"><i class="fas fa-clock" style="margin-right:4px;opacity:0.6"></i>Update: ${new Date().toLocaleTimeString()}</span>
-          <a class="btn-remote" href="http://${item.ip}:8080" target="_blank">
-            <i class="fas fa-desktop"></i>Remote
-          </a>
-        </div>`;
-      container.appendChild(card);
-    });
-  }catch(err){
-    document.getElementById('networkCards').innerHTML=`<div class="no-data"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data monitoring. Silakan refresh halaman.</p></div>`;
-  }
-}
 
-function openLocationInMaps(location){
-  const clean=location.replace(/\s+/g,'');
-  const[lat,lng]=clean.split(',');
-  if(!lat||!lng||isNaN(lat)||isNaN(lng)){alert('Koordinat tidak valid: '+location);return;}
-  window.open(`https://www.google.com/maps?q=${lat},${lng}&z=19&t=k&hl=id`,'_blank');
-}
+        <!-- NETWORK MONITORING CONTENT -->
+        <div id="network-content" class="content-area active">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="networkSearch" placeholder="Cari nama atau IP...">
+            </div>
+            <div class="cards-container" id="networkCards">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Memuat data monitoring jaringan...</p>
+                </div>
+            </div>
+        </div>
 
-document.getElementById('networkSearch').addEventListener('input',function(){
-  const filter=this.value.toLowerCase();
-  document.querySelectorAll('#networkCards .card').forEach(card=>{
-    const name=card.querySelector('.card-title h2').textContent.toLowerCase();
-    const ip=card.querySelector('.info-row .info-value').textContent.toLowerCase();
-    card.style.display=(name.includes(filter)||ip.includes(filter))?'':'none';
-  });
-});
+        <!-- PAYMENT MONITORING CONTENT -->
+        <div id="payment-content" class="content-area">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="paymentSearch" placeholder="Cari nama pelanggan...">
+            </div>
+            <div class="table-container">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Paket</th>
+                            <th>Biaya</th>
+                            <th>Total Paid</th>
+                            <th>Status</th>
+                            <th>Tanggal Pemasangan</th>
+                            <th>Jatuh Tempo</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody">
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <i class="fas fa-spinner"></i>
+                                <p>Memuat data pembayaran...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-// PAYMENT
-function addMonths(date,months){const d=new Date(date);d.setMonth(d.getMonth()+months);return d;}
+        <!-- FOOTER -->
+        <div class="footer-watermark">
+            <div class="watermark-content">
+                <span class="copyright">© 2025 All Rights Reserved</span>
+                <span class="separator">|</span>
+                <span class="author">By: Teguh Sulistyawan</span>
+            </div>
+        </div>
+    </div>
 
-async function loadPaymentData(){
-  try{
-    const res=await fetch(PAYMENT_API_URL);
-    const json=await res.json();
-    renderPaymentTable(json.data);
-    updatePaymentStats(json.data);
-  }catch(error){
-    document.getElementById('paymentTableBody').innerHTML=`<tr><td colspan="8" class="no-data"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data pembayaran.</p></td></tr>`;
-  }
-}
+    <script>
+        // ============================================
+        // KONFIGURASI API DAN URL
+        // ============================================
+        const NETWORK_API_URL =
+            "https://script.google.com/macros/s/AKfycbw7WUK1zmoqfxaVuvIGlmG4w0_NP87jrQrhNoY-cFvdlXpsJXFF-DFucCMH7kg7N7Gh9Q/exec";
+        const PAYMENT_API_URL =
+            "https://script.google.com/macros/s/AKfycbyqAiVx-IY8IdHSDuBWmBqhAYbwTWhXyBrghze2ABAjlWQhG1sKogT66z1DCj8Yo7xhGg/exec";
+        const SERVER_API_KEY = 'AIzaSyA8x0yI8zCPUgZktmGNvQVTzhm1fdZ0K74';
+        const SERVER_SPREADSHEET_ID = '1GYxO-vMxMQg-7uuyUS81EUS5PyVbBvdDaifvAYNspjo';
+        const SERVER_RANGE = 'Monitoring';
+        const SERVER_URL =
+            `https://sheets.googleapis.com/v4/spreadsheets/${SERVER_SPREADSHEET_ID}/values/${SERVER_RANGE}?key=${SERVER_API_KEY}`;
 
-function renderPaymentTable(data){
-  const tbody=document.getElementById('paymentTableBody');
-  const today=new Date();
-  if(!data||data.length===0){
-    tbody.innerHTML=`<tr><td colspan="8" class="no-data"><i class="fas fa-search"></i><p>Tidak ada data pembayaran ditemukan</p></td></tr>`;
-    return;
-  }
-  let html='';
-  data.forEach(r=>{
-    const name=r.Nama;
-    const biaya=Number(r['Biaya Bulanan']);
-    const totalPaid=Number(r.TotalPaid)||0;
-    const tglPemasangan=new Date(r['Tanggal Pemasangan']);
-    const jatuhTempo=addMonths(tglPemasangan,totalPaid+1);
-    const status=today>=jatuhTempo?'Nunggak':totalPaid>0?'Lunas':'Belum Jatuh Tempo';
-    const statusClass=status.toLowerCase().replace(/\s/g,'');
-    html+=`<tr>
-      <td style="font-weight:600">${name}</td>
-      <td>${r.Paket}</td>
-      <td>Rp ${biaya.toLocaleString('id-ID')}</td>
-      <td style="text-align:center">${totalPaid}</td>
-      <td><span class="payment-status ${statusClass}">${status}</span></td>
-      <td>${tglPemasangan.toISOString().slice(0,10)}</td>
-      <td>${jatuhTempo.toISOString().slice(0,10)}</td>
-      <td><button class="btn-pay" onclick="processPayment('${name}',this)" ${status=='Lunas'?'disabled':''}><i class="fas fa-money-bill-wave"></i>Bayar</button></td>
-    </tr>`;
-  });
-  tbody.innerHTML=html;
-}
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        (function() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const savedTheme = localStorage.getItem('dashboard-theme');
 
-function updatePaymentStats(data){
-  if(!data)return;
-  const today=new Date();
-  let lunas=0,nunggak=0;
-  data.forEach(r=>{
-    const totalPaid=Number(r.TotalPaid)||0;
-    const tglPemasangan=new Date(r['Tanggal Pemasangan']);
-    const jatuhTempo=addMonths(tglPemasangan,totalPaid+1);
-    if(today>=jatuhTempo)nunggak++;
-    else if(totalPaid>0)lunas++;
-  });
-  document.getElementById('lunasCount').textContent=lunas;
-  document.getElementById('nunggakCount').textContent=nunggak;
-}
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    body.setAttribute('data-theme', 'light');
+                    themeIcon.className = 'fas fa-sun';
+                    localStorage.setItem('dashboard-theme', 'light');
+                } else {
+                    body.removeAttribute('data-theme');
+                    themeIcon.className = 'fas fa-moon';
+                    localStorage.setItem('dashboard-theme', 'dark');
+                }
+            }
 
-document.getElementById('paymentSearch').addEventListener('input',function(){
-  const filter=this.value.toLowerCase();
-  document.querySelectorAll('#paymentTableBody tr').forEach(row=>{
-    if(row.cells.length<2)return;
-    row.style.display=row.cells[0].textContent.toLowerCase().includes(filter)?'':'none';
-  });
-});
+            // Inisialisasi tema
+            if (savedTheme === 'light') {
+                setTheme('light');
+            } else {
+                setTheme('dark');
+            }
 
-async function processPayment(name,btn){
-  const originalHTML=btn.innerHTML;
-  btn.disabled=true;
-  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Memproses...';
-  try{
-    const row=btn.closest('tr');
-    const cells=row.querySelectorAll('td');
-    const pkg=cells[1].textContent;
-    const amount=parseInt(cells[2].textContent.replace('Rp ','').replace(/\./g,''));
-    const res=await fetch(PAYMENT_API_URL,{method:'POST',body:new URLSearchParams({name})});
-    const json=await res.json();
-    if(json.success){
-      const notif=document.createElement('div');
-      notif.className='success-notification';
-      notif.innerHTML=`<i class="fas fa-check-circle"></i><span>${name} berhasil membayar. TotalPaid: ${json.totalPaid}</span>`;
-      document.body.appendChild(notif);
-      setTimeout(()=>notif.remove(),3000);
-      loadPaymentData();
-      await openInvoice(name,pkg,amount);
-    }else{
-      alert(`Error: ${json.message}`);
-      btn.disabled=false;btn.innerHTML=originalHTML;
-    }
-  }catch(error){
-    alert('Terjadi kesalahan saat memproses pembayaran');
-    console.error(error);
-    btn.disabled=false;btn.innerHTML=originalHTML;
-  }
-}
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.hasAttribute('data-theme') ? 'light' : 'dark';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                // Animasi rotasi ikon
+                themeIcon.style.transform = 'rotate(180deg)';
+                themeIcon.style.opacity = '0';
+                setTimeout(() => {
+                    setTheme(newTheme);
+                    themeIcon.style.transform = 'rotate(0deg)';
+                    themeIcon.style.opacity = '1';
+                }, 200);
+            });
+        })();
 
-async function openInvoice(name,pkg,amount){
-  const today=new Date();
-  const formattedDate=today.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
-  const customerId=`CUST-${Date.now()}`;
-  const invoiceData={nama:name,idpel:customerId,paket:pkg,biaya:amount,lain:0,tanggal:formattedDate};
-  const encodedData=encodeURIComponent(JSON.stringify(invoiceData));
-  const invoiceWindow=window.open(`invoice.html?data=${encodedData}`,'_blank');
-  setTimeout(()=>{
-    try{if(invoiceWindow&&!invoiceWindow.closed&&typeof invoiceWindow.downloadInvoice==='function')invoiceWindow.downloadInvoice();}
-    catch(e){console.log('Invoice window tidak dapat diakses');}
-  },2000);
-}
+        // ============================================
+        // FUNGSI NAVIGASI TAB
+        // ============================================
+        const tabButtons = document.querySelectorAll('.tab-button[data-tab]');
+        const contentAreas = document.querySelectorAll('.content-area');
 
-function goToMap(){window.location.href="/maps.html";}
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                contentAreas.forEach(area => area.classList.remove('active'));
+                const target = document.getElementById(`${tabId}-content`);
+                if (target) target.classList.add('active');
+            });
+        });
 
-// INIT
-fetchServerStatus();
-fetchNetworkData();
-loadPaymentData();
-setInterval(fetchServerStatus,30000);
-setInterval(fetchNetworkData,10000);
-</script>
+        // ============================================
+        // FUNGSI STATUS SERVER
+        // ============================================
+        async function fetchServerStatus() {
+            try {
+                const res = await fetch(SERVER_URL);
+                const data = await res.json();
+                const rows = data.values;
+                if (!rows || rows.length < 2) {
+                    updateServerStatus('offline', 'Server Offline');
+                    return;
+                }
+                const latestRow = rows[rows.length - 1];
+                const status = latestRow[1];
+                if (status && status.toLowerCase() === 'online') {
+                    updateServerStatus('online', 'Server Online');
+                } else {
+                    updateServerStatus('offline', 'Server Offline');
+                }
+            } catch (err) {
+                console.error('Gagal mengambil status server:', err);
+                updateServerStatus('offline', 'Server Offline');
+            }
+        }
+
+        function updateServerStatus(status, text) {
+            const serverButton = document.getElementById('server-status-button');
+            const serverText = document.getElementById('server-status-text');
+            serverText.textContent = text;
+            serverButton.classList.remove('online', 'offline');
+            serverButton.classList.add(status);
+        }
+
+        // ============================================
+        // FUNGSI MONITORING JARINGAN
+        // ============================================
+        async function fetchNetworkData() {
+            try {
+                const res = await fetch(NETWORK_API_URL);
+                const data = await res.json();
+                const container = document.getElementById('networkCards');
+                container.innerHTML = '';
+                let onlineCount = 0;
+                let offlineCount = 0;
+                data.forEach(item => {
+                    if (item.status === 'ONLINE') onlineCount++;
+                    else offlineCount++;
+                });
+                document.getElementById('onlineCount').textContent = onlineCount;
+                document.getElementById('offlineCount').textContent = offlineCount;
+
+                data.forEach(item => {
+                    let statusClass = 'OFFLINE';
+                    let statusIcon = 'fas fa-times-circle';
+                    if (item.status === 'ONLINE') {
+                        statusClass = 'ONLINE';
+                        statusIcon = 'fas fa-check-circle';
+                    } else if (item.status === 'SEDANG') {
+                        statusClass = 'SEDANG';
+                        statusIcon = 'fas fa-exclamation-triangle';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    if (item.status === 'ONLINE') {
+                        card.classList.add('online');
+                    }
+
+                    const hasLocation = item.location && item.location.includes(',');
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="card-title">
+                                <div class="card-icon">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <h2>${item.name}</h2>
+                            </div>
+                            <span class="status-badge ${statusClass}">
+                                <i class="${statusIcon}"></i>
+                                ${statusClass}
+                            </span>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-row">
+                                <span class="info-label">Alamat IP:</span>
+                                <span class="info-value">${item.ip}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Lokasi:</span>
+                                ${hasLocation
+                                    ? `<button class="location-btn" onclick="openLocationInMaps('${item.location}')">
+                                         <i class="fas fa-map-marker-alt"></i> Lihat di Maps
+                                       </button>`
+                                    : '<span class="info-value">Tidak diketahui</span>'
+                                }
+                            </div>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric latency">
+                                <div class="metric-label">Latensi</div>
+                                <div class="metric-value">${item.latency || '-'} ms</div>
+                            </div>
+                            <div class="metric jitter">
+                                <div class="metric-label">Jitter</div>
+                                <div class="metric-value">${item.jitter || '-'} ms</div>
+                            </div>
+                            <div class="metric loss">
+                                <div class="metric-label">Loss</div>
+                                <div class="metric-value">${item.loss || '-'}%</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="last-update">Update: ${new Date().toLocaleTimeString()}</span>
+                            <a class="btn-remote" href="http://${item.ip}:8080" target="_blank">
+                                <i class="fas fa-desktop"></i>
+                                Remote
+                            </a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Gagal fetch data jaringan:', err);
+                const container = document.getElementById('networkCards');
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Gagal memuat data monitoring. Silakan refresh halaman.</p>
+                    </div>`;
+            }
+        }
+
+        function openLocationInMaps(location) {
+            const cleanCoords = location.replace(/\s+/g, '');
+            const [lat, lng] = cleanCoords.split(',');
+            if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+                alert('Koordinat tidak valid: ' + location);
+                return;
+            }
+            const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}&z=19&t=k&hl=id`;
+            window.open(mapsUrl, '_blank');
+        }
+
+        document.getElementById('networkSearch').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const cards = document.querySelectorAll('#networkCards .card');
+            cards.forEach(card => {
+                const name = card.querySelector('.card-title h2').textContent.toLowerCase();
+                const ip = card.querySelector('.info-row .info-value').textContent.toLowerCase();
+                card.style.display = (name.includes(filter) || ip.includes(filter)) ? '' : 'none';
+            });
+        });
+
+        // ============================================
+        // FUNGSI MONITORING PEMBAYARAN
+        // ============================================
+        function addMonths(date, months) {
+            const d = new Date(date);
+            d.setMonth(d.getMonth() + months);
+            return d;
+        }
+
+        async function loadPaymentData() {
+            try {
+                const res = await fetch(PAYMENT_API_URL);
+                const json = await res.json();
+                renderPaymentTable(json.data);
+                updatePaymentStats(json.data);
+            } catch (error) {
+                console.error("Error loading payment data:", error);
+                document.getElementById('paymentTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-data">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Gagal memuat data pembayaran. Silakan coba lagi.</p>
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function renderPaymentTable(data) {
+            const tbody = document.getElementById("paymentTableBody");
+            const today = new Date();
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-data">
+                            <i class="fas fa-search"></i>
+                            <p>Tidak ada data pembayaran ditemukan</p>
+                        </td>
+                    </tr>`;
+                return;
+            }
+            let html = '';
+            data.forEach(r => {
+                const name = r.Nama;
+                const biaya = Number(r['Biaya Bulanan']);
+                const totalPaid = Number(r.TotalPaid) || 0;
+                const tglPemasangan = new Date(r['Tanggal Pemasangan']);
+                const jatuhTempo = addMonths(tglPemasangan, totalPaid + 1);
+                const status = today >= jatuhTempo ? 'Nunggak' :
+                    totalPaid > 0 ? 'Lunas' : 'Belum Jatuh Tempo';
+                const statusClass = status.toLowerCase().replace(/\s/g, '');
+                html += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>${r.Paket}</td>
+                        <td>Rp ${biaya.toLocaleString('id-ID')}</td>
+                        <td>${totalPaid}</td>
+                        <td><span class="payment-status ${statusClass}">${status}</span></td>
+                        <td>${tglPemasangan.toISOString().slice(0,10)}</td>
+                        <td>${jatuhTempo.toISOString().slice(0,10)}</td>
+                        <td>
+                            <button class="btn-pay" onclick="processPayment('${name}',this)" ${status=='Lunas'?'disabled':''}>
+                                <i class="fas fa-money-bill-wave"></i>
+                                Bayar
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function updatePaymentStats(data) {
+            if (!data) return;
+            const today = new Date();
+            let lunas = 0,
+                nunggak = 0;
+            data.forEach(r => {
+                const totalPaid = Number(r.TotalPaid) || 0;
+                const tglPemasangan = new Date(r['Tanggal Pemasangan']);
+                const jatuhTempo = addMonths(tglPemasangan, totalPaid + 1);
+                if (today >= jatuhTempo) nunggak++;
+                else if (totalPaid > 0) lunas++;
+            });
+            document.getElementById('lunasCount').textContent = lunas;
+            document.getElementById('nunggakCount').textContent = nunggak;
+        }
+
+        document.getElementById('paymentSearch').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#paymentTableBody tr');
+            rows.forEach(row => {
+                if (row.classList.contains('no-data') || row.classList.contains('loading')) return;
+                const name = row.cells[0].textContent.toLowerCase();
+                row.style.display = name.includes(filter) ? '' : 'none';
+            });
+        });
+
+        // ============================================
+        // FUNGSI PEMBAYARAN DAN INVOICE
+        // ============================================
+        async function processPayment(name, btn) {
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            try {
+                const row = btn.closest('tr');
+                const cells = row.querySelectorAll('td');
+                const packageName = cells[1].textContent;
+                const amountText = cells[2].textContent.replace('Rp ', '').replace(/\./g, '');
+                const amount = parseInt(amountText);
+                const res = await fetch(PAYMENT_API_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ name })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    const notification = document.createElement('div');
+                    notification.className = 'success-notification';
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <span>${name} berhasil membayar. TotalPaid: ${json.totalPaid}</span>`;
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3000);
+                    loadPaymentData();
+                    await openInvoice(name, packageName, amount);
+                } else {
+                    alert(`Error: ${json.message}`);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Bayar';
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan saat memproses pembayaran');
+                console.error(error);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Bayar';
+            }
+        }
+
+        async function openInvoice(name, packageName, amount) {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            const customerId = `CUST-${Date.now()}`;
+            const invoiceData = {
+                nama: name,
+                idpel: customerId,
+                paket: packageName,
+                biaya: amount,
+                lain: 0,
+                tanggal: formattedDate
+            };
+            const encodedData = encodeURIComponent(JSON.stringify(invoiceData));
+            const invoiceWindow = window.open(`invoice.html?data=${encodedData}`, '_blank');
+            setTimeout(() => {
+                try {
+                    if (invoiceWindow && !invoiceWindow.closed && typeof invoiceWindow
+                        .downloadInvoice === 'function') {
+                        invoiceWindow.downloadInvoice();
+                    }
+                } catch (error) {
+                    console.log('Tidak dapat mengakses invoice window atau fungsi downloadInvoice tidak tersedia');
+                }
+            }, 2000);
+        }
+
+        // ============================================
+        // INISIALISASI
+        // ============================================
+        fetchServerStatus();
+        fetchNetworkData();
+        loadPaymentData();
+        setInterval(fetchServerStatus, 30000);
+        setInterval(fetchNetworkData, 10000);
+
+        function goToMap() {
+            window.location.href = "/maps.html";
+        }
+    </script>
 </body>
 </html>
