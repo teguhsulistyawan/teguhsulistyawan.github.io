@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAHTSUL MASAIL – Tampilan Teks Realtime</title>
+
+  <style>
+    /* ---------- Font Kustom Arab ---------- */
+    @font-face {
+      font-family: 'CustomArabicFont';
+      src: url('arabic-font.ttf') format('truetype');
+    }
+
+    /* ---------- Variabel Tema ---------- */
+    :root {
+      --text-color: #ffffff;
+      --text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      --bg-overlay: rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-image: url('bacground.jpg');
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-image 0.5s ease;
+      position: relative;
+      overflow: hidden; /* untuk kontrol scroll */;
+    }
+
+    /* Overlay gelap transparan agar teks tetap terbaca */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-overlay);
+      z-index: 0;
+    }
+
+    /* Kontainer utama teks */
+    .text-container {
+      position: relative;
+      z-index: 2;
+      width: 90vw;
+      max-width: 1000px;
+      max-height: 85vh;
+      padding: 2rem;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* Area teks utama */
+    #textDisplay {
+      width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      font-size: 3.5rem;
+      line-height: 1.6;
+      color: var(--text-color);
+      text-shadow: var(--text-shadow);
+      transition: font-size 0.2s, font-family 0.2s;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      max-height: 65vh;
+      padding: 0.5rem;
+    }
+
+    /* Style untuk teks Arab */
+    .arabic-text {
+      direction: rtl;
+      font-family: 'CustomArabicFont', 'Traditional Arabic', Tahoma, sans-serif;
+    }
+
+    /* Style untuk teks Latin */
+    .latin-text {
+      direction: ltr;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Custom warna merah untuk teks di antara *...* */
+    .highlight-red {
+      color: #ff4d4d;
+      font-weight: bold;
+    }
+
+    /* Tombol kecil */
+    .btn-icon {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      backdrop-filter: blur(10px);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255,255,255,0.4);
+      transform: scale(1.05);
+    }
+
+    .btn-icon svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    /* Indikator status */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: #ddd;
+      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.2);
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4caf50;
+      box-shadow: 0 0 6px #4caf50;
+    }
+
+    /* Menu klik kanan */
+    #contextMenu {
+      position: fixed;
+      display: none;
+      background: rgba(255, 255, 255, 0.97);
+      color: #000;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+      z-index: 9999;
+      padding: 12px;
+      min-width: 250px;
+      backdrop-filter: blur(10px);
+      font-family: "Poppins", sans-serif;
+    }
+
+    #contextMenu div {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    #contextMenu div:hover {
+      background: #f0f0f0;
+    }
+
+    #contextMenu svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      stroke: #333;
+    }
+
+    #fontSelectorArea {
+      margin-top: 10px;
+      border-top: 1px solid #ddd;
+      padding-top: 12px;
+    }
+
+    #fontSelect {
+      width: 100%;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-weight: 500;
+      background: white;
+    }
+
+    /* Notifikasi copy */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 3rem;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    /* Responsif untuk layar kecil */
+    @media (max-width: 600px) {
+      #textDisplay {
+        font-size: 2rem;
+      }
+      .text-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Kontainer utama -->
+  <div class="text-container">
+    <!-- Area teks yang akan diperbarui -->
+    <div id="textDisplay" class="arabic-text">Menunggu data...</div>
+
+    <!-- Baris kontrol -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;">
+      <button class="btn-icon" id="copyBtn" title="Salin teks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Salin
+      </button>
+
+      <button class="btn-icon" id="pauseBtn" title="Jeda / Lanjutkan pembaruan">
+        <svg id="pauseIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        <span id="pauseLabel">Jeda</span>
+      </button>
+
+      <button class="btn-icon" id="resetSizeBtn" title="Reset ukuran font ke default">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+        Reset
+      </button>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Terhubung</span>
+    </div>
+  </div>
+
+  <!-- Menu klik kanan -->
+  <div id="contextMenu">
+    <div data-bg="bacground.jpg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12a10 10 0 0 1 20 0 10 10 0 0 1-20 0z"/></svg>
+      Latar 1 (Awan)
+    </div>
+    <div data-bg="bacground1.jpg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+      Latar 2
+    </div>
+    <div data-bg="bacground2.jpg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/></svg>
+      Latar 3
+    </div>
+    <div data-bg="bacground3.jpg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      Latar 4
+    </div>
+    <div data-bg="bacground4.jpg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="3"/></svg>
+      Latar 5
+    </div>
+
+    <div id="fontSelectorArea">
+      <label for="fontSelect" style="font-weight:600; display:block; margin-bottom:6px;">🎨 Pilih Font</label>
+      <select id="fontSelect">
+        <option value="'Poppins', sans-serif">Poppins (Modern)</option>
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="'CustomArabicFont', 'Traditional Arabic', Tahoma, sans-serif">Arab (Khusus)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Toast notifikasi -->
+  <div id="toast">Teks disalin!</div>
+
+  <script>
+    (function() {
+      // ---------- KONFIGURASI ----------
+      const SPREADSHEET_ID = '1ixedGP5FLnWpKjsyuCWs3H8ewGOHh3tDR-0mer_UpF4';
+      const API_KEY = 'AIzaSyAlT57jkJ9WR6bmEXlBXcR1-3kKzhk8FHw';
+      const SHEET_NAME = 'Sheet1';
+      const RANGE = 'A:A';          // Ambil seluruh kolom A
+      const POLL_INTERVAL = 4000;   // Cek setiap 4 detik
+
+      // ---------- STATE ----------
+      let lastFetchedText = '';             // Isi terakhir dari sheet
+      let currentFontSize = 3.5;            // dalam rem (default 3.5)
+      let isPaused = false;                 // Mode jeda
+      let currentFontFamily = "'Poppins', sans-serif"; // default
+
+      // Elemen DOM
+      const textDisplay = document.getElementById('textDisplay');
+      const body = document.body;
+      const contextMenu = document.getElementById('contextMenu');
+      const fontSelect = document.getElementById('fontSelect');
+      const copyBtn = document.getElementById('copyBtn');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const pauseLabel = document.getElementById('pauseLabel');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const resetSizeBtn = document.getElementById('resetSizeBtn');
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      const toast = document.getElementById('toast');
+
+      // ---------- FUNGSI BANTU ----------
+      // Deteksi apakah teks mengandung huruf Arab
+      function isArabic(text) {
+        return /[\u0600-\u06FF]/.test(text);
+      }
+
+      // Atur kelas arah & font dasar berdasarkan bahasa
+      function applyDirectionAndFont(el, text) {
+        if (isArabic(text)) {
+          el.classList.add('arabic-text');
+          el.classList.remove('latin-text');
+        } else {
+          el.classList.remove('arabic-text');
+          el.classList.add('latin-text');
+        }
+      }
+
+      // Terapkan ukuran font ke elemen teks
+      function applyFontSize() {
+        textDisplay.style.fontSize = currentFontSize + 'rem';
+        // Simpan ke localStorage
+        localStorage.setItem('bm_fontSize', currentFontSize);
+        // Perbarui scrollability
+        adjustScroll();
+      }
+
+      // Terapkan font family ke elemen teks
+      function applyFontFamily(family) {
+        currentFontFamily = family;
+        textDisplay.style.fontFamily = family;
+        localStorage.setItem('bm_fontFamily', family);
+      }
+
+      // Cek apakah konten melebihi viewport, atur overflow
+      function adjustScroll() {
+        const container = textDisplay;
+        // Reset dulu
+        container.style.overflowY = 'hidden';
+        // Gunakan requestAnimationFrame agar ukuran ter-update
+        requestAnimationFrame(() => {
+          if (container.scrollHeight > container.clientHeight) {
+            container.style.overflowY = 'auto';
+          } else {
+            container.style.overflowY = 'hidden';
+          }
+        });
+      }
+
+      // Format teks: ubah *teks* menjadi span merah
+      function formatText(rawText) {
+        // Hindari XSS: escape HTML dulu
+        let escaped = rawText
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+        // Ganti *teks* dengan span highlight
+        return escaped.replace(/\*(.*?)\*/g, '<span class="highlight-red">$1</span>');
+      }
+
+      // Perbarui tampilan teks (hanya jika berbeda)
+      function updateDisplay(newText) {
+        if (newText === lastFetchedText) return false; // tidak ada perubahan
+
+        lastFetchedText = newText;
+
+        // Format dan masukkan ke elemen
+        const formatted = formatText(newText).replace(/\n/g, '<br>');
+        textDisplay.innerHTML = formatted;
+
+        // Atur kelas arah
+        applyDirectionAndFont(textDisplay, newText);
+
+        // Terapkan font yang sedang aktif (dari state, bukan default)
+        textDisplay.style.fontFamily = currentFontFamily;
+        applyFontSize(); // pastikan ukuran juga
+
+        // Efek transisi singkat
+        textDisplay.style.transition = 'opacity 0.15s';
+        textDisplay.style.opacity = '0.7';
+        setTimeout(() => { textDisplay.style.opacity = '1'; }, 150);
+
+        // Update status
+        statusDot.style.background = '#4caf50';
+        statusText.textContent = 'Data terbaru ' + new Date().toLocaleTimeString();
+        return true;
+      }
+
+      // Ambil data dari Google Sheets (hanya kolom A, ambil sel terakhir)
+      async function fetchLatest() {
+        try {
+          const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!${RANGE}?key=${API_KEY}`;
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const data = await response.json();
+
+          if (!data.values || data.values.length === 0) {
+            // Tidak ada data
+            updateDisplay('[Tidak ada data di sheet]');
+            return;
+          }
+
+          // Ambil baris terakhir, kolom pertama (indeks 0)
+          const lastRow = data.values[data.values.length - 1];
+          const cellValue = lastRow ? lastRow[0] || '' : '';
+          updateDisplay(cellValue);
+
+          // Indikator koneksi baik
+          statusDot.style.background = '#4caf50';
+          statusText.textContent = 'Terhubung';
+        } catch (error) {
+          console.error('Gagal fetch:', error);
+          statusDot.style.background = '#f44336';
+          statusText.textContent = 'Gagal terhubung';
+        }
+      }
+
+      // ---------- FITUR TAMBAHAN ----------
+      // Salin teks ke clipboard
+      function copyTextToClipboard() {
+        const text = textDisplay.innerText; // ambil teks murni
+        navigator.clipboard.writeText(text).then(() => {
+          toast.style.opacity = '1';
+          setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }).catch(err => {
+          alert('Gagal menyalin: ' + err);
+        });
+      }
+
+      // Toggle jeda / lanjutkan
+      function togglePause() {
+        isPaused = !isPaused;
+        if (isPaused) {
+          pauseLabel.textContent = 'Lanjutkan';
+          pauseIcon.innerHTML = '<polygon points="5 4 19 12 5 20 5 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polygon>';
+          statusText.textContent = 'Pembaruan dijeda';
+        } else {
+          pauseLabel.textContent = 'Jeda';
+          pauseIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="none" stroke="currentColor" stroke-width="2"></rect><rect x="14" y="4" width="4" height="16" fill="none" stroke="currentColor" stroke-width="2"></rect>';
+          // Langsung fetch saat resume
+          fetchLatest();
+        }
+      }
+
+      // Reset ukuran font ke default 3.5rem
+      function resetFontSize() {
+        currentFontSize = 3.5;
+        applyFontSize();
+      }
+
+      // ---------- EVENT LISTENERS ----------
+      // Ctrl + Scroll untuk zoom
+      document.addEventListener('wheel', function(e) {
+        if (e.ctrlKey) {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? -0.2 : 0.2;
+          let newSize = currentFontSize + delta;
+          newSize = Math.min(8, Math.max(1, newSize)); // batas 1rem - 8rem
+          if (newSize !== currentFontSize) {
+            currentFontSize = newSize;
+            applyFontSize();
+          }
+        }
+      }, { passive: false });
+
+      // Menu klik kanan
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = e.pageX + 'px';
+        contextMenu.style.top = e.pageY + 'px';
+      });
+
+      document.addEventListener('click', function() {
+        contextMenu.style.display = 'none';
+      });
+
+      // Ganti latar dari menu
+      document.querySelectorAll('#contextMenu div[data-bg]').forEach(item => {
+        item.addEventListener('click', function(e) {
+          const bg = this.getAttribute('data-bg');
+          body.style.backgroundImage = `url('${bg}')`;
+          localStorage.setItem('bm_background', bg);
+          contextMenu.style.display = 'none';
+        });
+      });
+
+      // Ganti font dari dropdown
+      fontSelect.addEventListener('change', function() {
+        applyFontFamily(this.value);
+        contextMenu.style.display = 'none';
+      });
+
+      // Tombol salin
+      copyBtn.addEventListener('click', copyTextToClipboard);
+
+      // Tombol jeda
+      pauseBtn.addEventListener('click', togglePause);
+
+      // Tombol reset ukuran
+      resetSizeBtn.addEventListener('click', resetFontSize);
+
+      // ---------- INISIALISASI ----------
+      function loadSavedSettings() {
+        // Latar
+        const savedBg = localStorage.getItem('bm_background');
+        if (savedBg) {
+          body.style.backgroundImage = `url('${savedBg}')`;
+        }
+
+        // Font family
+        const savedFont = localStorage.getItem('bm_fontFamily');
+        if (savedFont) {
+          currentFontFamily = savedFont;
+          fontSelect.value = savedFont;
+          textDisplay.style.fontFamily = savedFont;
+        } else {
+          // Default: Poppins
+          fontSelect.value = "'Poppins', sans-serif";
+          applyFontFamily("'Poppins', sans-serif");
+        }
+
+        // Ukuran font
+        const savedSize = localStorage.getItem('bm_fontSize');
+        if (savedSize) {
+          currentFontSize = parseFloat(savedSize);
+        } else {
+          currentFontSize = 3.5;
+        }
+        applyFontSize();
+      }
+
+      // Mulai polling dengan jeda
+      let intervalId;
+      function startPolling() {
+        fetchLatest(); // langsung pertama kali
+        intervalId = setInterval(() => {
+          if (!isPaused) {
+            fetchLatest();
+          }
+        }, POLL_INTERVAL);
+      }
+
+      // Jalankan
+      loadSavedSettings();
+      startPolling();
+
+      // Bersihkan interval saat halaman ditutup (opsional)
+      window.addEventListener('beforeunload', () => {
+        clearInterval(intervalId);
+      });
+
+      // Adjust scroll saat ukuran jendela berubah
+      window.addEventListener('resize', adjustScroll);
+    })();
+  </script>
+</body>
+</html>
