@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GeoTime Camera</title>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-glass: rgba(18, 18, 18, 0.55);
+            --bg-glass-light: rgba(22, 22, 22, 0.45);
+            --text-soft: rgba(255, 255, 255, 0.88);
+            --text-muted: rgba(255, 255, 255, 0.55);
+            --text-subtle: rgba(255, 255, 255, 0.7);
+            --accent: #5b9bd5;
+            --accent-soft: rgba(91, 155, 213, 0.5);
+            --accent-glow: rgba(91, 155, 213, 0.25);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-glass-strong: rgba(255, 255, 255, 0.18);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 50%;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            --font-sans: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: var(--font-sans);
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* ── Container Utama ─────────────────────────── */
+        .app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* ── Video Kamera Fullscreen ────────────────── */
+        .camera-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            z-index: 1;
+            /* Mirror untuk kamera depan */
+            transform: scaleX(1);
+            transition: transform var(--transition-smooth);
+        }
+        .camera-video.front-facing {
+            transform: scaleX(-1);
+        }
+
+        /* ── Overlay Gelap Tipis ────────────────────── */
+        .dark-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center,
+                    transparent 40%,
+                    rgba(0, 0, 0, 0.15) 70%,
+                    rgba(0, 0, 0, 0.35) 100%);
+        }
+
+        /* ── Status Bar Kiri Atas ───────────────────── */
+        .status-bar-top {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 10;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: var(--text-soft);
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .status-chip i {
+            font-size: 9px;
+            color: var(--accent);
+        }
+        .status-chip.online i {
+            color: #4caf84;
+        }
+        .status-chip.offline i {
+            color: #e57373;
+        }
+        .status-chip.gps-active i {
+            color: #4caf84;
+            animation: gps-pulse 1.8s ease-in-out infinite;
+        }
+        .status-chip.gps-searching i {
+            color: #ffb74d;
+            animation: gps-pulse 0.8s ease-in-out infinite;
+        }
+        .status-chip.gps-denied i {
+            color: #e57373;
+        }
+        .status-chip.battery i {
+            color: #81c784;
+        }
+        .status-chip.battery-low i {
+            color: #e57373;
+        }
+
+        @keyframes gps-pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ── Mini Map Floating ──────────────────────── */
+        .mini-map-wrapper {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            width: 140px;
+            height: 140px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1.5px solid var(--border-glass-strong);
+            box-shadow: var(--shadow-md);
+            background: #1a1a1a;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all var(--transition-smooth);
+        }
+        .mini-map-wrapper.loading {
+            opacity: 0.6;
+        }
+        .mini-map-container {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-md);
+        }
+        .mini-map-container .leaflet-control-zoom {
+            display: none;
+        }
+        .mini-map-container .leaflet-control-attribution {
+            display: none;
+        }
+
+        /* ── Timestamp Info Kiri Bawah ──────────────── */
+        .timestamp-panel {
+            position: absolute;
+            bottom: 130px;
+            left: 16px;
+            z-index: 10;
+            padding: 12px 15px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-width: 220px;
+            transition: all var(--transition-smooth);
+        }
+        .timestamp-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            color: var(--text-soft);
+            letter-spacing: 0.2px;
+            line-height: 1.4;
+        }
+        .timestamp-row i {
+            font-size: 9px;
+            width: 14px;
+            text-align: center;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .timestamp-row .label {
+            color: var(--text-muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            min-width: 28px;
+            flex-shrink: 0;
+        }
+        .timestamp-row .value {
+            color: var(--text-soft);
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-mono);
+            font-size: 10px;
+        }
+        .timestamp-app-name {
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+        .timestamp-location-name {
+            font-size: 10px;
+            color: var(--text-subtle);
+            font-style: italic;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+
+        /* ── Bottom Controls ────────────────────────── */
+        .bottom-controls {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding: 14px 24px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 40px;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-smooth);
+        }
+
+        /* Tombol Capture Besar */
+        .btn-capture {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-full);
+            background: transparent;
+            border: 4px solid rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition-fast);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 0 var(--accent-glow);
+            animation: capture-pulse 3s ease-in-out infinite;
+        }
+        .btn-capture::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.9);
+            transition: all var(--transition-fast);
+        }
+        .btn-capture:active {
+            transform: scale(0.9);
+            border-color: var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .btn-capture:active::after {
+            inset: 14px;
+            background: rgba(255, 255, 255, 0.7);
+        }
+        @keyframes capture-pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* Tombol Kecil (Switch & GPS) */
+        .btn-small {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-glass-strong);
+            cursor: pointer;
+            color: var(--text-soft);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .btn-small:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.88);
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+        .btn-small i {
+            transition: transform var(--transition-fast);
+        }
+        .btn-small:active i {
+            transform: rotate(15deg);
+        }
+
+        /* ── Canvas Tersembunyi ─────────────────────── */
+        .capture-canvas {
+            display: none;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            z-index: -1;
+        }
+
+        /* ── Modal Preview ──────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-smooth);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            position: relative;
+            max-width: 92vw;
+            max-height: 85vh;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-glass-strong);
+            transform: scale(0.9);
+            transition: transform var(--transition-smooth);
+            background: #111;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-content img {
+            display: block;
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            padding: 14px 20px;
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid var(--border-glass);
+        }
+        .btn-modal {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid var(--border-glass-strong);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-soft);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all var(--transition-fast);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-sans);
+        }
+        .btn-modal:hover,
+        .btn-modal:active {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .btn-modal.download-btn {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-modal.download-btn:active {
+            background: #4a8bc5;
+            box-shadow: 0 0 24px rgba(91, 155, 213, 0.5);
+        }
+        .btn-close-modal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-glass-strong);
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+        .btn-close-modal:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.85);
+        }
+
+        /* ── Error / No Camera Message ──────────────── */
+        .camera-error {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            color: var(--text-soft);
+            background: rgba(0, 0, 0, 0.9);
+            text-align: center;
+            padding: 30px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+        .camera-error.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .camera-error i {
+            font-size: 48px;
+            color: #e57373;
+        }
+        .camera-error p {
+            font-size: 14px;
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        /* ── Responsive ─────────────────────────────── */
+        @media (max-width: 400px) {
+            .timestamp-panel {
+                bottom: 115px;
+                left: 8px;
+                padding: 10px 12px;
+                max-width: 185px;
+                gap: 3px;
+            }
+            .timestamp-row {
+                font-size: 10px;
+                gap: 4px;
+            }
+            .timestamp-row .value {
+                font-size: 9px;
+            }
+            .mini-map-wrapper {
+                width: 110px;
+                height: 110px;
+                top: 10px;
+                right: 10px;
+            }
+            .bottom-controls {
+                gap: 16px;
+                padding: 10px 18px;
+                bottom: 20px;
+            }
+            .btn-capture {
+                width: 60px;
+                height: 60px;
+                border-width: 3.5px;
+            }
+            .btn-capture::after {
+                inset: 6px;
+            }
+            .btn-capture:active::after {
+                inset: 12px;
+            }
+            .btn-small {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
+            }
+            .status-bar-top {
+                top: 8px;
+                left: 8px;
+                gap: 5px;
+            }
+            .status-chip {
+                padding: 4px 8px;
+                font-size: 9px;
+            }
+        }
+        @media (min-width: 768px) {
+            .timestamp-panel {
+                bottom: 150px;
+                left: 24px;
+                max-width: 260px;
+            }
+            .mini-map-wrapper {
+                width: 170px;
+                height: 170px;
+                top: 20px;
+                right: 20px;
+            }
+            .btn-capture {
+                width: 80px;
+                height: 80px;
+            }
+            .bottom-controls {
+                gap: 28px;
+                padding: 16px 30px;
+            }
+            .btn-small {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+            }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            .timestamp-panel {
+                bottom: 80px;
+                left: 10px;
+                max-width: 200px;
+                padding: 8px 10px;
+                gap: 2px;
+            }
+            .timestamp-row {
+                font-size: 9px;
+            }
+            .bottom-controls {
+                bottom: 12px;
+                gap: 14px;
+                padding: 8px 16px;
+            }
+            .btn-capture {
+                width: 52px;
+                height: 52px;
+                border-width: 3px;
+            }
+            .btn-capture::after {
+                inset: 5px;
+            }
+            .mini-map-wrapper {
+                width: 90px;
+                height: 90px;
+                top: 6px;
+                right: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- APP CONTAINER -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="app-container" id="appContainer">
+
+        <!-- Video Kamera Fullscreen -->
+        <video class="camera-video" id="cameraVideo" autoplay playsinline muted></video>
+
+        <!-- Overlay Gelap -->
+        <div class="dark-overlay"></div>
+
+        <!-- Status Bar Kiri Atas -->
+        <div class="status-bar-top" id="statusBarTop">
+            <span class="status-chip online" id="chipInternet" title="Status Internet">
+                <i class="fa-solid fa-wifi"></i> <span id="txtInternet">Online</span>
+            </span>
+            <span class="status-chip battery" id="chipBattery" title="Baterai">
+                <i class="fa-solid fa-battery-full"></i> <span id="txtBattery">--</span>
+            </span>
+            <span class="status-chip" id="chipResolution" title="Resolusi Kamera">
+                <i class="fa-solid fa-video"></i> <span id="txtResolution">--</span>
+            </span>
+            <span class="status-chip" id="chipClock" title="Jam">
+                <i class="fa-regular fa-clock"></i> <span id="txtClock">--:--:--</span>
+            </span>
+        </div>
+
+        <!-- Mini Map Floating -->
+        <div class="mini-map-wrapper loading" id="miniMapWrapper" title="Peta Lokasi Real-time">
+            <div class="mini-map-container" id="miniMapContainer"></div>
+        </div>
+
+        <!-- Timestamp Panel Kiri Bawah -->
+        <div class="timestamp-panel" id="timestampPanel">
+            <div class="timestamp-row">
+                <i class="fa-regular fa-calendar"></i>
+                <span class="label">Tgl</span>
+                <span class="value" id="txtDate">--</span>
+            </div>
+            <div class="timestamp-row">
+                <i class="fa-regular fa-clock"></i>
+                <span class="label">Jam</span>
+                <span class="value" id="txtTime">--:--:--</span>
+            </div>
+            <div class="timestamp-row">
+                <i class="fa-solid fa-location-dot"></i>
+                <span class="label">Lat</span>
+                <span class="value" id="txtLat">--</span>
+            </div>
+            <div class="timestamp-row">
+                <i class="fa-solid fa-location-dot"></i>
+                <span class="label">Lon</span>
+                <span class="value" id="txtLon">--</span>
+            </div>
+            <div class="timestamp-row">
+                <i class="fa-solid fa-crosshairs"></i>
+                <span class="label">Akur</span>
+                <span class="value" id="txtAccuracy">--</span>
+            </div>
+            <div class="timestamp-location-name" id="txtLocationName" title="Nama Lokasi">
+                Mendapatkan lokasi...
+            </div>
+            <div class="timestamp-app-name">GeoTime Camera</div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls" id="bottomControls">
+            <!-- Tombol Switch Kamera -->
+            <button class="btn-small" id="btnSwitchCamera" title="Tukar Kamera" aria-label="Switch Camera">
+                <i class="fa-solid fa-camera-rotate"></i>
+            </button>
+
+            <!-- Tombol Capture -->
+            <button class="btn-capture" id="btnCapture" title="Ambil Foto" aria-label="Capture Photo"></button>
+
+            <!-- Tombol GPS Refresh -->
+            <button class="btn-small" id="btnGpsRefresh" title="Refresh GPS" aria-label="Refresh GPS">
+                <i class="fa-solid fa-location-crosshairs"></i>
+            </button>
+        </div>
+
+        <!-- Canvas Tersembunyi untuk Capture -->
+        <canvas class="capture-canvas" id="captureCanvas"></canvas>
+
+        <!-- Pesan Error Kamera -->
+        <div class="camera-error" id="cameraError">
+            <i class="fa-solid fa-video-slash"></i>
+            <p>Tidak dapat mengakses kamera.<br>Pastikan izin kamera telah diberikan.</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- MODAL PREVIEW HASIL CAPTURE -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content" id="modalContent">
+                <button class="btn-close-modal" id="btnCloseModal" aria-label="Tutup Preview">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img id="modalImage" src="" alt="Hasil Capture" />
+                <div class="modal-actions">
+                    <button class="btn-modal" id="btnCloseModal2">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                    <button class="btn-modal download-btn" id="btnDownload">
+                        <i class="fa-solid fa-download"></i> Simpan Foto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS CDN -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <script>
+        (function() {
+            // ═══════════════════════════════════════════════
+            // DOM ELEMENT REFERENCES
+            // ═══════════════════════════════════════════════
+            const cameraVideo = document.getElementById('cameraVideo');
+            const captureCanvas = document.getElementById('captureCanvas');
+            const ctx = captureCanvas.getContext('2d');
+            const miniMapWrapper = document.getElementById('miniMapWrapper');
+            const miniMapContainer = document.getElementById('miniMapContainer');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalImage = document.getElementById('modalImage');
+            const cameraError = document.getElementById('cameraError');
+            const btnCapture = document.getElementById('btnCapture');
+            const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+            const btnGpsRefresh = document.getElementById('btnGpsRefresh');
+            const btnCloseModal = document.getElementById('btnCloseModal');
+            const btnCloseModal2 = document.getElementById('btnCloseModal2');
+            const btnDownload = document.getElementById('btnDownload');
+            const chipInternet = document.getElementById('chipInternet');
+            const txtInternet = document.getElementById('txtInternet');
+            const chipBattery = document.getElementById('chipBattery');
+            const txtBattery = document.getElementById('txtBattery');
+            const txtResolution = document.getElementById('txtResolution');
+            const txtClock = document.getElementById('txtClock');
+            const txtDate = document.getElementById('txtDate');
+            const txtTime = document.getElementById('txtTime');
+            const txtLat = document.getElementById('txtLat');
+            const txtLon = document.getElementById('txtLon');
+            const txtAccuracy = document.getElementById('txtAccuracy');
+            const txtLocationName = document.getElementById('txtLocationName');
+            const chipGpsIndicator = document.createElement('span'); // akan ditambahkan ke status bar
+
+            // ═══════════════════════════════════════════════
+            // STATE VARIABLES
+            // ═══════════════════════════════════════════════
+            let currentStream = null;
+            let currentFacingMode = 'environment'; // 'environment' = belakang, 'user' = depan
+            let hasMultipleCameras = false;
+            let videoTrackSettings = null;
+            let miniMapInstance = null;
+            let miniMapMarker = null;
+            let lastLatitude = null;
+            let lastLongitude = null;
+            let lastAccuracy = null;
+            let gpsWatchId = null;
+            let gpsStatus = 'searching'; // 'searching' | 'active' | 'denied' | 'unavailable'
+            let lastCapturedDataUrl = null;
+            let batteryLevel = null;
+            let isBatteryLow = false;
+            let reverseGeocodeTimer = null;
+            let lastGeocodeFetch = 0;
+            const GEOCODE_DEBOUNCE_MS = 5000; // minimal jeda 5 detik antar fetch
+
+            // ═══════════════════════════════════════════════
+            // GPS STATUS CHIP (ditambahkan ke status bar)
+            // ═══════════════════════════════════════════════
+            chipGpsIndicator.className = 'status-chip gps-searching';
+            chipGpsIndicator.title = 'Status GPS';
+            chipGpsIndicator.innerHTML =
+                '<i class="fa-solid fa-satellite"></i> <span id="txtGpsStatus">Mencari</span>';
+            const statusBarTop = document.getElementById('statusBarTop');
+            statusBarTop.appendChild(chipGpsIndicator);
+            const txtGpsStatus = document.getElementById('txtGpsStatus');
+
+            // ═══════════════════════════════════════════════
+            // HELPER: Format Tanggal Indonesia
+            // ═══════════════════════════════════════════════
+            function formatDateID(date) {
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = [
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+                const dayName = days[date.getDay()];
+                const day = date.getDate();
+                const month = months[date.getMonth()];
+                const year = date.getFullYear();
+                return `${dayName}, ${day} ${month} ${year}`;
+            }
+
+            function formatTimeID(date) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            function formatDateTimeCompact(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                const h = String(date.getHours()).padStart(2, '0');
+                const min = String(date.getMinutes()).padStart(2, '0');
+                const s = String(date.getSeconds()).padStart(2, '0');
+                return `${y}${m}${d}_${h}${min}${s}`;
+            }
+
+            // ═══════════════════════════════════════════════
+            // CLOCK UPDATE (setiap detik)
+            // ═══════════════════════════════════════════════
+            function updateClock() {
+                const now = new Date();
+                txtClock.textContent = formatTimeID(now);
+                txtDate.textContent = formatDateID(now);
+                txtTime.textContent = formatTimeID(now) + ' WIB';
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // ═══════════════════════════════════════════════
+            // INTERNET STATUS
+            // ═══════════════════════════════════════════════
+            function updateInternetStatus() {
+                const online = navigator.onLine;
+                if (online) {
+                    chipInternet.className = 'status-chip online';
+                    chipInternet.querySelector('i').className = 'fa-solid fa-wifi';
+                    txtInternet.textContent = 'Online';
+                } else {
+                    chipInternet.className = 'status-chip offline';
+                    chipInternet.querySelector('i').className = 'fa-solid fa-wifi-slash';
+                    txtInternet.textContent = 'Offline';
+                }
+            }
+            updateInternetStatus();
+            window.addEventListener('online', updateInternetStatus);
+            window.addEventListener('offline', updateInternetStatus);
+
+            // ═══════════════════════════════════════════════
+            // BATTERY STATUS
+            // ═══════════════════════════════════════════════
+            async function initBattery() {
+                try {
+                    if (navigator.getBattery) {
+                        const battery = await navigator.getBattery();
+                        batteryLevel = battery.level;
+                        isBatteryLow = battery.level < 0.2;
+                        updateBatteryUI();
+
+                        battery.addEventListener('levelchange', () => {
+                            batteryLevel = battery.level;
+                            isBatteryLow = battery.level < 0.2;
+                            updateBatteryUI();
+                        });
+                        battery.addEventListener('chargingchange', () => {
+                            updateBatteryUI();
+                        });
+                    } else {
+                        chipBattery.style.display = 'none';
+                    }
+                } catch (e) {
+                    chipBattery.style.display = 'none';
+                }
+            }
+
+            function updateBatteryUI() {
+                if (batteryLevel === null) {
+                    chipBattery.style.display = 'none';
+                    return;
+                }
+                chipBattery.style.display = 'flex';
+                const pct = Math.round(batteryLevel * 100);
+                txtBattery.textContent = pct + '%';
+
+                let iconClass = 'fa-solid fa-battery-full';
+                if (pct <= 10) iconClass = 'fa-solid fa-battery-empty';
+                else if (pct <= 25) iconClass = 'fa-solid fa-battery-quarter';
+                else if (pct <= 50) iconClass = 'fa-solid fa-battery-half';
+                else if (pct <= 75) iconClass = 'fa-solid fa-battery-three-quarters';
+
+                chipBattery.querySelector('i').className = iconClass;
+
+                if (isBatteryLow) {
+                    chipBattery.className = 'status-chip battery-low';
+                } else {
+                    chipBattery.className = 'status-chip battery';
+                }
+            }
+            initBattery();
+
+            // ═══════════════════════════════════════════════
+            // KAMERA: Inisialisasi
+            // ═══════════════════════════════════════════════
+            async function initCamera(facingMode = 'environment') {
+                try {
+                    // Hentikan stream sebelumnya
+                    if (currentStream) {
+                        currentStream.getTracks().forEach(track => track.stop());
+                        currentStream = null;
+                    }
+
+                    const constraints = {
+                        video: {
+                            facingMode: facingMode,
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 },
+                        },
+                        audio: false,
+                    };
+
+                    currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    cameraVideo.srcObject = currentStream;
+                    currentFacingMode = facingMode;
+
+                    // Update class untuk mirror (kamera depan)
+                    if (facingMode === 'user') {
+                        cameraVideo.classList.add('front-facing');
+                    } else {
+                        cameraVideo.classList.remove('front-facing');
+                    }
+
+                    // Dapatkan resolusi aktual
+                    const videoTrack = currentStream.getVideoTracks()[0];
+                    if (videoTrack) {
+                        videoTrackSettings = videoTrack.getSettings();
+                        const w = videoTrackSettings.width || '?';
+                        const h = videoTrackSettings.height || '?';
+                        txtResolution.textContent = `${w}x${h}`;
+                    }
+
+                    // Cek jumlah kamera
+                    await checkMultipleCameras();
+
+                    // Sembunyikan pesan error
+                    cameraError.classList.remove('visible');
+
+                } catch (err) {
+                    console.error('Gagal mengakses kamera:', err);
+                    cameraError.classList.add('visible');
+                    txtResolution.textContent = '--';
+                }
+            }
+
+            async function checkMultipleCameras() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                    hasMultipleCameras = videoDevices.length > 1;
+
+                    // Sembunyikan tombol switch jika hanya 1 kamera
+                    if (!hasMultipleCameras) {
+                        btnSwitchCamera.style.opacity = '0.35';
+                        btnSwitchCamera.style.pointerEvents = 'none';
+                        btnSwitchCamera.title = 'Hanya satu kamera tersedia';
+                    } else {
+                        btnSwitchCamera.style.opacity = '1';
+                        btnSwitchCamera.style.pointerEvents = 'auto';
+                        btnSwitchCamera.title = 'Tukar Kamera';
+                    }
+                } catch (e) {
+                    hasMultipleCameras = false;
+                    btnSwitchCamera.style.opacity = '0.35';
+                    btnSwitchCamera.style.pointerEvents = 'none';
+                }
+            }
+
+            function switchCamera() {
+                if (!hasMultipleCameras) return;
+                const newMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+                initCamera(newMode);
+            }
+
+            // ═══════════════════════════════════════════════
+            // GPS: Inisialisasi & Update
+            // ═══════════════════════════════════════════════
+            function initGPS() {
+                if (!navigator.geolocation) {
+                    gpsStatus = 'unavailable';
+                    updateGpsStatusUI();
+                    txtLocationName.textContent = 'GPS tidak tersedia';
+                    return;
+                }
+
+                gpsStatus = 'searching';
+                updateGpsStatusUI();
+
+                gpsWatchId = navigator.geolocation.watchPosition(
+                    onGpsSuccess,
+                    onGpsError, {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 2000,
+                    }
+                );
+            }
+
+            function onGpsSuccess(position) {
+                gpsStatus = 'active';
+                updateGpsStatusUI();
+
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+
+                lastLatitude = lat;
+                lastLongitude = lon;
+                lastAccuracy = accuracy;
+
+                // Update UI timestamp
+                txtLat.textContent = lat.toFixed(6) + '°';
+                txtLon.textContent = lon.toFixed(6) + '°';
+                txtAccuracy.textContent = '±' + Math.round(accuracy) + 'm';
+
+                // Update mini map
+                updateMiniMap(lat, lon, accuracy);
+
+                // Reverse geocoding dengan debounce
+                const now = Date.now();
+                if (now - lastGeocodeFetch > GEOCODE_DEBOUNCE_MS) {
+                    lastGeocodeFetch = now;
+                    fetchLocationName(lat, lon);
+                }
+            }
+
+            function onGpsError(err) {
+                console.warn('GPS Error:', err.message);
+                if (err.code === err.PERMISSION_DENIED) {
+                    gpsStatus = 'denied';
+                    txtLocationName.textContent = 'GPS: Izin ditolak';
+                } else {
+                    gpsStatus = 'searching';
+                    txtLocationName.textContent = 'GPS: ' + err.message;
+                }
+                updateGpsStatusUI();
+                txtLat.textContent = '--';
+                txtLon.textContent = '--';
+                txtAccuracy.textContent = '--';
+            }
+
+            function updateGpsStatusUI() {
+                chipGpsIndicator.classList.remove('gps-active', 'gps-searching', 'gps-denied');
+                const icon = chipGpsIndicator.querySelector('i');
+
+                switch (gpsStatus) {
+                    case 'active':
+                        chipGpsIndicator.classList.add('gps-active');
+                        icon.className = 'fa-solid fa-satellite';
+                        txtGpsStatus.textContent = 'Aktif';
+                        chipGpsIndicator.title = 'GPS Aktif - Sinyal terkunci';
+                        break;
+                    case 'searching':
+                        chipGpsIndicator.classList.add('gps-searching');
+                        icon.className = 'fa-solid fa-satellite';
+                        txtGpsStatus.textContent = 'Mencari';
+                        chipGpsIndicator.title = 'GPS Mencari sinyal...';
+                        break;
+                    case 'denied':
+                        chipGpsIndicator.classList.add('gps-denied');
+                        icon.className = 'fa-solid fa-satellite-dish';
+                        txtGpsStatus.textContent = 'Ditolak';
+                        chipGpsIndicator.title = 'GPS: Izin lokasi ditolak';
+                        break;
+                    default:
+                        chipGpsIndicator.classList.add('gps-searching');
+                        icon.className = 'fa-solid fa-circle-exclamation';
+                        txtGpsStatus.textContent = 'N/A';
+                        chipGpsIndicator.title = 'GPS tidak tersedia';
+                }
+            }
+
+            function refreshGps() {
+                // Hentikan watch sebelumnya
+                if (gpsWatchId !== null) {
+                    navigator.geolocation.clearWatch(gpsWatchId);
+                    gpsWatchId = null;
+                }
+                gpsStatus = 'searching';
+                updateGpsStatusUI();
+                txtLat.textContent = '--';
+                txtLon.textContent = '--';
+                txtAccuracy.textContent = '--';
+                txtLocationName.textContent = 'Memperbarui lokasi...';
+                lastGeocodeFetch = 0;
+                initGPS();
+            }
+
+            // ═══════════════════════════════════════════════
+            // REVERSE GEOCODING (Nominatim OpenStreetMap)
+            // ═══════════════════════════════════════════════
+            async function fetchLocationName(lat, lon) {
+                try {
+                    const url =
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1&accept-language=id`;
+                    const response = await fetch(url, {
+                        headers: { 'User-Agent': 'GeoTimeCamera/1.0 (minimal-camera-app)' },
+                    });
+                    if (!response.ok) throw new Error('Nominatim fetch failed');
+                    const data = await response.json();
+                    if (data && data.display_name) {
+                        // Ambil nama pendek yang relevan
+                        const addr = data.address || {};
+                        const shortName =
+                            addr.road ||
+                            addr.neighbourhood ||
+                            addr.suburb ||
+                            addr.village ||
+                            addr.town ||
+                            addr.city ||
+                            addr.county ||
+                            addr.state ||
+                            data.display_name.split(',')[0];
+                        txtLocationName.textContent = shortName || data.display_name;
+                        txtLocationName.title = data.display_name;
+                    } else {
+                        txtLocationName.textContent = 'Lokasi tidak dikenal';
+                    }
+                } catch (e) {
+                    console.warn('Reverse geocoding gagal:', e.message);
+                    txtLocationName.textContent = 'Lokasi (terbatas)';
+                }
+            }
+
+            // ═══════════════════════════════════════════════
+            // MINI MAP (Leaflet)
+            // ═══════════════════════════════════════════════
+            function initMiniMap(lat, lon) {
+                if (miniMapInstance) {
+                    // Sudah ada, update saja
+                    updateMiniMap(lat, lon, lastAccuracy || 10);
+                    return;
+                }
+
+                try {
+                    miniMapInstance = L.map(miniMapContainer, {
+                        center: [lat, lon],
+                        zoom: 17,
+                        zoomControl: false,
+                        scrollWheelZoom: false,
+                        dragging: false,
+                        doubleClickZoom: false,
+                        touchZoom: false,
+                        attributionControl: false,
+                        keyboard: false,
+                    });
+
+                    // Gunakan tile gelap CartoDB untuk tema premium
+                    L.tileLayer(
+                        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                            maxZoom: 19,
+                            subdomains: 'abcd',
+                        }
+                    ).addTo(miniMapInstance);
+
+                    // Tambahkan marker
+                    miniMapMarker = L.marker([lat, lon], {
+                        icon: L.divIcon({
+                            className: 'custom-gps-marker',
+                            html: '<div style="width:14px;height:14px;background:#5b9bd5;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(91,155,213,0.7);"></div>',
+                            iconSize: [14, 14],
+                            iconAnchor: [7, 7],
+                        }),
+                    }).addTo(miniMapInstance);
+
+                    // Circle akurasi
+                    if (lastAccuracy && lastAccuracy < 100) {
+                        L.circle([lat, lon], {
+                            radius: lastAccuracy,
+                            color: '#5b9bd5',
+                            fillColor: '#5b9bd5',
+                            fillOpacity: 0.15,
+                            weight: 1,
+                            opacity: 0.5,
+                        }).addTo(miniMapInstance);
+                    }
+
+                    miniMapWrapper.classList.remove('loading');
+                } catch (e) {
+                    console.warn('Gagal inisialisasi mini map:', e);
+                    miniMapWrapper.style.display = 'none';
+                }
+            }
+
+            function updateMiniMap(lat, lon, accuracy) {
+                if (!miniMapInstance) {
+                    initMiniMap(lat, lon);
+                    return;
+                }
+                try {
+                    miniMapInstance.setView([lat, lon], miniMapInstance.getZoom(), { animate: true });
+                    if (miniMapMarker) {
+                        miniMapMarker.setLatLng([lat, lon]);
+                    }
+                    // Update circle akurasi (hapus lama, buat baru)
+                    miniMapInstance.eachLayer((layer) => {
+                        if (layer instanceof L.Circle) {
+                            miniMapInstance.removeLayer(layer);
+                        }
+                    });
+                    if (accuracy && accuracy < 200) {
+                        L.circle([lat, lon], {
+                            radius: accuracy,
+                            color: '#5b9bd5',
+                            fillColor: '#5b9bd5',
+                            fillOpacity: 0.12,
+                            weight: 1,
+                            opacity: 0.4,
+                        }).addTo(miniMapInstance);
+                    }
+                    miniMapWrapper.classList.remove('loading');
+                } catch (e) {
+                    console.warn('Gagal update mini map:', e);
+                }
+            }
+
+            // ═══════════════════════════════════════════════
+            // CAPTURE SYSTEM (Canvas API + Watermark)
+            // ═══════════════════════════════════════════════
+            function capturePhoto() {
+                if (!currentStream || !videoTrackSettings) {
+                    alert('Kamera belum siap.');
+                    return;
+                }
+
+                const videoWidth = videoTrackSettings.width || 1920;
+                const videoHeight = videoTrackSettings.height || 1080;
+
+                // Set canvas ke resolusi asli video
+                captureCanvas.width = videoWidth;
+                captureCanvas.height = videoHeight;
+
+                // Jika kamera depan, flip horizontal agar hasil tidak mirror
+                if (currentFacingMode === 'user') {
+                    ctx.save();
+                    ctx.translate(videoWidth, 0);
+                    ctx.scale(-1, 1);
+                    ctx.drawImage(cameraVideo, 0, 0, videoWidth, videoHeight);
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(cameraVideo, 0, 0, videoWidth, videoHeight);
+                }
+
+                // ── Tambahkan Watermark Timestamp ──────────
+                const now = new Date();
+                const dateStr = formatDateID(now);
+                const timeStr = formatTimeID(now);
+                let gpsStr = '';
+                if (lastLatitude !== null && lastLongitude !== null) {
+                    gpsStr =
+                        `${lastLatitude.toFixed(6)}, ${lastLongitude.toFixed(6)} | ±${Math.round(lastAccuracy || 0)}m`;
+                } else {
+                    gpsStr = 'GPS: --';
+                }
+                const watermarkText1 = `GeoTime Camera | ${dateStr} | ${timeStr}`;
+                const watermarkText2 = `📍 ${gpsStr}`;
+
+                // Style watermark
+                const fontSize1 = Math.max(18, Math.round(videoWidth * 0.022));
+                const fontSize2 = Math.max(14, Math.round(videoWidth * 0.017));
+                const paddingX = Math.round(videoWidth * 0.025);
+                const paddingY = Math.round(videoHeight * 0.03);
+                const lineHeight1 = fontSize1 + 8;
+                const lineHeight2 = fontSize2 + 4;
+                const totalTextHeight = lineHeight1 + lineHeight2;
+                const boxHeight = totalTextHeight + paddingY * 2;
+                const boxY = videoHeight - boxHeight - Math.round(videoHeight * 0.02);
+
+                // Background box semi-transparan
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.fillRect(0, boxY, videoWidth, boxHeight);
+
+                // Garis aksen tipis di atas box
+                ctx.fillStyle = 'rgba(91, 155, 213, 0.7)';
+                ctx.fillRect(0, boxY, videoWidth, 3);
+
+                // Teks watermark
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = `500 ${fontSize1}px ${getComputedStyle(document.body).fontFamily}`;
+                ctx.textBaseline = 'top';
+                ctx.fillText(watermarkText1, paddingX, boxY + paddingY);
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = `400 ${fontSize2}px ${getComputedStyle(document.body).fontFamily}`;
+                ctx.fillText(watermarkText2, paddingX, boxY + paddingY + lineHeight1);
+
+                // ── Export ke Data URL ────────────────────
+                const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.95);
+                lastCapturedDataUrl = dataUrl;
+
+                // Tampilkan modal preview
+                showPreview(dataUrl);
+            }
+
+            // ═══════════════════════════════════════════════
+            // MODAL PREVIEW
+            // ═══════════════════════════════════════════════
+            function showPreview(dataUrl) {
+                modalImage.src = dataUrl;
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hidePreview() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                // Bersihkan src setelah transisi untuk menghemat memori
+                setTimeout(() => {
+                    if (!modalOverlay.classList.contains('active')) {
+                        modalImage.src = '';
+                    }
+                }, 400);
+            }
+
+            function downloadPhoto() {
+                if (!lastCapturedDataUrl) return;
+                const now = new Date();
+                const filename = `GeoTime_${formatDateTimeCompact(now)}.jpg`;
+                const link = document.createElement('a');
+                link.href = lastCapturedDataUrl;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            // ═══════════════════════════════════════════════
+            // EVENT LISTENERS
+            // ═══════════════════════════════════════════════
+            btnCapture.addEventListener('click', () => {
+                // Animasi klik cepat
+                btnCapture.style.transform = 'scale(0.85)';
+                setTimeout(() => {
+                    btnCapture.style.transform = '';
+                }, 150);
+                capturePhoto();
+            });
+
+            btnSwitchCamera.addEventListener('click', switchCamera);
+
+            btnGpsRefresh.addEventListener('click', () => {
+                // Animasi rotasi ikon
+                const icon = btnGpsRefresh.querySelector('i');
+                icon.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    icon.style.transform = '';
+                }, 400);
+                refreshGps();
+            });
+
+            btnCloseModal.addEventListener('click', hidePreview);
+            btnCloseModal2.addEventListener('click', hidePreview);
+            btnDownload.addEventListener('click', downloadPhoto);
+
+            // Tutup modal dengan klik di luar gambar
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    hidePreview();
+                }
+            });
+
+            // Keyboard shortcut
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (modalOverlay.classList.contains('active')) {
+                        hidePreview();
+                    }
+                }
+                if (e.key === ' ' || e.code === 'Space') {
+                    if (!modalOverlay.classList.contains('active')) {
+                        e.preventDefault();
+                        capturePhoto();
+                    }
+                }
+                if (e.key === 'f' || e.key === 'F') {
+                    if (!modalOverlay.classList.contains('active') && hasMultipleCameras) {
+                        e.preventDefault();
+                        switchCamera();
+                    }
+                }
+            });
+
+            // ═══════════════════════════════════════════════
+            // HANDLE VISIBILITY CHANGE (hemat resource)
+            // ═══════════════════════════════════════════════
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Jeda GPS saat tab tidak aktif (opsional)
+                    if (gpsWatchId !== null) {
+                        navigator.geolocation.clearWatch(gpsWatchId);
+                        gpsWatchId = null;
+                        gpsStatus = 'searching';
+                        updateGpsStatusUI();
+                    }
+                } else {
+                    // Lanjutkan GPS saat tab aktif kembali
+                    if (gpsWatchId === null && gpsStatus !== 'denied') {
+                        initGPS();
+                    }
+                }
+            });
+
+            // ═══════════════════════════════════════════════
+            // INITIALIZATION
+            // ═══════════════════════════════════════════════
+            async function initializeApp() {
+                // Mulai kamera (default: kamera belakang)
+                await initCamera('environment');
+
+                // Mulai GPS
+                initGPS();
+
+                // Log info
+                console.log('%c📸 GeoTime Camera %cReady',
+                    'font-size:16px;font-weight:bold;color:#5b9bd5;',
+                    'font-size:12px;color:#aaa;');
+                console.log('%cKamera Professional Minimalis | Fullscreen Experience',
+                    'font-size:11px;color:#888;');
+            }
+
+            // Jalankan aplikasi
+            initializeApp().catch(err => {
+                console.error('Gagal menginisialisasi aplikasi:', err);
+                cameraError.classList.add('visible');
+            });
+
+        })();
+    </script>
+</body>
+</html>
