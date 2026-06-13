@@ -1,500 +1,968 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Monitor Jaringan MikroTik</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monitor Jaringan MikroTik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<style>
-/* ================= ROOT & VARIABLES ================= */
-:root {
-    --primary: #2a5bd7;
-    --primary-dark: #1e4ac4;
-    --primary-light: #e8efff;
-    --success: #00c9a7;
-    --success-light: #e0faf6;
-    --warning: #ffa502;
-    --warning-light: #fff4e0;
-    --danger: #ff4757;
-    --danger-light: #ffe5e8;
-    --bg: linear-gradient(135deg, #f5f7fb 0%, #f0f4ff 100%);
-    --card: #ffffff;
-    --shadow: 0 8px 32px rgba(42, 91, 215, 0.08);
-    --shadow-hover: 0 12px 48px rgba(42, 91, 215, 0.12);
-    --text: #2c3e50;
-    --text-light: #6c7a92;
-    --border: #e8ecf4;
-}
+    <style>
+        /* ================= ROOT & VARIABLES ================= */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --text: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --radius-sm: 12px;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 2px; -webkit-font-smoothing: antialiased; }
-.container { max-width: 500px; margin: 0 auto; padding: 5px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* ================= HEADER ================= */
-.header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 20px 18px; border-radius: 5px; margin-bottom: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
-.header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--success), var(--warning), var(--danger)); opacity: 0.7; }
-.header-content { display: flex; align-items: center; gap: 12px; }
-.header-icon { background: rgba(255, 255, 255, 0.15); width: 44px; height: 44px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 20px; backdrop-filter: blur(5px); }
-.header-text h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.3px; }
-.status-indicator { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; opacity: 0.9; }
-.status-dot { width: 10px; height: 10px; border-radius: 50%; background: #2ed573; display: inline-block; animation: pulse 2s infinite; box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(46, 213, 115, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); } }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+        }
 
-/* ================= TRAFFIC SECTION ================= */
-.traffic-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-.traffic-card { background: var(--card); border-radius: 5px; padding: 20px; box-shadow: var(--shadow); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid var(--border); }
-.traffic-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-.traffic-card-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-.traffic-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.download-icon { background: var(--success-light); color: var(--success); }
-.upload-icon { background: var(--primary-light); color: var(--primary); }
-.traffic-label { font-size: 1.1rem; font-weight: 600; color: var(--text); }
-.speedometer-container { position: relative; width: 140px; height: 140px; margin: 0 auto; }
-.speedometer-svg { width: 100%; height: 100%; }
-.speedometer-track { fill: none; stroke: #e8ecf4; stroke-width: 8; }
-.speedometer-arc { fill: none; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 157; stroke-dashoffset: 157; transition: stroke-dashoffset 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.4s ease; }
-.speed-low { stroke: var(--success); } .speed-medium { stroke: var(--warning); } .speed-high { stroke: var(--danger); }
-.needle-container { position: absolute; inset: 0; transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.needle { position: absolute; width: 3px; height: 55px; background: linear-gradient(to top, var(--primary), var(--primary-dark)); top: 50%; left: 50%; transform-origin: bottom center; transform: translate(-50%, -100%); border-radius: 3px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-.needle::after { content: ''; width: 14px; height: 14px; background: var(--primary); border-radius: 50%; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); border: 3px solid var(--card); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-.speedometer-center { position: absolute; top: 70%; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transform: translateY(-50%); }
-.speedometer-value { font-size: 1.8rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--text), var(--primary-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px; }
-.speedometer-unit { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; font-weight: 500; }
-.traffic-description { text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 8px; line-height: 1.4; }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-/* ================= SYSTEM SECTION ================= */
-.system-section { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
-.system-card { background: var(--card); border-radius: 5px; padding: 20px; box-shadow: var(--shadow); transition: transform 0.3s ease; border: 1px solid var(--border); }
-.system-card:hover { transform: translateY(-2px); }
-.system-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.system-title { font-size: 0.95rem; color: var(--text-light); font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.system-icon { color: var(--primary); font-size: 1.1rem; }
-.system-value { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-.system-details { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.85rem; color: var(--text-light); }
-.progress-container { height: 10px; background: #f0f4ff; border-radius: 10px; overflow: hidden; position: relative; }
-.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--success), var(--success-light)); transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease; border-radius: 5px; }
-.progress-warning { background: linear-gradient(90deg, var(--warning), var(--warning-light)); }
-.progress-danger { background: linear-gradient(90deg, var(--danger), var(--danger-light)); }
-.progress-label { font-size: 0.8rem; color: var(--text-light); margin-top: 6px; display: flex; justify-content: space-between; }
-.uptime-card { background: linear-gradient(135deg, var(--primary-light), #e8f4ff); border: 1px solid var(--border); }
-.uptime-content { display: flex; align-items: center; gap: 12px; }
-.uptime-icon { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.uptime-text { flex: 1; }
-.uptime-value { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; line-height: 1.3; }
-.uptime-label { font-size: 0.9rem; color: var(--text-light); font-weight: 500; }
+        /* ================= HEADER ================= */
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
+            padding: 20px 22px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.25);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
 
-/* ================= FOOTER ================= */
-.footer { text-align: center; padding: 16px; font-size: 0.85rem; color: var(--text-light); border-top: 1px solid var(--border); margin-top: 10px; }
-.update-info { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; }
-.update-info i { color: var(--primary); }
+        .header:active {
+            transform: scale(0.99);
+            box-shadow: 0 6px 18px -2px rgba(79, 70, 229, 0.3);
+        }
 
-@media (max-width: 480px) { .container { padding: 8px; } .traffic-section { gap: 12px; } .traffic-card { padding: 16px; } .speedometer-container { width: 120px; height: 120px; } .system-card { padding: 16px; } .header { padding: 18px 16px; } .header-text h1 { font-size: 1.3rem; } .system-value { font-size: 1.3rem; } .uptime-value { font-size: 1.2rem; } }
-@media (max-width: 380px) { .traffic-section { grid-template-columns: 1fr; } .speedometer-container { width: 130px; height: 130px; } }
-</style>
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-icon {
+            background: rgba(255, 255, 255, 0.15);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .status-indicator {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ed573;
+            display: inline-block;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(46, 213, 115, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0);
+            }
+        }
+
+        /* ================= TRAFFIC SECTION ================= */
+        .traffic-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .traffic-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 16px 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .traffic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .traffic-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .traffic-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .download-icon {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .upload-icon {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .traffic-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+
+        .speedometer-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+
+        .speedometer-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .speedometer-track {
+            fill: none;
+            stroke: #f1f5f9;
+            stroke-width: 8;
+        }
+
+        .speedometer-arc {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.4s ease;
+        }
+
+        .speed-low {
+            stroke: var(--success);
+        }
+        .speed-medium {
+            stroke: var(--warning);
+        }
+        .speed-high {
+            stroke: var(--danger);
+        }
+
+        .needle-container {
+            position: absolute;
+            inset: 0;
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .needle {
+            position: absolute;
+            width: 3px;
+            height: 52px;
+            background: linear-gradient(to top, #4f46e5, #6366f1);
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%);
+            border-radius: 3px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .needle::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .speedometer-center {
+            position: absolute;
+            top: 70%;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transform: translateY(-50%);
+        }
+
+        .speedometer-value {
+            font-size: 1.7rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, #0f172a, #4f46e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .speedometer-unit {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .traffic-description {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ================= SYSTEM SECTION ================= */
+        .system-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .system-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .system-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .system-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .system-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        .system-icon {
+            color: var(--primary);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .system-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 12px 0 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .progress-warning {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .progress-danger {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .uptime-card {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe;
+        }
+
+        .uptime-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .uptime-icon {
+            background: var(--primary);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+        }
+
+        .uptime-text {
+            flex: 1;
+        }
+
+        .uptime-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .uptime-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+
+        /* ================= CHART CARD ================= */
+        .chart-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .chart-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ================= FOOTER ================= */
+        .footer {
+            text-align: center;
+            padding: 8px 0 4px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            letter-spacing: -0.2px;
+        }
+
+        .update-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 6px;
+            color: var(--primary);
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 480px) {
+            .container {
+                gap: 14px;
+            }
+
+            .header {
+                padding: 16px 18px;
+            }
+
+            .header-text h1 {
+                font-size: 1.2rem;
+            }
+
+            .traffic-section {
+                gap: 12px;
+            }
+
+            .traffic-card {
+                padding: 16px 12px 14px;
+            }
+
+            .speedometer-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .system-card {
+                padding: 16px;
+            }
+
+            .system-value {
+                font-size: 1.2rem;
+            }
+
+            .uptime-value {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .traffic-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .speedometer-container {
+                width: 130px;
+                height: 130px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
-    <header class="header">
-        <div class="header-content">
-            <div class="header-icon"><i class="fas fa-server"></i></div>
-            <div class="header-text">
-                <h1>MONITOR SERVER</h1>
-                <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span id="statusText">Sistem Aktif</span>
-                    <span id="updateTime"></span>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-icon"><i class="fas fa-server"></i></div>
+                <div class="header-text">
+                    <h1>MONITOR SERVER</h1>
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span id="statusText">Sistem Aktif</span>
+                        <span id="updateTime"></span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <section class="traffic-section">
-        <div class="traffic-card">
-            <div class="traffic-card-header">
-                <div class="traffic-icon download-icon"><i class="fas fa-download"></i></div>
-                <div class="traffic-label">Download</div>
-            </div>
-            <div class="speedometer-container">
-                <svg class="speedometer-svg" viewBox="0 0 160 160">
-                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-                    <path id="txArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
-                </svg>
-                <div class="needle-container" id="txNeedle"><div class="needle"></div></div>
-                <div class="speedometer-center">
-                    <div class="speedometer-value" id="txValue">0</div>
-                    <div class="speedometer-unit">Mbps</div>
+        <section class="traffic-section">
+            <div class="traffic-card">
+                <div class="traffic-card-header">
+                    <div class="traffic-icon download-icon"><i class="fas fa-download"></i></div>
+                    <div class="traffic-label">Download</div>
                 </div>
-            </div>
-            <div class="traffic-description"><i class="fas fa-arrow-up"></i> Inbound traffic</div>
-        </div>
-        
-        <div class="traffic-card">
-            <div class="traffic-card-header">
-                <div class="traffic-icon upload-icon"><i class="fas fa-upload"></i></div>
-                <div class="traffic-label">Upload</div>
-            </div>
-            <div class="speedometer-container">
-                <svg class="speedometer-svg" viewBox="0 0 160 160">
-                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-                    <path id="rxArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
-                </svg>
-                <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
-                <div class="speedometer-center">
-                    <div class="speedometer-value" id="rxValue">0</div>
-                    <div class="speedometer-unit">Mbps</div>
+                <div class="speedometer-container">
+                    <svg class="speedometer-svg" viewBox="0 0 160 160">
+                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="txArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
+                    </svg>
+                    <div class="needle-container" id="txNeedle"><div class="needle"></div></div>
+                    <div class="speedometer-center">
+                        <div class="speedometer-value" id="txValue">0</div>
+                        <div class="speedometer-unit">Mbps</div>
+                    </div>
                 </div>
+                <div class="traffic-description"><i class="fas fa-arrow-up"></i> Inbound traffic</div>
             </div>
-            <div class="traffic-description"><i class="fas fa-arrow-down"></i> Outbound traffic</div>
-        </div>
 
-        
-    </section>
-
-    <section class="system-section" style="margin-bottom: 20px;">
-        <div class="system-card">
-            <div class="system-header" style="margin-bottom: 16px;">
-                <div class="system-title">
-                    <i class="fas fa-chart-area system-icon"></i>
-                    Riwayat Bandwidth (24 Jam)
+            <div class="traffic-card">
+                <div class="traffic-card-header">
+                    <div class="traffic-icon upload-icon"><i class="fas fa-upload"></i></div>
+                    <div class="traffic-label">Upload</div>
                 </div>
+                <div class="speedometer-container">
+                    <svg class="speedometer-svg" viewBox="0 0 160 160">
+                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="rxArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
+                    </svg>
+                    <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
+                    <div class="speedometer-center">
+                        <div class="speedometer-value" id="rxValue">0</div>
+                        <div class="speedometer-unit">Mbps</div>
+                    </div>
+                </div>
+                <div class="traffic-description"><i class="fas fa-arrow-down"></i> Outbound traffic</div>
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <div class="chart-header">
+                <i class="fas fa-chart-area" style="color: var(--primary);"></i> Riwayat Bandwidth (24 Jam)
             </div>
             <div style="position: relative; height: 220px; width: 100%;">
                 <canvas id="trafficChart"></canvas>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="system-section">
-        <div class="system-card">
-            <div class="system-header">
-                <div class="system-title"><i class="fas fa-microchip system-icon"></i> Penggunaan CPU</div>
-                <div class="system-value"><span id="cpuVal">0</span>%</div>
+        <section class="system-section">
+            <div class="system-card">
+                <div class="system-header">
+                    <div class="system-title"><i class="fas fa-microchip system-icon"></i> Penggunaan CPU</div>
+                    <div class="system-value"><span id="cpuVal">0</span>%</div>
+                </div>
+                <div class="progress-container"><div class="progress-bar" id="cpuBar"></div></div>
+                <div class="progress-label"><span>Idle</span><span id="cpuLoad">Beban Rendah</span></div>
             </div>
-            <div class="progress-container"><div class="progress-bar" id="cpuBar"></div></div>
-            <div class="progress-label"><span>Idle</span><span id="cpuLoad">Beban Rendah</span></div>
-        </div>
 
-        <div class="system-card">
-            <div class="system-header">
-                <div class="system-title"><i class="fas fa-memory system-icon"></i> Penggunaan RAM</div>
-                <div class="system-value"><span id="ramUsed">0</span> / <span id="ramTotal">0</span> MB</div>
+            <div class="system-card">
+                <div class="system-header">
+                    <div class="system-title"><i class="fas fa-memory system-icon"></i> Penggunaan RAM</div>
+                    <div class="system-value"><span id="ramUsed">0</span> / <span id="ramTotal">0</span> MB</div>
+                </div>
+                <div class="progress-container"><div class="progress-bar" id="ramBar"></div></div>
+                <div class="progress-label"><span>Tersedia</span><span id="ramPercent">0% Digunakan</span></div>
             </div>
-            <div class="progress-container"><div class="progress-bar" id="ramBar"></div></div>
-            <div class="progress-label"><span>Tersedia</span><span id="ramPercent">0% Digunakan</span></div>
-        </div>
 
-        <div class="system-card uptime-card">
-            <div class="uptime-content">
-                <div class="uptime-icon"><i class="fas fa-clock"></i></div>
-                <div class="uptime-text">
-                    <div class="uptime-label">Waktu Operasi</div>
-                    <div class="uptime-value" id="uptimeVal">-</div>
+            <div class="system-card uptime-card">
+                <div class="uptime-content">
+                    <div class="uptime-icon"><i class="fas fa-clock"></i></div>
+                    <div class="uptime-text">
+                        <div class="uptime-label">Waktu Operasi</div>
+                        <div class="uptime-value" id="uptimeVal">-</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="footer">
-        <div>Sistem Monitoring Jaringan SantriDev</div>
-        <div class="update-info"><i class="fas fa-sync-alt"></i><span>Realtime: <span id="lastUpdateTime">-</span></span></div>
-    </footer>
-</div>
+        <footer class="footer">
+            <div>Sistem Monitoring Jaringan SantriDev</div>
+            <div class="update-info"><i class="fas fa-sync-alt"></i><span>Realtime: <span id="lastUpdateTime">-</span></span></div>
+        </footer>
+    </div>
 
-<script>
-const MAX_MBPS = 250;
-const FIREBASE_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik.json";
-// URL BARU untuk mengambil maksimal 1440 data log terakhir (24 jam) dari Firebase
-const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=1440";
+    <script>
+        const MAX_MBPS = 250;
+        const FIREBASE_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik.json";
+        const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=1440";
 
-let lastUpdateTime = null;
-let updateInterval;
+        let lastUpdateTime = null;
+        let updateInterval;
+        let trafficChart;
+        let trafficHistory = [];
 
-// Variabel Global untuk Chart
-let trafficChart;
-let trafficHistory = []; // LocalStorage DIHAPUS, mulai dari array kosong
+        function initChart() {
+            const ctx = document.getElementById('trafficChart').getContext('2d');
+            Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
+            Chart.defaults.color = '#64748b';
 
-function initChart() {
-    const ctx = document.getElementById('trafficChart').getContext('2d');
-    Chart.defaults.font.family = "'Segoe UI', system-ui, -apple-system, sans-serif";
-    Chart.defaults.color = '#6c7a92';
-
-    trafficChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Download (Mbps)',
-                    borderColor: '#2a5bd7', 
-                    backgroundColor: 'rgba(42, 91, 215, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 5,
-                    fill: true,
-                    tension: 0.4,
-                    data: []
+            trafficChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Download (Mbps)',
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            fill: true,
+                            tension: 0.4,
+                            data: []
+                        },
+                        {
+                            label: 'Upload (Mbps)',
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            fill: true,
+                            tension: 0.4,
+                            data: []
+                        }
+                    ]
                 },
-                {
-                    label: 'Upload (Mbps)',
-                    borderColor: '#00c9a7', 
-                    backgroundColor: 'rgba(0, 201, 167, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 5,
-                    fill: true,
-                    tension: 0.4,
-                    data: []
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 10,
+                                usePointStyle: true,
+                                font: { size: 10, family: "'Inter', sans-serif" },
+                                color: '#64748b'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'white',
+                            titleColor: '#0f172a',
+                            bodyColor: '#0f172a',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 10,
+                            usePointStyle: true,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { maxTicksLimit: 6, font: { size: 10 } }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            border: { dash: [4, 4] },
+                            ticks: { font: { size: 10 }, callback: function(value) { return value; } }
+                        }
+                    }
                 }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false, 
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { display: true, position: 'top', labels: { boxWidth: 12, usePointStyle: true, font: { size: 11 } } },
-                tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#2c3e50', bodyColor: '#2c3e50', borderColor: '#e8ecf4', borderWidth: 1, padding: 10, usePointStyle: true }
-            },
-            scales: {
-                x: { grid: { display: false, drawBorder: false }, ticks: { maxTicksLimit: 6, font: { size: 10 } } },
-                y: { beginAtZero: true, grid: { color: '#e8ecf4', drawBorder: false }, border: { dash: [5, 5] }, ticks: { font: { size: 10 }, callback: function(value) { return value; } } }
+            });
+        }
+
+        function updateChartData() {
+            if (!trafficChart) return;
+            trafficChart.data.labels = trafficHistory.map(item => item.time);
+            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.tx);
+            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.rx);
+            trafficChart.update('none');
+        }
+
+        async function fetchHistoryFromFirebase() {
+            try {
+                const response = await fetch(FIREBASE_HISTORY_URL);
+                if (response.ok) {
+                    const data = await response.json();
+                    trafficHistory = [];
+                    if (data) {
+                        Object.keys(data).forEach(key => {
+                            trafficHistory.push({
+                                time: data[key].time,
+                                tx: data[key].tx,
+                                rx: data[key].rx
+                            });
+                        });
+                    }
+                    updateChartData();
+                }
+            } catch (error) {
+                console.error("Gagal mengambil riwayat dari Firebase:", error);
             }
         }
-    });
-}
 
-function updateChartData() {
-    if (!trafficChart) return;
-    trafficChart.data.labels = trafficHistory.map(item => item.time);
-    trafficChart.data.datasets[0].data = trafficHistory.map(item => item.tx);
-    trafficChart.data.datasets[1].data = trafficHistory.map(item => item.rx);
-    trafficChart.update('none'); 
-}
+        function updateNeedle(id, value) {
+            const v = Math.min(value, MAX_MBPS);
+            const percent = v / MAX_MBPS;
+            const angle = -90 + (percent * 180);
+            const needleElement = document.getElementById(id);
+            if (needleElement) needleElement.style.transform = `rotate(${angle}deg)`;
 
-// FUNGSI BARU: Menarik data riwayat dari Firebase saat web pertama dibuka
-async function fetchHistoryFromFirebase() {
-    try {
-        const response = await fetch(FIREBASE_HISTORY_URL);
-        if (response.ok) {
-            const data = await response.json();
-            trafficHistory = [];
-            
-            // Firebase mengembalikan bentuk objek acak, kita harus mengonversinya ke array
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    trafficHistory.push({
-                        time: data[key].time,
-                        tx: data[key].tx,
-                        rx: data[key].rx
-                    });
+            const arc = document.getElementById(id === "rxNeedle" ? "rxArc" : "txArc");
+            if (arc) {
+                arc.style.strokeDashoffset = 157 - (157 * percent);
+                if (percent <= 0.4) arc.className = "speedometer-arc speed-low";
+                else if (percent <= 0.75) arc.className = "speedometer-arc speed-medium";
+                else arc.className = "speedometer-arc speed-high";
+            }
+            const valueElement = document.getElementById(id === "rxNeedle" ? "rxValue" : "txValue");
+            if (valueElement) valueElement.textContent = v.toFixed(2);
+        }
+
+        function updateProgressBar(elementId, percent, type = "cpu") {
+            const bar = document.getElementById(elementId);
+            if (!bar) return;
+            const widthPercent = Math.min(percent, 100);
+            bar.style.width = `${widthPercent}%`;
+
+            if (type === "cpu") {
+                const cpuLoad = document.getElementById('cpuLoad');
+                if (percent > 80) {
+                    bar.className = "progress-bar progress-danger";
+                    cpuLoad.textContent = "Beban Tinggi";
+                    cpuLoad.style.color = "var(--danger)";
+                } else if (percent > 60) {
+                    bar.className = "progress-bar progress-warning";
+                    cpuLoad.textContent = "Beban Sedang";
+                    cpuLoad.style.color = "var(--warning)";
+                } else {
+                    bar.className = "progress-bar";
+                    cpuLoad.textContent = "Beban Rendah";
+                    cpuLoad.style.color = "var(--success)";
+                }
+            } else if (type === "ram") {
+                const ramPercentElement = document.getElementById('ramPercent');
+                if (percent > 80) {
+                    bar.className = "progress-bar progress-danger";
+                    ramPercentElement.style.color = "var(--danger)";
+                } else if (percent > 60) {
+                    bar.className = "progress-bar progress-warning";
+                    ramPercentElement.style.color = "var(--warning)";
+                } else {
+                    bar.className = "progress-bar";
+                    ramPercentElement.style.color = "var(--success)";
+                }
+            }
+        }
+
+        function formatUptime(uptimeString) {
+            if (!uptimeString) return "-";
+            const daysMatch = uptimeString.match(/(\d+)d/);
+            const hoursMatch = uptimeString.match(/(\d+)h/);
+            const minutesMatch = uptimeString.match(/(\d+)m/);
+            const secondsMatch = uptimeString.match(/(\d+)s/);
+            let parts = [];
+            if (daysMatch) parts.push(`${parseInt(daysMatch[1])} hari`);
+            if (hoursMatch) parts.push(`${parseInt(hoursMatch[1])} jam`);
+            if (minutesMatch) parts.push(`${parseInt(minutesMatch[1])} menit`);
+            if (secondsMatch && (!daysMatch && !hoursMatch && !minutesMatch)) parts.push(`${parseInt(secondsMatch[1])} detik`);
+            if (parts.length === 0) return uptimeString;
+            return parts.slice(0, 2).join(' ');
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return "";
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function updateSystem(data) {
+            if (!data) return;
+            const routerData = data.router_01 || data;
+            if (!routerData) { updateStatus(false, "Data tidak ditemukan"); return; }
+
+            const cpuPercent = routerData.cpu || 0;
+            document.getElementById("cpuVal").textContent = cpuPercent;
+            updateProgressBar("cpuBar", cpuPercent, "cpu");
+
+            const totalRam = routerData.total_ram || 0;
+            const freeRam = routerData.free_ram || 0;
+            const usedRam = totalRam - freeRam;
+            const totalRamMB = Math.round(totalRam / 1024 / 1024);
+            const usedRamMB = Math.round(usedRam / 1024 / 1024);
+            const ramPercent = totalRam > 0 ? (usedRam / totalRam) * 100 : 0;
+            document.getElementById("ramUsed").textContent = usedRamMB;
+            document.getElementById("ramTotal").textContent = totalRamMB;
+            document.getElementById("ramPercent").textContent = `${Math.round(ramPercent)}% Digunakan`;
+            updateProgressBar("ramBar", ramPercent, "ram");
+
+            document.getElementById("uptimeVal").textContent = formatUptime(routerData.uptime);
+
+            const rxMbps = (routerData.rx_bps || 0) / 1e6;
+            const txMbps = (routerData.tx_bps || 0) / 1e6;
+            updateNeedle("rxNeedle", rxMbps);
+            updateNeedle("txNeedle", txMbps);
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const currentTx = parseFloat(txMbps.toFixed(2));
+            const currentRx = parseFloat(rxMbps.toFixed(2));
+
+            if (trafficHistory.length > 0) {
+                let lastPoint = trafficHistory[trafficHistory.length - 1];
+                if (lastPoint.time === timeString) {
+                    lastPoint.tx = currentTx;
+                    lastPoint.rx = currentRx;
+                } else {
+                    trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
+                    if (trafficHistory.length > 1440) trafficHistory.shift();
+                }
+            } else {
+                trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
+            }
+            updateChartData();
+
+            lastUpdateTime = routerData.last_update;
+            updateStatus(routerData.status === "online", "Terhubung");
+
+            const updateTimeElement = document.getElementById('updateTime');
+            const lastUpdateElement = document.getElementById('lastUpdateTime');
+            if (lastUpdateTime) {
+                const timeStr = formatTime(lastUpdateTime);
+                updateTimeElement.textContent = timeStr ? `• ${timeStr}` : "";
+                lastUpdateElement.textContent = timeStr;
+            } else {
+                updateTimeElement.textContent = "";
+                lastUpdateElement.textContent = "-";
+            }
+        }
+
+        function updateStatus(isOnline, message) {
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.getElementById('statusText');
+            if (isOnline) {
+                statusDot.style.background = "#2ed573";
+                statusDot.style.animation = "pulse 2s infinite";
+                statusText.textContent = message || "Sistem Aktif";
+                statusText.style.color = "#2ed573";
+            } else {
+                statusDot.style.background = "#ef4444";
+                statusDot.style.animation = "none";
+                statusText.textContent = message || "Sistem Offline";
+                statusText.style.color = "#ef4444";
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const response = await fetch(FIREBASE_URL, {
+                    signal: controller.signal,
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
                 });
+                clearTimeout(timeoutId);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (error.name === 'AbortError') updateStatus(false, "Timeout koneksi");
+                else updateStatus(false, "Error koneksi");
+                return null;
             }
-            updateChartData(); // Tampilkan data ke grafik
         }
-    } catch (error) {
-        console.error("Gagal mengambil riwayat dari Firebase:", error);
-    }
-}
 
-function updateNeedle(id, value) {
-    const v = Math.min(value, MAX_MBPS);
-    const percent = v / MAX_MBPS;
-    const angle = -90 + (percent * 180);
-    const needleElement = document.getElementById(id);
-    if (needleElement) needleElement.style.transform = `rotate(${angle}deg)`;
-    
-    const arc = document.getElementById(id === "rxNeedle" ? "rxArc" : "txArc");
-    if (arc) {
-        arc.style.strokeDashoffset = 157 - (157 * percent);
-        if (percent <= 0.4) arc.className = "speedometer-arc speed-low";
-        else if (percent <= 0.75) arc.className = "speedometer-arc speed-medium";
-        else arc.className = "speedometer-arc speed-high";
-    }
-    const valueElement = document.getElementById(id === "rxNeedle" ? "rxValue" : "txValue");
-    if (valueElement) valueElement.textContent = v.toFixed(2);
-}
-
-function updateProgressBar(elementId, percent, type = "cpu") {
-    const bar = document.getElementById(elementId);
-    if (!bar) return;
-    const widthPercent = Math.min(percent, 100);
-    bar.style.width = `${widthPercent}%`;
-    
-    if (type === "cpu") {
-        const cpuLoad = document.getElementById('cpuLoad');
-        if (percent > 80) { bar.className = "progress-bar progress-danger"; cpuLoad.textContent = "Beban Tinggi"; cpuLoad.style.color = "var(--danger)"; }
-        else if (percent > 60) { bar.className = "progress-bar progress-warning"; cpuLoad.textContent = "Beban Sedang"; cpuLoad.style.color = "var(--warning)"; }
-        else { bar.className = "progress-bar"; cpuLoad.textContent = "Beban Rendah"; cpuLoad.style.color = "var(--success)"; }
-    } else if (type === "ram") {
-        const ramPercentElement = document.getElementById('ramPercent');
-        if (percent > 80) { bar.className = "progress-bar progress-danger"; ramPercentElement.style.color = "var(--danger)"; }
-        else if (percent > 60) { bar.className = "progress-bar progress-warning"; ramPercentElement.style.color = "var(--warning)"; }
-        else { bar.className = "progress-bar"; ramPercentElement.style.color = "var(--success)"; }
-    }
-}
-
-function formatUptime(uptimeString) {
-    if (!uptimeString) return "-";
-    const daysMatch = uptimeString.match(/(\d+)d/);
-    const hoursMatch = uptimeString.match(/(\d+)h/);
-    const minutesMatch = uptimeString.match(/(\d+)m/);
-    const secondsMatch = uptimeString.match(/(\d+)s/);
-    let parts = [];
-    if (daysMatch) parts.push(`${parseInt(daysMatch[1])} hari`);
-    if (hoursMatch) parts.push(`${parseInt(hoursMatch[1])} jam`);
-    if (minutesMatch) parts.push(`${parseInt(minutesMatch[1])} menit`);
-    if (secondsMatch && (!daysMatch && !hoursMatch && !minutesMatch)) parts.push(`${parseInt(secondsMatch[1])} detik`);
-    if (parts.length === 0) return uptimeString;
-    return parts.slice(0, 2).join(' ');
-}
-
-function formatTime(timestamp) {
-    if (!timestamp) return "";
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-
-function updateSystem(data) {
-    if (!data) return;
-    const routerData = data.router_01 || data;
-    if (!routerData) { updateStatus(false, "Data tidak ditemukan"); return; }
-
-    const cpuPercent = routerData.cpu || 0;
-    document.getElementById("cpuVal").textContent = cpuPercent;
-    updateProgressBar("cpuBar", cpuPercent, "cpu");
-
-    const totalRam = routerData.total_ram || 0;
-    const freeRam = routerData.free_ram || 0;
-    const usedRam = totalRam - freeRam;
-    const totalRamMB = Math.round(totalRam / 1024 / 1024);
-    const usedRamMB = Math.round(usedRam / 1024 / 1024);
-    const ramPercent = totalRam > 0 ? (usedRam / totalRam) * 100 : 0;
-    document.getElementById("ramUsed").textContent = usedRamMB;
-    document.getElementById("ramTotal").textContent = totalRamMB;
-    document.getElementById("ramPercent").textContent = `${Math.round(ramPercent)}% Digunakan`;
-    updateProgressBar("ramBar", ramPercent, "ram");
-
-    document.getElementById("uptimeVal").textContent = formatUptime(routerData.uptime);
-
-    const rxMbps = (routerData.rx_bps || 0) / 1e6;
-    const txMbps = (routerData.tx_bps || 0) / 1e6;
-    updateNeedle("rxNeedle", rxMbps);
-    updateNeedle("txNeedle", txMbps);
-
-    // ==========================================
-    // LOGIKA CHART MENGGABUNGKAN HISTORY & REALTIME
-    // ==========================================
-    const now = new Date();
-    // Gunakan format jam:menit agar sinkron dengan yang dikirim Python
-    const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    const currentTx = parseFloat(txMbps.toFixed(2));
-    const currentRx = parseFloat(rxMbps.toFixed(2));
-
-    if (trafficHistory.length > 0) {
-        let lastPoint = trafficHistory[trafficHistory.length - 1];
-        
-        if (lastPoint.time === timeString) {
-            // Animasi pergerakan real-time tip (ujung grafik)
-            lastPoint.tx = currentTx;
-            lastPoint.rx = currentRx;
-        } else {
-            // Berganti menit, buat titik baru (menyatu dengan data dari Python)
-            trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
-            if (trafficHistory.length > 1440) trafficHistory.shift();
+        async function updateMonitor() {
+            const data = await fetchData();
+            if (data) updateSystem(data);
         }
-    } else {
-        trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
-    }
-    updateChartData();
-    // ==========================================
 
-    lastUpdateTime = routerData.last_update;
-    updateStatus(routerData.status === "online", "Terhubung");
-    
-    const updateTimeElement = document.getElementById('updateTime');
-    const lastUpdateElement = document.getElementById('lastUpdateTime');
-    if (lastUpdateTime) {
-        const timeStr = formatTime(lastUpdateTime);
-        updateTimeElement.textContent = timeStr ? `• ${timeStr}` : "";
-        lastUpdateElement.textContent = timeStr;
-    } else {
-        updateTimeElement.textContent = "";
-        lastUpdateElement.textContent = "-";
-    }
-}
+        function initializeUI() {
+            updateNeedle("rxNeedle", 0);
+            updateNeedle("txNeedle", 0);
+            updateProgressBar("cpuBar", 0, "cpu");
+            updateProgressBar("ramBar", 0, "ram");
+            updateStatus(true, "Menghubungkan...");
+        }
 
-function updateStatus(isOnline, message) {
-    const statusDot = document.querySelector('.status-dot');
-    const statusText = document.getElementById('statusText');
-    if (isOnline) {
-        statusDot.style.background = "#2ed573";
-        statusDot.style.animation = "pulse 2s infinite";
-        statusText.textContent = message || "Sistem Aktif";
-        statusText.style.color = "#2ed573";
-    } else {
-        statusDot.style.background = "#ff4757";
-        statusDot.style.animation = "none";
-        statusText.textContent = message || "Sistem Offline";
-        statusText.style.color = "#ff4757";
-    }
-}
+        function startMonitoring() {
+            updateMonitor();
+            clearInterval(updateInterval);
+            updateInterval = setInterval(updateMonitor, 1000);
+            setTimeout(() => { location.reload(); }, 30 * 60 * 1000);
+        }
 
-async function fetchData() {
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const response = await fetch(FIREBASE_URL, { signal: controller.signal, headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } });
-        clearTimeout(timeoutId);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        if (error.name === 'AbortError') updateStatus(false, "Timeout koneksi");
-        else updateStatus(false, "Error koneksi");
-        return null;
-    }
-}
+        window.addEventListener('DOMContentLoaded', async () => {
+            initChart();
+            initializeUI();
+            await fetchHistoryFromFirebase();
+            startMonitoring();
 
-async function updateMonitor() {
-    const data = await fetchData();
-    if (data) updateSystem(data);
-}
-
-function initializeUI() {
-    updateNeedle("rxNeedle", 0);
-    updateNeedle("txNeedle", 0);
-    updateProgressBar("cpuBar", 0, "cpu");
-    updateProgressBar("ramBar", 0, "ram");
-    updateStatus(true, "Menghubungkan...");
-}
-
-function startMonitoring() {
-    updateMonitor();
-    clearInterval(updateInterval);
-    updateInterval = setInterval(updateMonitor, 1000);
-    setTimeout(() => { location.reload(); }, 30 * 60 * 1000); // Auto refresh 30 menit
-}
-
-window.addEventListener('DOMContentLoaded', async () => {
-    initChart();
-    initializeUI();
-    
-    // TUNGGU mengambil riwayat full 24 Jam dari Firebase selesai
-    await fetchHistoryFromFirebase();
-    
-    // Baru kemudian jalankan monitoring realtime speedometer per detik
-    startMonitoring();
-    
-    document.querySelector('.header').addEventListener('click', () => {
-        updateMonitor();
-        const header = document.querySelector('.header');
-        header.style.opacity = '0.8';
-        setTimeout(() => header.style.opacity = '1', 300);
-    });
-});
-</script>
+            document.querySelector('.header').addEventListener('click', () => {
+                updateMonitor();
+                const header = document.querySelector('.header');
+                header.style.opacity = '0.8';
+                setTimeout(() => header.style.opacity = '1', 300);
+            });
+        });
+    </script>
 </body>
 </html>
