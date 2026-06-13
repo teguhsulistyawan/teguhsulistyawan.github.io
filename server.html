@@ -115,25 +115,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 2p
         <div class="traffic-card">
             <div class="traffic-card-header">
                 <div class="traffic-icon download-icon"><i class="fas fa-download"></i></div>
-                <div class="traffic-label">Download</div>
-            </div>
-            <div class="speedometer-container">
-                <svg class="speedometer-svg" viewBox="0 0 160 160">
-                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-                    <path id="rxArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
-                </svg>
-                <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
-                <div class="speedometer-center">
-                    <div class="speedometer-value" id="rxValue">0</div>
-                    <div class="speedometer-unit">Mbps</div>
-                </div>
-            </div>
-            <div class="traffic-description"><i class="fas fa-arrow-down"></i> Inbound traffic</div>
-        </div>
-
-        <div class="traffic-card">
-            <div class="traffic-card-header">
-                <div class="traffic-icon upload-icon"><i class="fas fa-upload"></i></div>
                 <div class="traffic-label">Upload</div>
             </div>
             <div class="speedometer-container">
@@ -147,8 +128,29 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 2p
                     <div class="speedometer-unit">Mbps</div>
                 </div>
             </div>
-            <div class="traffic-description"><i class="fas fa-arrow-up"></i> Outbound traffic</div>
+            <div class="traffic-description"><i class="fas fa-arrow-up"></i> Inbound traffic</div>
         </div>
+        
+        <div class="traffic-card">
+            <div class="traffic-card-header">
+                <div class="traffic-icon upload-icon"><i class="fas fa-upload"></i></div>
+                <div class="traffic-label">Download</div>
+            </div>
+            <div class="speedometer-container">
+                <svg class="speedometer-svg" viewBox="0 0 160 160">
+                    <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                    <path id="rxArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
+                </svg>
+                <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
+                <div class="speedometer-center">
+                    <div class="speedometer-value" id="rxValue">0</div>
+                    <div class="speedometer-unit">Mbps</div>
+                </div>
+            </div>
+            <div class="traffic-description"><i class="fas fa-arrow-down"></i> Outbound traffic</div>
+        </div>
+
+        
     </section>
 
     <section class="system-section" style="margin-bottom: 20px;">
@@ -202,7 +204,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 2p
 </div>
 
 <script>
-const MAX_MBPS = 300;
+const MAX_MBPS = 250;
 const FIREBASE_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik.json";
 // URL BARU untuk mengambil maksimal 1440 data log terakhir (24 jam) dari Firebase
 const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=1440";
