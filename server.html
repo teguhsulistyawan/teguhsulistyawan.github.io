@@ -13,31 +13,39 @@
     <style>
         /* ================= ROOT & VARIABLES ================= */
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #eef2ff;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: rgba(99, 102, 241, 0.12);
             --success: #10b981;
-            --success-light: #d1fae5;
+            --success-light: rgba(16, 185, 129, 0.12);
             --warning: #f59e0b;
-            --warning-light: #fef3c7;
+            --warning-light: rgba(245, 158, 11, 0.12);
             --danger: #ef4444;
-            --danger-light: #fee2e2;
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-            --text: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --danger-light: rgba(239, 68, 68, 0.12);
+            --bg: #0b1120;
+            --card: #111b2d;
+            --card-hover: #162236;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.35);
+            --text: #e5edf8;
+            --text-light: #91a3bd;
+            --text-dim: #64748b;
+            --border: #26354b;
+            --border-light: #1e2d42;
             --radius: 16px;
             --radius-sm: 12px;
+            --radius-xs: 8px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -47,11 +55,14 @@
             min-height: 100vh;
             padding: 16px;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             letter-spacing: -0.01em;
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 520px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -60,30 +71,46 @@
 
         /* ================= HEADER ================= */
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            background: linear-gradient(135deg, #111c31 0%, #172943 58%, #1b3150 100%);
             color: white;
-            padding: 20px 22px;
+            padding: 22px 26px;
             border-radius: var(--radius);
-            box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.25);
+            border: 1px solid #263750;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
             position: relative;
             overflow: hidden;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
         }
 
+        .header:hover {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+        }
+
         .header:active {
-            transform: scale(0.99);
-            box-shadow: 0 6px 18px -2px rgba(79, 70, 229, 0.3);
+            transform: scale(0.995);
         }
 
         .header::before {
             content: '';
             position: absolute;
             top: -40%;
-            right: -20%;
+            right: -10%;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -5%;
             width: 180px;
             height: 180px;
-            background: rgba(255, 255, 255, 0.07);
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -91,38 +118,45 @@
         .header-content {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 18px;
             position: relative;
             z-index: 1;
         }
 
         .header-icon {
-            background: rgba(255, 255, 255, 0.15);
-            width: 48px;
-            height: 48px;
+            background: rgba(99, 102, 241, 0.15);
+            width: 52px;
+            height: 52px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
         }
 
         .header-text h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             line-height: 1.2;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #e5edf8 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .status-indicator {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             display: flex;
             align-items: center;
-            gap: 6px;
-            opacity: 0.9;
+            gap: 8px;
+            opacity: 0.95;
             font-weight: 500;
         }
 
@@ -134,84 +168,102 @@
             display: inline-block;
             animation: pulse 2s infinite;
             box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
+            flex-shrink: 0;
         }
 
         @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 8px rgba(46, 213, 115, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(46, 213, 115, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); }
         }
 
         /* ================= TRAFFIC SECTION ================= */
         .traffic-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 20px;
         }
 
         .traffic-card {
             background: var(--card);
             border-radius: var(--radius);
-            padding: 20px 16px 16px;
+            padding: 24px 20px 20px;
             box-shadow: var(--shadow);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .traffic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .traffic-card.download-card::before {
+            background: linear-gradient(90deg, #4f46e5, #818cf8);
+        }
+
+        .traffic-card.upload-card::before {
+            background: linear-gradient(90deg, #059669, #34d399);
         }
 
         .traffic-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow-hover);
+            border-color: #31456a;
+            background: var(--card-hover);
         }
 
         .traffic-card-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 16px;
             width: 100%;
         }
 
         .traffic-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 17px;
+            flex-shrink: 0;
         }
 
         .download-icon {
-            background: var(--success-light);
-            color: var(--success);
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
         }
 
         .upload-icon {
-            background: var(--primary-light);
-            color: var(--primary);
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
         }
 
         .traffic-label {
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             color: var(--text);
             letter-spacing: -0.2px;
         }
 
         .speedometer-container {
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 150px;
+            height: 150px;
             margin: 0 auto;
         }
 
@@ -222,7 +274,7 @@
 
         .speedometer-track {
             fill: none;
-            stroke: #f1f5f9;
+            stroke: #1e2d42;
             stroke-width: 8;
         }
 
@@ -236,13 +288,13 @@
         }
 
         .speed-low {
-            stroke: var(--success);
+            stroke: #10b981;
         }
         .speed-medium {
-            stroke: var(--warning);
+            stroke: #f59e0b;
         }
         .speed-high {
-            stroke: var(--danger);
+            stroke: #ef4444;
         }
 
         .needle-container {
@@ -254,28 +306,28 @@
         .needle {
             position: absolute;
             width: 3px;
-            height: 52px;
-            background: linear-gradient(to top, #4f46e5, #6366f1);
+            height: 54px;
+            background: linear-gradient(to top, #4f46e5, #818cf8);
             top: 50%;
             left: 50%;
             transform-origin: bottom center;
             transform: translate(-50%, -100%);
             border-radius: 3px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            filter: drop-shadow(0 2px 6px rgba(99, 102, 241, 0.3));
         }
 
         .needle::after {
             content: '';
             width: 16px;
             height: 16px;
-            background: var(--primary);
+            background: var(--primary-dark);
             border-radius: 50%;
             position: absolute;
             bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: 3px solid #1b2a42;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
         }
 
         .speedometer-center {
@@ -292,10 +344,10 @@
         }
 
         .speedometer-value {
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             font-weight: 800;
             line-height: 1;
-            background: linear-gradient(135deg, #0f172a, #4f46e5);
+            background: linear-gradient(135deg, #a5b4fc, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -303,55 +355,186 @@
         }
 
         .speedometer-unit {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-light);
             margin-top: 4px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
         }
 
         .traffic-description {
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-light);
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+        }
+
+        .traffic-description i {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* ================= TRAFFIC METER ================= */
+        .traffic-meter {
+            width: 100%;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .traffic-meter-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .traffic-meter-label span:last-child {
+            color: #dbe7f8;
+            font-variant-numeric: tabular-nums;
+            font-size: 0.75rem;
+        }
+
+        .traffic-meter-track {
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #1e2d42;
+        }
+
+        .traffic-meter-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: width;
+        }
+
+        .download-fill {
+            background: linear-gradient(90deg, #4f46e5, #818cf8);
+            box-shadow: 0 0 12px rgba(129, 140, 248, 0.25);
+        }
+
+        .upload-fill {
+            background: linear-gradient(90deg, #059669, #34d399);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+        }
+
+        /* ================= CHART CARD ================= */
+        .chart-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #34d399);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: #31456a;
+        }
+
+        .chart-header {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.2px;
+        }
+
+        .chart-header i {
+            font-size: 1rem;
+            color: #818cf8;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 240px;
+            width: 100%;
         }
 
         /* ================= SYSTEM SECTION ================= */
         .system-section {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         .system-card {
             background: var(--card);
             border-radius: var(--radius);
-            padding: 18px 20px;
+            padding: 20px 22px;
             box-shadow: var(--shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .cpu-card::before {
+            background: linear-gradient(90deg, #6366f1, #a5b4fc);
+        }
+
+        .ram-card::before {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
         }
 
         .system-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-hover);
+            border-color: #31456a;
+            background: var(--card-hover);
         }
 
         .system-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
+            gap: 12px;
         }
 
         .system-title {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-light);
             font-weight: 600;
             display: flex;
@@ -361,25 +544,26 @@
         }
 
         .system-icon {
-            color: var(--primary);
+            color: #818cf8;
             font-size: 1rem;
             width: 20px;
             text-align: center;
         }
 
         .system-value {
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.35rem;
+            font-weight: 800;
             color: var(--text);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
+            font-variant-numeric: tabular-nums;
         }
 
         .progress-container {
             height: 8px;
-            background: #f1f5f9;
+            background: #1e2d42;
             border-radius: 20px;
             overflow: hidden;
-            margin: 12px 0 8px;
+            margin: 14px 0 10px;
         }
 
         .progress-bar {
@@ -391,11 +575,11 @@
         }
 
         .progress-warning {
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
         }
 
         .progress-danger {
-            background: linear-gradient(90deg, #ef4444, #f87171);
+            background: linear-gradient(90deg, #ef4444, #f87171) !important;
         }
 
         .progress-label {
@@ -406,29 +590,39 @@
             font-weight: 500;
         }
 
+        /* ================= UPTIME CARD ================= */
         .uptime-card {
-            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-            border: 1px solid #c7d2fe;
+            background: linear-gradient(135deg, #15233b 0%, #182b47 100%);
+            border-color: #2c4264;
+            grid-column: 1 / -1;
+        }
+
+        .uptime-card::before {
+            background: linear-gradient(90deg, #6366f1, #a5b4fc, #818cf8);
+        }
+
+        .uptime-card:hover {
+            border-color: #3a5478;
         }
 
         .uptime-content {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
         }
 
         .uptime-icon {
-            background: var(--primary);
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
             color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
         }
 
         .uptime-text {
@@ -438,43 +632,26 @@
         .uptime-label {
             font-size: 0.8rem;
             color: var(--text-light);
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .uptime-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary-dark);
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #c7d7ff;
             line-height: 1.3;
-            letter-spacing: -0.2px;
-        }
-
-        /* ================= CHART CARD ================= */
-        .chart-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .chart-header {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: -0.3px;
         }
 
         /* ================= FOOTER ================= */
         .footer {
             text-align: center;
-            padding: 8px 0 4px;
-            font-size: 0.8rem;
-            color: var(--text-light);
+            padding: 12px 0 8px;
+            font-size: 0.82rem;
+            color: var(--text-dim);
             font-weight: 500;
             letter-spacing: -0.2px;
         }
@@ -483,40 +660,80 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-top: 6px;
-            color: var(--primary);
+            gap: 8px;
+            margin-top: 8px;
+            color: #818cf8;
+            font-size: 0.8rem;
+        }
+
+        .update-info i {
+            font-size: 0.75rem;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* ================= RESPONSIVE ================= */
-        @media (max-width: 480px) {
+        @media (max-width: 900px) {
+            .system-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
             .container {
-                gap: 14px;
+                gap: 16px;
             }
 
             .header {
-                padding: 16px 18px;
+                padding: 18px 20px;
             }
 
             .header-text h1 {
-                font-size: 1.2rem;
+                font-size: 1.25rem;
+            }
+
+            .header-icon {
+                width: 46px;
+                height: 46px;
+                font-size: 20px;
             }
 
             .traffic-section {
-                gap: 12px;
+                gap: 14px;
             }
 
             .traffic-card {
-                padding: 16px 12px 14px;
+                padding: 20px 16px 16px;
             }
 
             .speedometer-container {
-                width: 120px;
-                height: 120px;
+                width: 130px;
+                height: 130px;
+            }
+
+            .speedometer-value {
+                font-size: 1.55rem;
+            }
+
+            .system-section {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .uptime-card {
+                grid-column: auto;
             }
 
             .system-card {
-                padding: 16px;
+                padding: 18px;
             }
 
             .system-value {
@@ -524,20 +741,107 @@
             }
 
             .uptime-value {
-                font-size: 1.1rem;
+                font-size: 1.15rem;
+            }
+
+            .chart-wrapper {
+                height: 200px;
             }
         }
 
-        @media (max-width: 380px) {
+        @media (max-width: 480px) {
             .traffic-section {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 14px;
             }
 
             .speedometer-container {
-                width: 130px;
-                height: 130px;
+                width: 140px;
+                height: 140px;
             }
+
+            .header-content {
+                gap: 14px;
+            }
+
+            .header-text h1 {
+                font-size: 1.15rem;
+            }
+
+            .status-indicator {
+                font-size: 0.78rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .header-text h1 {
+                font-size: 1.05rem;
+            }
+
+            .speedometer-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .speedometer-value {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* ================= REDUCED MOTION ================= */
+        @media (prefers-reduced-motion: reduce) {
+            .traffic-meter-fill,
+            .needle-container,
+            .speedometer-arc,
+            .progress-bar {
+                transition: none;
+            }
+
+            .update-info i {
+                animation: none;
+            }
+
+            .status-dot {
+                animation: none;
+            }
+        }
+
+        /* ================= SCROLLBAR ================= */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #26354b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #31456a;
+        }
+
+        /* ================= CHART DARK THEME OVERRIDE ================= */
+        .chart-card canvas {
+            filter: none;
         }
     </style>
 </head>
@@ -559,86 +863,92 @@
         </header>
 
         <section class="traffic-section">
-    <!-- DOWNLOAD -->
-    <div class="traffic-card">
-        <div class="traffic-card-header">
-            <div class="traffic-icon download-icon">
-                <i class="fas fa-download"></i>
-            </div>
-            <div class="traffic-label">Download</div>
-        </div>
+            <!-- DOWNLOAD -->
+            <div class="traffic-card download-card">
+                <div class="traffic-card-header">
+                    <div class="traffic-icon download-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="traffic-label">Download</div>
+                </div>
 
-        <div class="speedometer-container">
-            <svg class="speedometer-svg" viewBox="0 0 160 160">
-                <path class="speedometer-track"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-                <path id="rxArc"
-                      class="speedometer-arc speed-low"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-            </svg>
+                <div class="speedometer-container">
+                    <svg class="speedometer-svg" viewBox="0 0 160 160">
+                        <path class="speedometer-track"
+                              d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="rxArc"
+                              class="speedometer-arc speed-low"
+                              d="M30,80 A50,50 0 1 1 130,80"/>
+                    </svg>
 
-            <div class="needle-container" id="rxNeedle">
-                <div class="needle"></div>
-            </div>
+                    <div class="needle-container" id="rxNeedle">
+                        <div class="needle"></div>
+                    </div>
 
-            <div class="speedometer-center">
-                <div class="speedometer-value" id="rxValue">0</div>
-                <div class="speedometer-unit">Mbps</div>
-            </div>
-        </div>
+                    <div class="speedometer-center">
+                        <div class="speedometer-value" id="rxValue">0</div>
+                        <div class="speedometer-unit">Mbps</div>
+                    </div>
+                </div>
 
-        <div class="traffic-description">
-            <i class="fas fa-arrow-up"></i> Inbound traffic
-        </div>
-    </div>
-
-            
-    <!-- UPLOAD -->
-    <div class="traffic-card">
-        <div class="traffic-card-header">
-            <div class="traffic-icon upload-icon">
-                <i class="fas fa-upload"></i>
-            </div>
-            <div class="traffic-label">Upload</div>
-        </div>
-
-        <div class="speedometer-container">
-            <svg class="speedometer-svg" viewBox="0 0 160 160">
-                <path class="speedometer-track"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-                <path id="txArc"
-                      class="speedometer-arc speed-low"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-            </svg>
-
-            <div class="needle-container" id="txNeedle">
-                <div class="needle"></div>
+                <div class="traffic-description">
+                    <i class="fas fa-arrow-up"></i> Inbound traffic
+                </div>
+                <div class="traffic-meter" aria-label="Indikator aktivitas download">
+                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="rxTrafficPercent">0%</span></div>
+                    <div class="traffic-meter-track"><div class="traffic-meter-fill download-fill" id="rxTrafficLevel"></div></div>
+                </div>
             </div>
 
-            <div class="speedometer-center">
-                <div class="speedometer-value" id="txValue">0</div>
-                <div class="speedometer-unit">Mbps</div>
+            <!-- UPLOAD -->
+            <div class="traffic-card upload-card">
+                <div class="traffic-card-header">
+                    <div class="traffic-icon upload-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <div class="traffic-label">Upload</div>
+                </div>
+
+                <div class="speedometer-container">
+                    <svg class="speedometer-svg" viewBox="0 0 160 160">
+                        <path class="speedometer-track"
+                              d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="txArc"
+                              class="speedometer-arc speed-low"
+                              d="M30,80 A50,50 0 1 1 130,80"/>
+                    </svg>
+
+                    <div class="needle-container" id="txNeedle">
+                        <div class="needle"></div>
+                    </div>
+
+                    <div class="speedometer-center">
+                        <div class="speedometer-value" id="txValue">0</div>
+                        <div class="speedometer-unit">Mbps</div>
+                    </div>
+                </div>
+
+                <div class="traffic-description">
+                    <i class="fas fa-arrow-down"></i> Outbound traffic
+                </div>
+                <div class="traffic-meter" aria-label="Indikator aktivitas upload">
+                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="txTrafficPercent">0%</span></div>
+                    <div class="traffic-meter-track"><div class="traffic-meter-fill upload-fill" id="txTrafficLevel"></div></div>
+                </div>
             </div>
-        </div>
-
-        <div class="traffic-description">
-            <i class="fas fa-arrow-down"></i> Outbound traffic
-        </div>
-    </div>
-
-    </section>
+        </section>
 
         <section class="chart-card">
             <div class="chart-header">
-                <i class="fas fa-chart-area" style="color: var(--primary);"></i> Riwayat Bandwidth (24 Jam)
+                <i class="fas fa-chart-area"></i> Riwayat Bandwidth (24 Jam)
             </div>
-            <div style="position: relative; height: 220px; width: 100%;">
+            <div class="chart-wrapper">
                 <canvas id="trafficChart"></canvas>
             </div>
         </section>
 
         <section class="system-section">
-            <div class="system-card">
+            <div class="system-card cpu-card">
                 <div class="system-header">
                     <div class="system-title"><i class="fas fa-microchip system-icon"></i> Penggunaan CPU</div>
                     <div class="system-value"><span id="cpuVal">0</span>%</div>
@@ -647,7 +957,7 @@
                 <div class="progress-label"><span>Idle</span><span id="cpuLoad">Beban Rendah</span></div>
             </div>
 
-            <div class="system-card">
+            <div class="system-card ram-card">
                 <div class="system-header">
                     <div class="system-title"><i class="fas fa-memory system-icon"></i> Penggunaan RAM</div>
                     <div class="system-value"><span id="ramUsed">0</span> / <span id="ramTotal">0</span> MB</div>
@@ -674,7 +984,7 @@
     </div>
 
     <script>
-        const MAX_MBPS = 250;
+        const MAX_MBPS = 300;
         const FIREBASE_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik.json";
         const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=1440";
 
@@ -686,17 +996,17 @@
         function initChart() {
             const ctx = document.getElementById('trafficChart').getContext('2d');
             Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
-            Chart.defaults.color = '#64748b';
+            Chart.defaults.color = '#91a3bd';
 
             trafficChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [
-                       {
+                        {
                             label: 'Download (Mbps)',
-                            borderColor: '#4f46e5',
-                            backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                            borderColor: '#818cf8',
+                            backgroundColor: 'rgba(129, 140, 248, 0.08)',
                             borderWidth: 2,
                             pointRadius: 0,
                             pointHoverRadius: 5,
@@ -706,8 +1016,8 @@
                         },
                         {
                             label: 'Upload (Mbps)',
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                            borderColor: '#34d399',
+                            backgroundColor: 'rgba(52, 211, 153, 0.08)',
                             borderWidth: 2,
                             pointRadius: 0,
                             pointHoverRadius: 5,
@@ -715,7 +1025,6 @@
                             tension: 0.4,
                             data: []
                         }
-                        
                     ]
                 },
                 options: {
@@ -730,31 +1039,34 @@
                             labels: {
                                 boxWidth: 10,
                                 usePointStyle: true,
-                                font: { size: 10, family: "'Inter', sans-serif" },
-                                color: '#64748b'
+                                font: { size: 11, family: "'Inter', sans-serif", weight: '500' },
+                                color: '#91a3bd',
+                                padding: 16
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'white',
-                            titleColor: '#0f172a',
-                            bodyColor: '#0f172a',
-                            borderColor: '#e2e8f0',
+                            backgroundColor: '#1b2a42',
+                            titleColor: '#e5edf8',
+                            bodyColor: '#e5edf8',
+                            borderColor: '#31456a',
                             borderWidth: 1,
-                            padding: 10,
+                            padding: 12,
                             usePointStyle: true,
-                            cornerRadius: 8
+                            cornerRadius: 8,
+                            titleFont: { family: "'Inter', sans-serif", weight: '600' },
+                            bodyFont: { family: "'Inter', sans-serif" }
                         }
                     },
                     scales: {
                         x: {
                             grid: { display: false, drawBorder: false },
-                            ticks: { maxTicksLimit: 6, font: { size: 10 } }
+                            ticks: { maxTicksLimit: 6, font: { size: 10 }, color: '#64748b' }
                         },
                         y: {
                             beginAtZero: true,
-                            grid: { color: '#f1f5f9', drawBorder: false },
-                            border: { dash: [4, 4] },
-                            ticks: { font: { size: 10 }, callback: function(value) { return value; } }
+                            grid: { color: 'rgba(38, 53, 75, 0.5)', drawBorder: false },
+                            border: { dash: [4, 4], color: 'rgba(38, 53, 75, 0.5)' },
+                            ticks: { font: { size: 10 }, color: '#64748b', callback: function(value) { return value; } }
                         }
                     }
                 }
@@ -764,8 +1076,8 @@
         function updateChartData() {
             if (!trafficChart) return;
             trafficChart.data.labels = trafficHistory.map(item => item.time);
-            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.tx);
-            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.rx);
+            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.rx);
+            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.tx);
             trafficChart.update('none');
         }
 
@@ -820,27 +1132,27 @@
                 if (percent > 80) {
                     bar.className = "progress-bar progress-danger";
                     cpuLoad.textContent = "Beban Tinggi";
-                    cpuLoad.style.color = "var(--danger)";
+                    cpuLoad.style.color = "#ef4444";
                 } else if (percent > 60) {
                     bar.className = "progress-bar progress-warning";
                     cpuLoad.textContent = "Beban Sedang";
-                    cpuLoad.style.color = "var(--warning)";
+                    cpuLoad.style.color = "#f59e0b";
                 } else {
                     bar.className = "progress-bar";
                     cpuLoad.textContent = "Beban Rendah";
-                    cpuLoad.style.color = "var(--success)";
+                    cpuLoad.style.color = "#10b981";
                 }
             } else if (type === "ram") {
                 const ramPercentElement = document.getElementById('ramPercent');
                 if (percent > 80) {
                     bar.className = "progress-bar progress-danger";
-                    ramPercentElement.style.color = "var(--danger)";
+                    ramPercentElement.style.color = "#ef4444";
                 } else if (percent > 60) {
                     bar.className = "progress-bar progress-warning";
-                    ramPercentElement.style.color = "var(--warning)";
+                    ramPercentElement.style.color = "#f59e0b";
                 } else {
                     bar.className = "progress-bar";
-                    ramPercentElement.style.color = "var(--success)";
+                    ramPercentElement.style.color = "#10b981";
                 }
             }
         }
@@ -892,6 +1204,17 @@
             const txMbps = (routerData.tx_bps || 0) / 1e6;
             updateNeedle("rxNeedle", rxMbps);
             updateNeedle("txNeedle", txMbps);
+
+            const rxActivity = Math.min(100, Math.max(0, (rxMbps / MAX_MBPS) * 100));
+            const txActivity = Math.min(100, Math.max(0, (txMbps / MAX_MBPS) * 100));
+            const rxLevel = document.getElementById("rxTrafficLevel");
+            const txLevel = document.getElementById("txTrafficLevel");
+            const rxPercent = document.getElementById("rxTrafficPercent");
+            const txPercent = document.getElementById("txTrafficPercent");
+            if (rxLevel) rxLevel.style.width = `${rxActivity}%`;
+            if (txLevel) txLevel.style.width = `${txActivity}%`;
+            if (rxPercent) rxPercent.textContent = `${Math.round(rxActivity)}%`;
+            if (txPercent) txPercent.textContent = `${Math.round(txActivity)}%`;
 
             const now = new Date();
             const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
