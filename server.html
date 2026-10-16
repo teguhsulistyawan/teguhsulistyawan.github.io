@@ -559,44 +559,72 @@
         </header>
 
         <section class="traffic-section">
-            <div class="traffic-card">
-                <div class="traffic-card-header">
-                    <div class="traffic-icon download-icon"><i class="fas fa-download"></i></div>
-                    <div class="traffic-label">Download</div>
-                </div>
-                <div class="speedometer-container">
-                    <svg class="speedometer-svg" viewBox="0 0 160 160">
-                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-                        <path id="txArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
-                    </svg>
-                    <div class="needle-container" id="txNeedle"><div class="needle"></div></div>
-                    <div class="speedometer-center">
-                        <div class="speedometer-value" id="txValue">0</div>
-                        <div class="speedometer-unit">Mbps</div>
-                    </div>
-                </div>
-                <div class="traffic-description"><i class="fas fa-arrow-up"></i> Inbound traffic</div>
+    <!-- UPLOAD -->
+    <div class="traffic-card">
+        <div class="traffic-card-header">
+            <div class="traffic-icon upload-icon">
+                <i class="fas fa-upload"></i>
+            </div>
+            <div class="traffic-label">Upload</div>
+        </div>
+
+        <div class="speedometer-container">
+            <svg class="speedometer-svg" viewBox="0 0 160 160">
+                <path class="speedometer-track"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+                <path id="txArc"
+                      class="speedometer-arc speed-low"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+            </svg>
+
+            <div class="needle-container" id="txNeedle">
+                <div class="needle"></div>
             </div>
 
-            <div class="traffic-card">
-                <div class="traffic-card-header">
-                    <div class="traffic-icon upload-icon"><i class="fas fa-upload"></i></div>
-                    <div class="traffic-label">Upload</div>
-                </div>
-                <div class="speedometer-container">
-                    <svg class="speedometer-svg" viewBox="0 0 160 160">
-                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
-                        <path id="rxArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
-                    </svg>
-                    <div class="needle-container" id="rxNeedle"><div class="needle"></div></div>
-                    <div class="speedometer-center">
-                        <div class="speedometer-value" id="rxValue">0</div>
-                        <div class="speedometer-unit">Mbps</div>
-                    </div>
-                </div>
-                <div class="traffic-description"><i class="fas fa-arrow-down"></i> Outbound traffic</div>
+            <div class="speedometer-center">
+                <div class="speedometer-value" id="txValue">0</div>
+                <div class="speedometer-unit">Mbps</div>
             </div>
-        </section>
+        </div>
+
+        <div class="traffic-description">
+            <i class="fas fa-arrow-down"></i> Outbound traffic
+        </div>
+    </div>
+
+    <!-- DOWNLOAD -->
+    <div class="traffic-card">
+        <div class="traffic-card-header">
+            <div class="traffic-icon download-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="traffic-label">Download</div>
+        </div>
+
+        <div class="speedometer-container">
+            <svg class="speedometer-svg" viewBox="0 0 160 160">
+                <path class="speedometer-track"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+                <path id="rxArc"
+                      class="speedometer-arc speed-low"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+            </svg>
+
+            <div class="needle-container" id="rxNeedle">
+                <div class="needle"></div>
+            </div>
+
+            <div class="speedometer-center">
+                <div class="speedometer-value" id="rxValue">0</div>
+                <div class="speedometer-unit">Mbps</div>
+            </div>
+        </div>
+
+        <div class="traffic-description">
+            <i class="fas fa-arrow-up"></i> Inbound traffic
+        </div>
+    </div>
+</section>
 
         <section class="chart-card">
             <div class="chart-header">
