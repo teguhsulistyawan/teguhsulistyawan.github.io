@@ -559,6 +559,40 @@
         </header>
 
         <section class="traffic-section">
+    <!-- DOWNLOAD -->
+    <div class="traffic-card">
+        <div class="traffic-card-header">
+            <div class="traffic-icon download-icon">
+                <i class="fas fa-download"></i>
+            </div>
+            <div class="traffic-label">Download</div>
+        </div>
+
+        <div class="speedometer-container">
+            <svg class="speedometer-svg" viewBox="0 0 160 160">
+                <path class="speedometer-track"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+                <path id="rxArc"
+                      class="speedometer-arc speed-low"
+                      d="M30,80 A50,50 0 1 1 130,80"/>
+            </svg>
+
+            <div class="needle-container" id="rxNeedle">
+                <div class="needle"></div>
+            </div>
+
+            <div class="speedometer-center">
+                <div class="speedometer-value" id="rxValue">0</div>
+                <div class="speedometer-unit">Mbps</div>
+            </div>
+        </div>
+
+        <div class="traffic-description">
+            <i class="fas fa-arrow-up"></i> Inbound traffic
+        </div>
+    </div>
+
+            
     <!-- UPLOAD -->
     <div class="traffic-card">
         <div class="traffic-card-header">
@@ -592,39 +626,7 @@
         </div>
     </div>
 
-    <!-- DOWNLOAD -->
-    <div class="traffic-card">
-        <div class="traffic-card-header">
-            <div class="traffic-icon download-icon">
-                <i class="fas fa-download"></i>
-            </div>
-            <div class="traffic-label">Download</div>
-        </div>
-
-        <div class="speedometer-container">
-            <svg class="speedometer-svg" viewBox="0 0 160 160">
-                <path class="speedometer-track"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-                <path id="rxArc"
-                      class="speedometer-arc speed-low"
-                      d="M30,80 A50,50 0 1 1 130,80"/>
-            </svg>
-
-            <div class="needle-container" id="rxNeedle">
-                <div class="needle"></div>
-            </div>
-
-            <div class="speedometer-center">
-                <div class="speedometer-value" id="rxValue">0</div>
-                <div class="speedometer-unit">Mbps</div>
-            </div>
-        </div>
-
-        <div class="traffic-description">
-            <i class="fas fa-arrow-up"></i> Inbound traffic
-        </div>
-    </div>
-</section>
+    </section>
 
         <section class="chart-card">
             <div class="chart-header">
@@ -692,7 +694,7 @@
                     labels: [],
                     datasets: [
                         {
-                            label: 'Download (Mbps)',
+                            label: 'Upload (Mbps)',
                             borderColor: '#4f46e5',
                             backgroundColor: 'rgba(79, 70, 229, 0.08)',
                             borderWidth: 2,
@@ -703,7 +705,7 @@
                             data: []
                         },
                         {
-                            label: 'Upload (Mbps)',
+                            label: 'Download (Mbps)',
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.08)',
                             borderWidth: 2,
