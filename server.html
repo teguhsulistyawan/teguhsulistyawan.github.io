@@ -863,13 +863,13 @@
         </header>
 
         <section class="traffic-section">
-            <!-- DOWNLOAD -->
+            <!-- UPLINK -->
             <div class="traffic-card download-card">
                 <div class="traffic-card-header">
                     <div class="traffic-icon download-icon">
-                        <i class="fas fa-download"></i>
+                        <i class="fas fa-upload"></i>
                     </div>
-                    <div class="traffic-label">Download</div>
+                    <div class="traffic-label">Uplink</div>
                 </div>
 
                 <div class="speedometer-container">
@@ -892,21 +892,21 @@
                 </div>
 
                 <div class="traffic-description">
-                    <i class="fas fa-arrow-up"></i> Inbound traffic
+                    <i class="fas fa-arrow-up"></i> Uplink traffic
                 </div>
-                <div class="traffic-meter" aria-label="Indikator aktivitas download">
+                <div class="traffic-meter" aria-label="Indikator aktivitas uplink">
                     <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="rxTrafficPercent">0%</span></div>
                     <div class="traffic-meter-track"><div class="traffic-meter-fill download-fill" id="rxTrafficLevel"></div></div>
                 </div>
             </div>
 
-            <!-- UPLOAD -->
+            <!-- DOWNLINK -->
             <div class="traffic-card upload-card">
                 <div class="traffic-card-header">
                     <div class="traffic-icon upload-icon">
-                        <i class="fas fa-upload"></i>
+                        <i class="fas fa-download"></i>
                     </div>
-                    <div class="traffic-label">Upload</div>
+                    <div class="traffic-label">Downlink</div>
                 </div>
 
                 <div class="speedometer-container">
@@ -929,9 +929,9 @@
                 </div>
 
                 <div class="traffic-description">
-                    <i class="fas fa-arrow-down"></i> Outbound traffic
+                    <i class="fas fa-arrow-down"></i> Downlink traffic
                 </div>
-                <div class="traffic-meter" aria-label="Indikator aktivitas upload">
+                <div class="traffic-meter" aria-label="Indikator aktivitas downlink">
                     <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="txTrafficPercent">0%</span></div>
                     <div class="traffic-meter-track"><div class="traffic-meter-fill upload-fill" id="txTrafficLevel"></div></div>
                 </div>
@@ -1004,7 +1004,7 @@
                     labels: [],
                     datasets: [
                         {
-                            label: 'Download (Mbps)',
+                            label: 'Uplink (Mbps)',
                             borderColor: '#818cf8',
                             backgroundColor: 'rgba(129, 140, 248, 0.08)',
                             borderWidth: 2,
@@ -1015,7 +1015,7 @@
                             data: []
                         },
                         {
-                            label: 'Upload (Mbps)',
+                            label: 'Downlink (Mbps)',
                             borderColor: '#34d399',
                             backgroundColor: 'rgba(52, 211, 153, 0.08)',
                             borderWidth: 2,
