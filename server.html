@@ -180,8 +180,28 @@
         /* ================= TRAFFIC SECTION ================= */
         .traffic-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 20px;
+        }
+
+        .main-uplink-card {
+            grid-column: 1 / -1;
+        }
+
+        .main-speedometer {
+            width: 190px;
+            height: 190px;
+        }
+
+        .main-uplink-card .speedometer-value {
+            font-size: 2rem;
+        }
+
+        @media (min-width: 901px) {
+            .main-uplink-card {
+                padding-top: 28px;
+                padding-bottom: 24px;
+            }
         }
 
         .traffic-card {
@@ -208,11 +228,14 @@
             border-radius: var(--radius) var(--radius) 0 0;
         }
 
-        .traffic-card.download-card::before {
+        .traffic-card.download-card::before,
+        .traffic-card.main-uplink-card::before {
             background: linear-gradient(90deg, #4f46e5, #818cf8);
         }
 
-        .traffic-card.upload-card::before {
+        .traffic-card.upload-card::before,
+        .traffic-card.static-downlink-card::before,
+        .traffic-card.pppoe-downlink-card::before {
             background: linear-gradient(90deg, #059669, #34d399);
         }
 
@@ -681,6 +704,11 @@
             .system-section {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .main-speedometer {
+                width: 175px;
+                height: 175px;
+            }
         }
 
         @media (max-width: 640px) {
@@ -863,77 +891,87 @@
         </header>
 
         <section class="traffic-section">
-            <!-- UPLINK -->
-            <div class="traffic-card download-card">
+            <!-- UPLINK UTAMA -->
+            <div class="traffic-card main-uplink-card">
                 <div class="traffic-card-header">
                     <div class="traffic-icon download-icon">
                         <i class="fas fa-upload"></i>
                     </div>
-                    <div class="traffic-label">Uplink</div>
+                    <div class="traffic-label">Uplink Utama (Ether1)</div>
                 </div>
 
-                <div class="speedometer-container">
+                <div class="speedometer-container main-speedometer">
                     <svg class="speedometer-svg" viewBox="0 0 160 160">
-                        <path class="speedometer-track"
-                              d="M30,80 A50,50 0 1 1 130,80"/>
-                        <path id="rxArc"
-                              class="speedometer-arc speed-low"
-                              d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="uplinkArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
                     </svg>
-
-                    <div class="needle-container" id="rxNeedle">
-                        <div class="needle"></div>
-                    </div>
-
+                    <div class="needle-container" id="uplinkNeedle"><div class="needle"></div></div>
                     <div class="speedometer-center">
-                        <div class="speedometer-value" id="rxValue">0</div>
+                        <div class="speedometer-value" id="uplinkValue">0</div>
                         <div class="speedometer-unit">Mbps</div>
                     </div>
                 </div>
 
-                <div class="traffic-description">
-                    <i class="fas fa-arrow-up"></i> Uplink traffic
-                </div>
-                <div class="traffic-meter" aria-label="Indikator aktivitas uplink">
-                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="rxTrafficPercent">0%</span></div>
-                    <div class="traffic-meter-track"><div class="traffic-meter-fill download-fill" id="rxTrafficLevel"></div></div>
+                <div class="traffic-description"><i class="fas fa-arrow-up"></i> Trafik uplink utama</div>
+                <div class="traffic-meter" aria-label="Indikator aktivitas uplink utama">
+                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="uplinkTrafficPercent">0%</span></div>
+                    <div class="traffic-meter-track"><div class="traffic-meter-fill download-fill" id="uplinkTrafficLevel"></div></div>
                 </div>
             </div>
 
-            <!-- DOWNLINK -->
-            <div class="traffic-card upload-card">
+            <!-- DOWNLINK PELANGGAN STATIK -->
+            <div class="traffic-card static-downlink-card">
                 <div class="traffic-card-header">
                     <div class="traffic-icon upload-icon">
                         <i class="fas fa-download"></i>
                     </div>
-                    <div class="traffic-label">Downlink</div>
+                    <div class="traffic-label">Downlink Statik (Ether4)</div>
                 </div>
 
                 <div class="speedometer-container">
                     <svg class="speedometer-svg" viewBox="0 0 160 160">
-                        <path class="speedometer-track"
-                              d="M30,80 A50,50 0 1 1 130,80"/>
-                        <path id="txArc"
-                              class="speedometer-arc speed-low"
-                              d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="staticArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
                     </svg>
-
-                    <div class="needle-container" id="txNeedle">
-                        <div class="needle"></div>
-                    </div>
-
+                    <div class="needle-container" id="staticNeedle"><div class="needle"></div></div>
                     <div class="speedometer-center">
-                        <div class="speedometer-value" id="txValue">0</div>
+                        <div class="speedometer-value" id="staticValue">0</div>
                         <div class="speedometer-unit">Mbps</div>
                     </div>
                 </div>
 
-                <div class="traffic-description">
-                    <i class="fas fa-arrow-down"></i> Downlink traffic
+                <div class="traffic-description"><i class="fas fa-arrow-down"></i> Trafik downlink pelanggan statik</div>
+                <div class="traffic-meter" aria-label="Indikator aktivitas downlink statik">
+                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="staticTrafficPercent">0%</span></div>
+                    <div class="traffic-meter-track"><div class="traffic-meter-fill upload-fill" id="staticTrafficLevel"></div></div>
                 </div>
-                <div class="traffic-meter" aria-label="Indikator aktivitas downlink">
-                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="txTrafficPercent">0%</span></div>
-                    <div class="traffic-meter-track"><div class="traffic-meter-fill upload-fill" id="txTrafficLevel"></div></div>
+            </div>
+
+            <!-- DOWNLINK PELANGGAN PPPOE -->
+            <div class="traffic-card pppoe-downlink-card">
+                <div class="traffic-card-header">
+                    <div class="traffic-icon upload-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="traffic-label">Downlink PPPoE (Ether5)</div>
+                </div>
+
+                <div class="speedometer-container">
+                    <svg class="speedometer-svg" viewBox="0 0 160 160">
+                        <path class="speedometer-track" d="M30,80 A50,50 0 1 1 130,80"/>
+                        <path id="pppoeArc" class="speedometer-arc speed-low" d="M30,80 A50,50 0 1 1 130,80"/>
+                    </svg>
+                    <div class="needle-container" id="pppoeNeedle"><div class="needle"></div></div>
+                    <div class="speedometer-center">
+                        <div class="speedometer-value" id="pppoeValue">0</div>
+                        <div class="speedometer-unit">Mbps</div>
+                    </div>
+                </div>
+
+                <div class="traffic-description"><i class="fas fa-arrow-down"></i> Trafik downlink pelanggan PPPoE</div>
+                <div class="traffic-meter" aria-label="Indikator aktivitas downlink PPPoE">
+                    <div class="traffic-meter-label"><span>Aktivitas jaringan</span><span id="pppoeTrafficPercent">0%</span></div>
+                    <div class="traffic-meter-track"><div class="traffic-meter-fill upload-fill" id="pppoeTrafficLevel"></div></div>
                 </div>
             </div>
         </section>
@@ -1015,13 +1053,24 @@
                             data: []
                         },
                         {
-                            label: 'Downlink (Mbps)',
+                            label: 'Downlink Statik — Ether4 (Mbps)',
                             borderColor: '#34d399',
-                            backgroundColor: 'rgba(52, 211, 153, 0.08)',
+                            backgroundColor: 'rgba(52, 211, 153, 0.06)',
                             borderWidth: 2,
                             pointRadius: 0,
                             pointHoverRadius: 5,
-                            fill: true,
+                            fill: false,
+                            tension: 0.4,
+                            data: []
+                        },
+                        {
+                            label: 'Downlink PPPoE — Ether5 (Mbps)',
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.06)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            fill: false,
                             tension: 0.4,
                             data: []
                         }
@@ -1076,8 +1125,9 @@
         function updateChartData() {
             if (!trafficChart) return;
             trafficChart.data.labels = trafficHistory.map(item => item.time);
-            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.rx);
-            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.tx);
+            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.uplink ?? item.tx ?? null);
+            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.staticDownlink ?? null);
+            trafficChart.data.datasets[2].data = trafficHistory.map(item => item.pppoeDownlink ?? null);
             trafficChart.update('none');
         }
 
@@ -1092,7 +1142,10 @@
                             trafficHistory.push({
                                 time: data[key].time,
                                 tx: data[key].tx,
-                                rx: data[key].rx
+                                rx: data[key].rx,
+                                uplink: data[key].uplink ?? data[key].tx ?? null,
+                                staticDownlink: data[key].staticDownlink ?? data[key].ether4_tx_bps_mbps ?? null,
+                                pppoeDownlink: data[key].pppoeDownlink ?? data[key].ether5_tx_bps_mbps ?? null
                             });
                         });
                     }
@@ -1104,21 +1157,30 @@
         }
 
         function updateNeedle(id, value) {
-            const v = Math.min(value, MAX_MBPS);
+            const safeValue = Number.isFinite(Number(value)) ? Math.max(0, Number(value)) : 0;
+            const v = Math.min(safeValue, MAX_MBPS);
             const percent = v / MAX_MBPS;
             const angle = -90 + (percent * 180);
-            const needleElement = document.getElementById(id);
+            const needleElement = document.getElementById(id + "Needle");
             if (needleElement) needleElement.style.transform = `rotate(${angle}deg)`;
 
-            const arc = document.getElementById(id === "rxNeedle" ? "rxArc" : "txArc");
+            const arc = document.getElementById(id + "Arc");
             if (arc) {
                 arc.style.strokeDashoffset = 157 - (157 * percent);
                 if (percent <= 0.4) arc.className = "speedometer-arc speed-low";
                 else if (percent <= 0.75) arc.className = "speedometer-arc speed-medium";
                 else arc.className = "speedometer-arc speed-high";
             }
-            const valueElement = document.getElementById(id === "rxNeedle" ? "rxValue" : "txValue");
+            const valueElement = document.getElementById(id + "Value");
             if (valueElement) valueElement.textContent = v.toFixed(2);
+        }
+
+        function updateTrafficMeter(prefix, mbps) {
+            const activity = Math.min(100, Math.max(0, (mbps / MAX_MBPS) * 100));
+            const level = document.getElementById(prefix + "TrafficLevel");
+            const percent = document.getElementById(prefix + "TrafficPercent");
+            if (level) level.style.width = `${activity}%`;
+            if (percent) percent.textContent = `${Math.round(activity)}%`;
         }
 
         function updateProgressBar(elementId, percent, type = "cpu") {
@@ -1200,38 +1262,52 @@
 
             document.getElementById("uptimeVal").textContent = formatUptime(routerData.uptime);
 
-            const rxMbps = (routerData.rx_bps || 0) / 1e6;
-            const txMbps = (routerData.tx_bps || 0) / 1e6;
-            updateNeedle("rxNeedle", rxMbps);
-            updateNeedle("txNeedle", txMbps);
+            // Arah trafik berdasarkan sudut pandang interface MikroTik:
+            // Ether1 (uplink ISP): RX = download yang masuk dari ISP ke router.
+            // Ether4 (pelanggan statik): TX = download yang dikirim router ke pelanggan.
+            // Ether5 (pelanggan PPPoE): TX = download yang dikirim router ke pelanggan.
+            // Prioritaskan counter RX/TX interface asli agar field turunan lama tidak membalik arah.
+            const uplinkBps = Number(routerData.ether1_rx_bps ?? routerData.uplink_rx_bps ?? routerData.rx_bps ?? 0);
+            const staticDownlinkBps = Number(routerData.ether4_tx_bps ?? routerData.ether4_downlink_bps ?? 0);
+            const pppoeDownlinkBps = Number(routerData.ether5_tx_bps ?? routerData.ether5_downlink_bps ?? 0);
 
-            const rxActivity = Math.min(100, Math.max(0, (rxMbps / MAX_MBPS) * 100));
-            const txActivity = Math.min(100, Math.max(0, (txMbps / MAX_MBPS) * 100));
-            const rxLevel = document.getElementById("rxTrafficLevel");
-            const txLevel = document.getElementById("txTrafficLevel");
-            const rxPercent = document.getElementById("rxTrafficPercent");
-            const txPercent = document.getElementById("txTrafficPercent");
-            if (rxLevel) rxLevel.style.width = `${rxActivity}%`;
-            if (txLevel) txLevel.style.width = `${txActivity}%`;
-            if (rxPercent) rxPercent.textContent = `${Math.round(rxActivity)}%`;
-            if (txPercent) txPercent.textContent = `${Math.round(txActivity)}%`;
+            const uplinkMbps = Math.max(0, uplinkBps) / 1e6;
+            const staticDownlinkMbps = Math.max(0, staticDownlinkBps) / 1e6;
+            const pppoeDownlinkMbps = Math.max(0, pppoeDownlinkBps) / 1e6;
+
+            updateNeedle("uplink", uplinkMbps);
+            updateNeedle("static", staticDownlinkMbps);
+            updateNeedle("pppoe", pppoeDownlinkMbps);
+
+            updateTrafficMeter("uplink", uplinkMbps);
+            updateTrafficMeter("static", staticDownlinkMbps);
+            updateTrafficMeter("pppoe", pppoeDownlinkMbps);
 
             const now = new Date();
             const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            const currentTx = parseFloat(txMbps.toFixed(2));
-            const currentRx = parseFloat(rxMbps.toFixed(2));
+            // Simpan tiga trafik secara terpisah untuk grafik riwayat:
+            // Ether1 RX = uplink ISP; Ether4 TX = downlink pelanggan statik;
+            // Ether5 TX = downlink pelanggan PPPoE.
+            const currentUplink = parseFloat(uplinkMbps.toFixed(2));
+            const currentStaticDownlink = parseFloat(staticDownlinkMbps.toFixed(2));
+            const currentPppoeDownlink = parseFloat(pppoeDownlinkMbps.toFixed(2));
+            const currentTx = currentUplink; // kompatibilitas dengan struktur riwayat lama
+            const currentRx = parseFloat((staticDownlinkMbps + pppoeDownlinkMbps).toFixed(2));
 
             if (trafficHistory.length > 0) {
                 let lastPoint = trafficHistory[trafficHistory.length - 1];
                 if (lastPoint.time === timeString) {
                     lastPoint.tx = currentTx;
                     lastPoint.rx = currentRx;
+                    lastPoint.uplink = currentUplink;
+                    lastPoint.staticDownlink = currentStaticDownlink;
+                    lastPoint.pppoeDownlink = currentPppoeDownlink;
                 } else {
-                    trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
+                    trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx, uplink: currentUplink, staticDownlink: currentStaticDownlink, pppoeDownlink: currentPppoeDownlink });
                     if (trafficHistory.length > 1440) trafficHistory.shift();
                 }
             } else {
-                trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx });
+                trafficHistory.push({ time: timeString, tx: currentTx, rx: currentRx, uplink: currentUplink, staticDownlink: currentStaticDownlink, pppoeDownlink: currentPppoeDownlink });
             }
             updateChartData();
 
@@ -1290,8 +1366,9 @@
         }
 
         function initializeUI() {
-            updateNeedle("rxNeedle", 0);
-            updateNeedle("txNeedle", 0);
+            updateNeedle("uplink", 0);
+            updateNeedle("static", 0);
+            updateNeedle("pppoe", 0);
             updateProgressBar("cpuBar", 0, "cpu");
             updateProgressBar("ramBar", 0, "ram");
             updateStatus(true, "Menghubungkan...");
