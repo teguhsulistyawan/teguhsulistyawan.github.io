@@ -1144,8 +1144,8 @@
                                 tx: data[key].tx,
                                 rx: data[key].rx,
                                 uplink: data[key].uplink ?? data[key].tx ?? null,
-                                staticDownlink: data[key].staticDownlink ?? data[key].ether4_tx_bps_mbps ?? null,
-                                pppoeDownlink: data[key].pppoeDownlink ?? data[key].ether5_tx_bps_mbps ?? null
+                                staticDownlink: data[key].staticDownlink ?? data[key].ether4_downlink_mbps ?? data[key].ether4_tx_mbps ?? null,
+                                pppoeDownlink: data[key].pppoeDownlink ?? data[key].ether5_downlink_mbps ?? data[key].ether5_tx_mbps ?? null
                             });
                         });
                     }
