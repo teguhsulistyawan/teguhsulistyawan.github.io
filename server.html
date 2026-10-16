@@ -505,6 +505,98 @@
             width: 100%;
         }
 
+        /* ================= RIWAYAT BANDWIDTH PROFESIONAL ================= */
+        .history-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 14px;
+        }
+
+        .history-description {
+            color: var(--text-light);
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .history-range {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 4px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: rgba(7, 14, 28, 0.55);
+        }
+
+        .history-range button {
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font: inherit;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .history-range button:hover { color: var(--text); background: var(--card-hover); }
+        .history-range button.active {
+            color: #fff;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25);
+        }
+
+        .history-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0 0 12px;
+            color: var(--text-dim);
+            font-size: 0.72rem;
+        }
+
+        .history-meta strong { color: var(--text-light); font-weight: 600; }
+        .history-status { display: inline-flex; align-items: center; gap: 6px; }
+        .history-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #34d399; display: inline-block; }
+
+        .history-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin: 0 0 16px;
+        }
+
+        .history-stat {
+            min-width: 0;
+            padding: 12px 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: rgba(7, 14, 28, 0.32);
+        }
+
+        .history-stat-label { display: flex; align-items: center; gap: 7px; color: var(--text-light); font-size: 0.72rem; font-weight: 600; margin-bottom: 8px; }
+        .history-stat-mark { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+        .history-stat-value { color: var(--text); font-size: 1.05rem; font-weight: 800; letter-spacing: -0.4px; overflow-wrap: anywhere; }
+        .history-stat-detail { color: var(--text-dim); font-size: 0.68rem; margin-top: 5px; }
+
+        @media (max-width: 560px) {
+            .history-toolbar { align-items: stretch; }
+            .history-range { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .history-range button { padding: 8px 5px; }
+            .history-summary { gap: 7px; }
+            .history-stat { padding: 10px 8px; }
+            .history-stat-label { font-size: 0.65rem; gap: 5px; }
+            .history-stat-value { font-size: 0.92rem; }
+            .history-stat-detail { font-size: 0.62rem; }
+        }
+
         /* ================= SYSTEM SECTION ================= */
         .system-section {
             display: grid;
@@ -978,7 +1070,36 @@
 
         <section class="chart-card">
             <div class="chart-header">
-                <i class="fas fa-chart-area"></i> Riwayat Bandwidth (24 Jam)
+                <i class="fas fa-chart-area"></i> Riwayat Bandwidth
+            </div>
+            <div class="history-toolbar">
+                <div class="history-description">Pantau trafik uplink dan downlink berdasarkan periode waktu.</div>
+                <div class="history-range" role="group" aria-label="Periode riwayat bandwidth">
+                    <button type="button" class="active" data-history-range="24h" aria-pressed="true">24 Jam</button>
+                    <button type="button" data-history-range="7d" aria-pressed="false">7 Hari</button>
+                    <button type="button" data-history-range="30d" aria-pressed="false">30 Hari</button>
+                </div>
+            </div>
+            <div class="history-meta">
+                <span id="historyPeriodLabel"><strong>Periode:</strong> 24 jam terakhir</span>
+                <span class="history-status"><span class="history-status-dot"></span><span id="historyRecordCount">Memuat riwayat...</span></span>
+            </div>
+            <div class="history-summary">
+                <div class="history-stat">
+                    <div class="history-stat-label"><span class="history-stat-mark" style="background:#818cf8"></span>RX Ether1 · Uplink</div>
+                    <div class="history-stat-value" id="historyEther1Latest">— Mbps</div>
+                    <div class="history-stat-detail" id="historyEther1Stats">Rata-rata — · Puncak —</div>
+                </div>
+                <div class="history-stat">
+                    <div class="history-stat-label"><span class="history-stat-mark" style="background:#34d399"></span>TX Ether4 · Statik</div>
+                    <div class="history-stat-value" id="historyEther4Latest">— Mbps</div>
+                    <div class="history-stat-detail" id="historyEther4Stats">Rata-rata — · Puncak —</div>
+                </div>
+                <div class="history-stat">
+                    <div class="history-stat-label"><span class="history-stat-mark" style="background:#f59e0b"></span>TX Ether5 · PPPoE</div>
+                    <div class="history-stat-value" id="historyEther5Latest">— Mbps</div>
+                    <div class="history-stat-detail" id="historyEther5Stats">Rata-rata — · Puncak —</div>
+                </div>
             </div>
             <div class="chart-wrapper">
                 <canvas id="trafficChart"></canvas>
@@ -1024,12 +1145,15 @@
     <script>
         const MAX_MBPS = 300;
         const FIREBASE_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik.json";
-        const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=1440";
+        const FIREBASE_HISTORY_URL = "https://mikrotik-monitor-d8ff6-default-rtdb.firebaseio.com/mikrotik_history.json?orderBy=\"$key\"&limitToLast=43200";
 
         let lastUpdateTime = null;
         let updateInterval;
         let trafficChart;
         let trafficHistory = [];
+        let selectedHistoryRange = '24h';
+        const HISTORY_RANGE_MS = { '24h': 24 * 60 * 60 * 1000, '7d': 7 * 24 * 60 * 60 * 1000, '30d': 30 * 24 * 60 * 60 * 1000 };
+        const HISTORY_RANGE_LABELS = { '24h': '24 jam terakhir', '7d': '7 hari terakhir', '30d': '30 hari terakhir' };
 
         function initChart() {
             const ctx = document.getElementById('trafficChart').getContext('2d');
@@ -1122,36 +1246,111 @@
             });
         }
 
+        // Firebase push ID memuat timestamp di 8 karakter pertama. Ini memungkinkan
+        // pemilihan periode yang benar walaupun record lama hanya menyimpan HH:mm.
+        function firebasePushKeyTimestamp(key) {
+            const alphabet = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+            if (typeof key !== 'string' || key.length < 8) return null;
+            let timestamp = 0;
+            for (let i = 0; i < 8; i++) {
+                const digit = alphabet.indexOf(key[i]);
+                if (digit < 0) return null;
+                timestamp = timestamp * 64 + digit;
+            }
+            return Number.isFinite(timestamp) && timestamp > 0 ? timestamp : null;
+        }
+
+        function formatHistoryTime(item) {
+            if (!item.timestamp) return item.time || '—';
+            const date = new Date(item.timestamp);
+            if (selectedHistoryRange === '24h') {
+                return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            }
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit' }) + ' ' +
+                date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getVisibleHistory() {
+            const windowMs = HISTORY_RANGE_MS[selectedHistoryRange] || HISTORY_RANGE_MS['24h'];
+            const cutoff = Date.now() - windowMs;
+            const dated = trafficHistory.filter(item => Number.isFinite(item.timestamp));
+            if (dated.length > 0) return dated.filter(item => item.timestamp >= cutoff);
+
+            // Fallback untuk data lama yang ID-nya tidak dapat dibaca: asumsi 1 record/menit.
+            const maxRecords = selectedHistoryRange === '30d' ? 43200 : selectedHistoryRange === '7d' ? 10080 : 1440;
+            return trafficHistory.slice(-maxRecords);
+        }
+
+        function updateHistorySummary(visibleHistory) {
+            const series = [
+                { field: 'ether1_rx_mbps', latest: 'historyEther1Latest', stats: 'historyEther1Stats' },
+                { field: 'ether4_tx_mbps', latest: 'historyEther4Latest', stats: 'historyEther4Stats' },
+                { field: 'ether5_tx_mbps', latest: 'historyEther5Latest', stats: 'historyEther5Stats' }
+            ];
+            series.forEach(item => {
+                const values = visibleHistory.map(point => Number(point[item.field])).filter(value => Number.isFinite(value) && value >= 0);
+                const latest = values.length ? values[values.length - 1] : null;
+                const average = values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+                const peak = values.length ? Math.max(...values) : null;
+                document.getElementById(item.latest).textContent = latest === null ? '— Mbps' : latest.toFixed(2) + ' Mbps';
+                document.getElementById(item.stats).textContent = values.length
+                    ? `Rata-rata ${average.toFixed(2)} · Puncak ${peak.toFixed(2)} Mbps`
+                    : 'Belum ada data pada periode ini';
+            });
+            document.getElementById('historyPeriodLabel').innerHTML = '<strong>Periode:</strong> ' + HISTORY_RANGE_LABELS[selectedHistoryRange];
+            document.getElementById('historyRecordCount').textContent = `${visibleHistory.length.toLocaleString('id-ID')} titik data`; 
+        }
+
         function updateChartData() {
             if (!trafficChart) return;
-            trafficChart.data.labels = trafficHistory.map(item => item.time);
-            trafficChart.data.datasets[0].data = trafficHistory.map(item => item.ether1_rx_mbps ?? null);
-            trafficChart.data.datasets[1].data = trafficHistory.map(item => item.ether4_tx_mbps ?? null);
-            trafficChart.data.datasets[2].data = trafficHistory.map(item => item.ether5_tx_mbps ?? null);
+            const visibleHistory = getVisibleHistory();
+            // Batasi titik yang digambar agar grafik bulanan tetap ringan di HP/desktop.
+            const maxChartPoints = 1500;
+            const step = Math.max(1, Math.ceil(visibleHistory.length / maxChartPoints));
+            const chartHistory = visibleHistory.filter((item, index) => index % step === 0 || index === visibleHistory.length - 1);
+            trafficChart.data.labels = chartHistory.map(formatHistoryTime);
+            trafficChart.data.datasets[0].data = chartHistory.map(item => item.ether1_rx_mbps ?? null);
+            trafficChart.data.datasets[1].data = chartHistory.map(item => item.ether4_tx_mbps ?? null);
+            trafficChart.data.datasets[2].data = chartHistory.map(item => item.ether5_tx_mbps ?? null);
             trafficChart.update('none');
+            updateHistorySummary(visibleHistory);
         }
 
         async function fetchHistoryFromFirebase() {
             try {
                 const response = await fetch(FIREBASE_HISTORY_URL);
-                if (response.ok) {
-                    const data = await response.json();
-                    trafficHistory = [];
-                    if (data) {
-                        Object.keys(data).forEach(key => {
-                            trafficHistory.push({
-                                time: data[key].time,
-                                ether1_rx_mbps: data[key].ether1_rx_mbps ?? null,
-                                ether4_tx_mbps: data[key].ether4_tx_mbps ?? null,
-                                ether5_tx_mbps: data[key].ether5_tx_mbps ?? null
-                            });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                trafficHistory = [];
+                if (data && typeof data === 'object') {
+                    Object.keys(data).sort().forEach(key => {
+                        const record = data[key] || {};
+                        trafficHistory.push({
+                            time: record.time || '',
+                            timestamp: firebasePushKeyTimestamp(key),
+                            ether1_rx_mbps: record.ether1_rx_mbps ?? null,
+                            ether4_tx_mbps: record.ether4_tx_mbps ?? null,
+                            ether5_tx_mbps: record.ether5_tx_mbps ?? null
                         });
-                    }
-                    updateChartData();
+                    });
                 }
+                updateChartData();
             } catch (error) {
-                console.error("Gagal mengambil riwayat dari Firebase:", error);
+                console.error('Gagal mengambil riwayat dari Firebase:', error);
+                const count = document.getElementById('historyRecordCount');
+                if (count) count.textContent = 'Gagal memuat riwayat';
             }
+        }
+
+        function setHistoryRange(range) {
+            if (!HISTORY_RANGE_MS[range]) return;
+            selectedHistoryRange = range;
+            document.querySelectorAll('[data-history-range]').forEach(button => {
+                const active = button.dataset.historyRange === range;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+            updateChartData();
         }
 
         function updateNeedle(id, value) {
@@ -1291,6 +1490,7 @@
             const currentPppoeDownlink = parseFloat(pppoeDownlinkMbps.toFixed(2));
             const historyPoint = {
                 time: timeString,
+                timestamp: now.getTime(),
                 ether1_rx_mbps: currentUplink,
                 ether4_tx_mbps: currentStaticDownlink,
                 ether5_tx_mbps: currentPppoeDownlink
@@ -1302,7 +1502,7 @@
                     Object.assign(lastPoint, historyPoint);
                 } else {
                     trafficHistory.push(historyPoint);
-                    if (trafficHistory.length > 1440) trafficHistory.shift();
+                    if (trafficHistory.length > 43200) trafficHistory.shift();
                 }
             } else {
                 trafficHistory.push(historyPoint);
@@ -1382,6 +1582,9 @@
         window.addEventListener('DOMContentLoaded', async () => {
             initChart();
             initializeUI();
+            document.querySelectorAll('[data-history-range]').forEach(button => {
+                button.addEventListener('click', () => setHistoryRange(button.dataset.historyRange));
+            });
             await fetchHistoryFromFirebase();
             startMonitoring();
 
