@@ -1554,6 +1554,13 @@
                 <a href="server.html" class="server-status-button" id="server-status-button">
                     <div class="pulse"></div>
                     <span id="server-status-text">Memuat Status Server...</span>
+
+ <section class="extra-section">
+        <!-- Tombol install PWA (akan ditampilkan jika tersedia) -->
+        <button id="installButton" class="install-btn">
+            <i class="fa-solid fa-download"></i> Instal Aplikasi
+        </button>
+
                     <i class="fas fa-external-link-alt"></i>
                 </a>
             </div>
@@ -2068,6 +2075,46 @@
         function goToMap() {
             window.location.href = "/maps.html";
         }
+
+        // === PWA INSTALL PROMPT ===
+        let deferredPrompt;
+        const installButton = document.getElementById('installButton');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Cegah prompt otomatis
+            e.preventDefault();
+            // Simpan event
+            deferredPrompt = e;
+            // Tampilkan tombol install
+            installButton.style.display = 'flex';
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            // Tampilkan prompt instalasi
+            deferredPrompt.prompt();
+            // Tunggu keputusan user
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('User response:', outcome);
+            // Reset deferredPrompt
+            deferredPrompt = null;
+            // Sembunyikan tombol setelah digunakan
+            installButton.style.display = 'none';
+        });
+
+        // === SERVICE WORKER REGISTRATION ===
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
     </script>
 </body>
 </html>
