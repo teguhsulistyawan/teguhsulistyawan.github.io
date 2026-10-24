@@ -3,7 +3,9 @@
 <head>
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2b71c5" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="TS NETWORK" />
@@ -1521,17 +1523,34 @@
         }
 
 
-        /* Tombol install khusus */
+        /* Tombol instalasi PWA */
         .install-btn {
-            background: linear-gradient(135deg, #2b71c5, #1a5194);
-            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 14px auto 0;
+            padding: 11px 18px;
             border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2b71c5, #1a5194);
+            color: #ffffff;
             box-shadow: 0 4px 14px rgba(43, 113, 197, 0.35);
-            display: none; /* disembunyikan default */
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
         }
         .install-btn:hover {
             background: linear-gradient(135deg, #1a5194, #143d70);
             box-shadow: 0 8px 24px rgba(43, 113, 197, 0.5);
+        }
+        .install-btn:active {
+            transform: scale(0.97);
+        }
+        .install-btn:focus-visible {
+            outline: 2px solid #ffffff;
+            outline-offset: 3px;
         }
 
     </style>
@@ -1554,15 +1573,15 @@
                 <a href="server.html" class="server-status-button" id="server-status-button">
                     <div class="pulse"></div>
                     <span id="server-status-text">Memuat Status Server...</span>
-
- <section class="extra-section">
-        <!-- Tombol install PWA (akan ditampilkan jika tersedia) -->
-        <button id="installButton" class="install-btn">
-            <i class="fa-solid fa-download"></i> Instal Aplikasi
-        </button>
-
                     <i class="fas fa-external-link-alt"></i>
                 </a>
+
+                <!-- Tombol PWA berada di luar tautan Status Server agar klik tidak membuka server.html -->
+                <section class="extra-section">
+                    <button id="installButton" class="install-btn" type="button" aria-label="Instal aplikasi TS NETWORK">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i> Instal Aplikasi
+                    </button>
+                </section>
             </div>
         </div>
 
@@ -2077,40 +2096,72 @@
         }
 
         // === PWA INSTALL PROMPT ===
-        let deferredPrompt;
+        let deferredPrompt = null;
         const installButton = document.getElementById('installButton');
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Cegah prompt otomatis
-            e.preventDefault();
-            // Simpan event
-            deferredPrompt = e;
-            // Tampilkan tombol install
-            installButton.style.display = 'flex';
-        });
+        const isStandalonePWA = () =>
+            window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone === true;
 
-        installButton.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            // Tampilkan prompt instalasi
-            deferredPrompt.prompt();
-            // Tunggu keputusan user
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log('User response:', outcome);
-            // Reset deferredPrompt
-            deferredPrompt = null;
-            // Sembunyikan tombol setelah digunakan
-            installButton.style.display = 'none';
-        });
+        const isIOSDevice = () =>
+            /iphone|ipad|ipod/i.test(window.navigator.userAgent) ||
+            (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+
+        if (installButton) {
+            // Jika aplikasi sudah terpasang, tombol tidak perlu ditampilkan.
+            if (isStandalonePWA()) {
+                installButton.style.display = 'none';
+            } else if (isIOSDevice()) {
+                // iOS Safari tidak menyediakan beforeinstallprompt; pengguna memasang dari menu Bagikan.
+                installButton.innerHTML = '<i class="fa-solid fa-circle-info" aria-hidden="true"></i> Cara Instal Aplikasi';
+                installButton.style.display = 'flex';
+            }
+
+            window.addEventListener('beforeinstallprompt', (event) => {
+                event.preventDefault();
+                deferredPrompt = event;
+                installButton.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> Instal Aplikasi';
+                installButton.style.display = 'flex';
+            });
+
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    const promptEvent = deferredPrompt;
+                    deferredPrompt = null;
+
+                    promptEvent.prompt();
+                    const { outcome } = await promptEvent.userChoice;
+                    console.log('PWA install choice:', outcome);
+                    installButton.style.display = 'none';
+                    return;
+                }
+
+                if (isIOSDevice() && !isStandalonePWA()) {
+                    alert('Untuk memasang TS NETWORK di iPhone/iPad:\n\n1. Buka halaman ini melalui Safari.\n2. Tekan tombol Bagikan (ikon kotak dengan panah ke atas).\n3. Pilih “Tambahkan ke Layar Utama” / “Add to Home Screen”.\n4. Tekan “Tambah”.');
+                    return;
+                }
+
+                if (!isStandalonePWA()) {
+                    alert('Pemasangan dari tombol ini belum tersedia. Buka menu browser, lalu pilih “Instal aplikasi” atau “Tambahkan ke layar utama”. Pastikan situs dibuka melalui HTTPS.');
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                deferredPrompt = null;
+                installButton.style.display = 'none';
+            });
+        }
 
         // === SERVICE WORKER REGISTRATION ===
+        // sw.js harus berada di root domain dan situs harus menggunakan HTTPS (atau localhost).
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered with scope:', registration.scope);
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((registration) => {
+                        console.log('Service Worker aktif/didaftarkan dengan scope:', registration.scope);
                     })
-                    .catch(error => {
-                        console.error('ServiceWorker registration failed:', error);
+                    .catch((error) => {
+                        console.error('Pendaftaran Service Worker gagal:', error);
                     });
             });
         }
