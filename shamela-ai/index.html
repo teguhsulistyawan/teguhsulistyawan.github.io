@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d2d22">
+  <meta name="description" content="PWA pembungkus untuk membuka layanan resmi Shamela AI dalam tampilan aplikasi.">
+  <meta name="application-name" content="Shamela AI">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/shamela-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/shamela-192.svg">
+  <title>Shamela AI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --green: #0d2d22;
+      --green2: #123c2d;
+      --gold: #d9b96e;
+      --cream: #f5e7bf;
+      --ink: #101713;
+      --muted: #aab7b0;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; background: var(--ink); }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow: hidden; }
+    .app { display: flex; flex-direction: column; width: 100%; height: 100%; height: 100dvh; background: var(--ink); }
+    header {
+      min-height: 54px; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: max(8px, env(safe-area-inset-top)) 14px 8px;
+      background: var(--green); color: var(--cream); border-bottom: 1px solid #315a47;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand img { width: 32px; height: 32px; flex: 0 0 32px; }
+    .brand strong { display: block; font-size: 15px; line-height: 1.1; letter-spacing: .2px; }
+    .brand small { display: block; color: #c6d2ca; font-size: 11px; margin-top: 3px; }
+    .actions { display: flex; align-items: center; gap: 8px; }
+    .button {
+      color: var(--cream); text-decoration: none; border: 1px solid #54735f; border-radius: 10px;
+      padding: 8px 10px; background: var(--green2); white-space: nowrap; font-size: 12px;
+    }
+    .button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    #install { display: none; }
+    main { flex: 1; min-height: 0; position: relative; background: #090b0a; }
+    iframe { border: 0; position: absolute; inset: 0; width: 100%; height: 100%; background: #090b0a; }
+    .notice {
+      display: none; position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2;
+      max-width: 620px; margin: 0 auto; padding: 13px 15px; border: 1px solid #5c664f;
+      border-radius: 14px; background: rgba(13,45,34,.96); color: #fff5d8; font-size: 13px; line-height: 1.5;
+      box-shadow: 0 8px 28px rgba(0,0,0,.3);
+    }
+    .notice a { color: var(--gold); font-weight: 700; }
+    footer { min-height: 27px; padding: 5px 12px max(5px, env(safe-area-inset-bottom)); color: #8c9a92; background: var(--green); text-align: center; font-size: 10px; }
+    @media (max-width: 420px) {
+      header { padding-left: 9px; padding-right: 9px; }
+      .brand strong { font-size: 14px; }
+      .brand small { font-size: 10px; }
+      .button { padding: 8px 9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <img src="./icons/shamela-192.svg" alt="">
+        <div><strong>Shamela AI</strong><small>المكتبة الشاملة · akses layanan resmi</small></div>
+      </div>
+      <nav class="actions" aria-label="Aksi aplikasi">
+        <button class="button" id="install" type="button">Instal aplikasi</button>
+        <a class="button" href="https://shamela.ws/ai" target="_blank" rel="noopener noreferrer">Buka situs resmi ↗</a>
+      </nav>
+    </header>
+    <main>
+      <iframe
+        id="shamela"
+        title="Shamela AI"
+        src="https://shamela.ws/ai"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="clipboard-read; clipboard-write; fullscreen">
+      </iframe>
+      <div class="notice" id="notice">
+        Jika halaman Shamela tidak tampil di area ini, kemungkinan situs membatasi pembukaan di dalam iframe.
+        Kebijakan tersebut tidak dapat diubah dari PWA ini.
+        <a href="https://shamela.ws/ai" target="_blank" rel="noopener noreferrer">Buka Shamela AI langsung</a>.
+      </div>
+    </main>
+    <footer>Penghubung independen ke Shamela AI · layanan dan akun tetap dikelola oleh shamela.ws</footer>
+  </div>
+  <script>
+    let deferredInstallPrompt = null;
+    const installButton = document.getElementById('install');
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installButton.style.display = 'inline-block';
+    });
+    installButton.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installButton.style.display = 'none';
+    });
+    window.addEventListener('appinstalled', () => {
+      installButton.style.display = 'none';
+    });
+
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch((error) => {
+          console.warn('PWA service worker registration failed:', error);
+        });
+      });
+    }
+    // The cross-origin website cannot be inspected from this wrapper. Keep a clear fallback.
+    window.setTimeout(() => {
+      document.getElementById('notice').style.display = 'block';
+    }, 9000);
+  </script>
+</body>
+</html>
