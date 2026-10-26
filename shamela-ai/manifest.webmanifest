@@ -1,0 +1,31 @@
+{
+  "id": "/shamela-ai/",
+  "name": "Shamela AI",
+  "short_name": "Shamela AI",
+  "description": "Akses layanan resmi Shamela AI dalam tampilan aplikasi.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "/shamela-ai/",
+  "scope": "/shamela-ai/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0d2d22",
+  "theme_color": "#0d2d22",
+  "categories": ["education", "books", "reference"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/shamela-ai/icons/shamela-192.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/shamela-ai/icons/shamela-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
