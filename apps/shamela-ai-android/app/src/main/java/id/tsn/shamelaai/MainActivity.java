@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 4102;
 
     private WebView webView;
+    private CookieManager cookieManager;
     private ValueCallback<Uri[]> fileChooserCallback;
 
     @Override
@@ -30,6 +31,9 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setStatusBarColor(android.graphics.Color.rgb(13, 45, 34));
         getWindow().setNavigationBarColor(android.graphics.Color.rgb(13, 45, 34));
+
+        cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
 
         webView = new WebView(this);
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -55,10 +59,8 @@ public class MainActivity extends Activity {
             settings.setSafeBrowsingEnabled(true);
         }
 
-        CookieManager cookies = CookieManager.getInstance();
-        cookies.setAcceptCookie(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookies.setAcceptThirdPartyCookies(webView, true);
+            cookieManager.setAcceptThirdPartyCookies(webView, true);
         }
 
         webView.setWebViewClient(new WebViewClient() {
@@ -77,7 +79,6 @@ public class MainActivity extends Activity {
                 Uri uri = Uri.parse(url);
                 String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase();
                 if ("https".equals(scheme) || "http".equals(scheme)) {
-                    // Web pages stay inside this app, so no browser address bar is shown.
                     return false;
                 }
                 try {
@@ -88,6 +89,13 @@ public class MainActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
                 }
                 return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Persist the site's cookies after each completed navigation.
+                persistCookies();
             }
 
             @Override
@@ -128,6 +136,13 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void persistCookies() {
+        if (cookieManager != null) {
+            // CookieManager.flush() writes cookies to persistent storage.
+            cookieManager.flush();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -141,7 +156,27 @@ public class MainActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (webView != null) webView.saveState(outState);
+        persistCookies();
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        if (webView != null) webView.onPause();
+        persistCookies();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        persistCookies();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) webView.onResume();
     }
 
     @Override
@@ -156,13 +191,14 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        persistCookies();
         if (fileChooserCallback != null) {
             fileChooserCallback.onReceiveValue(null);
             fileChooserCallback = null;
         }
         if (webView != null) {
             webView.stopLoading();
-            webView.loadUrl("about:blank");
+            // Do not load about:blank here: leave WebView site storage intact.
             webView.setWebChromeClient(null);
             webView.setWebViewClient(null);
             webView.destroy();
