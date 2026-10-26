@@ -1,10 +1,12 @@
-const CACHE_NAME = 'shamela-ai-shell-v1';
+const CACHE_NAME = 'shamela-ai-shell-v2';
 const SHELL_URLS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icons/shamela-192.svg',
-  './icons/shamela-512.svg'
+  './icons/shamela-512.svg',
+  './icons/shamela-192.png',
+  './icons/shamela-512.png'
 ];
 
 self.addEventListener('install', (event) => {
